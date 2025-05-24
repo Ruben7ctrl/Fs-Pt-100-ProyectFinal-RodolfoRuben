@@ -214,6 +214,7 @@ class Favorites(db.Model):
 
     def serialize(self):
         return {
+            "id": self.id,
             "user1_id": self.user1_id,
             "user2_id": self.user2_id,
             "onlinegame_id": self.onlinegame_id,

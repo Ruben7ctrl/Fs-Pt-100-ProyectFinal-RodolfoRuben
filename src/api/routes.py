@@ -356,11 +356,11 @@ def get_user_stats(id):
         # id = get_jwt_identity()
 
         stmt = select(OnlineStats).where(OnlineStats.user_id == id)
-        user_stats = db.session.execute(stmt).scalar_one_or_none()
+        user_stats = db.session.execute(stmt).scalars().all()
         if user_stats is None:
             return jsonify({"error": "User stats not Found"}), 400
 
-        return jsonify(user_stats.serialize()), 200
+        return jsonify([stats.serialize() for stats in user_stats]), 200
     
     except Exception as e:
         print(e)
@@ -373,11 +373,11 @@ def get_game_stats(id):
     try:
         
         stmt = select(OnlineStats).where(OnlineStats.online_game_id == id)
-        onlinegame_stats = db.session.execute(stmt).scalar_one_or_none()
+        onlinegame_stats = db.session.execute(stmt).scalars().all()
         if onlinegame_stats is None:
             return jsonify({"error": "User stats not Found"}), 400
 
-        return jsonify(onlinegame_stats.serialize()), 200
+        return jsonify([stats.serialize() for stats in onlinegame_stats]), 200
     
     except Exception as e: 
         print(e)
@@ -567,13 +567,13 @@ def delete_ia_sesion(id):
         return jsonify({"error": "something went wrong delete ia"})
 
 
-@api.route('/ia_sessions/<int:id>/events', methods=['GET'])
+@api.route('/ia_sessions/<int:id>/ia_events', methods=['GET'])
 @jwt_required()
 def get_ia_events(id):
     try:
 
         stmt = select(IAevents).where(IAevents.sessions_id == id)
-        ia_events = db.session.execute(stmt).scalar().all()
+        ia_events = db.session.execute(stmt).scalars().all()
         if ia_events is None:
             return jsonify({"error": "IA Events not found"}), 400
 
@@ -601,7 +601,7 @@ def get_IaEvents(id):
         return jsonify({"error": "something went wrong events"})
 
 
-@api.route('/ia_sessions/<int:id>/events', methods=['POST'])
+@api.route('/ia_sessions/<int:id>/ia_events', methods=['POST'])
 @jwt_required()
 def create_ia_events(id):
     try:
@@ -824,3 +824,76 @@ def delete_favorites(id):
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete favorite"})
+    
+
+@api.route('/users/<int:id>/contacts', methods=['GET'])
+@jwt_required()
+def get_user_contacts(id):
+    try:
+
+        stmt = select(UserContacts).where(UserContacts.id == id)
+        user_contacts = db.session.execute(stmt).scalars().all()
+        if user_contacts is None:
+            return jsonify({"error": "Contacts not found"}), 400
+        
+        return jsonify([favs.serialize() for favs in user_contacts]), 200
+    
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "something went wrong user Contacts"})
+    
+
+@api.route('/contacts', methods=['POST'])
+@jwt_required()
+def create_contacts():
+    try:
+
+        data = request.get_json()
+
+        user_id = data.get('user_id')
+        contact_user_id = data.get('contact_user_id')
+        if not user_id or not contact_user_id:
+            return jsonify({"error": "User ID, Contact User ID is required"}), 404
+        
+        user = db.session.get(Users, user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        contact_user = db.session.get(Users, contact_user_id)
+        if not contact_user:
+            return jsonify({"error": "Contact User not found"}), 404
+        
+        
+        new_contact = UserContacts(
+            user_id = user_id,
+            contact_user_id = contact_user_id,
+        )
+
+        db.session.add(new_contact)
+        db.session.commit()
+
+        return jsonify(new_contact.serialize()), 201
+    
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "something went wrong create contact"})
+    
+
+@api.route('/contacts/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_contacts(id):
+    try:
+
+        stmt = select(UserContacts).where(UserContacts.id == id)
+        contact = db.session.execute(stmt).scalar_one_or_none()
+        if contact is None:
+            return jsonify({"error": "Contact not found"}), 400
+
+        db.session.delete(contact)
+        db.session.commit()
+
+        return jsonify({"msg": "Contact delete"}), 200
+    
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "something went wrong delete contact"})
