@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Agrega el directorio 'src' al path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from app import app
 from api.models import db
 from seed_data import (
