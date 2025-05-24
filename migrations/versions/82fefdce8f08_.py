@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 0a98ad712f04
-Revises: e7a28387d6b7
-Create Date: 2025-05-22 11:31:12.575944
+Revision ID: 82fefdce8f08
+Revises: 
+Create Date: 2025-05-23 23:45:06.955602
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0a98ad712f04'
-down_revision = 'e7a28387d6b7'
+revision = '82fefdce8f08'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('onlinegames',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=70), nullable=False),
-    sa.Column('descrption', sa.String(length=500), nullable=True),
+    sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('difficulty_levels', sa.String(length=40), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -29,13 +29,13 @@ def upgrade():
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('password', sa.String(length=50), nullable=False),
-    sa.Column('username', sa.String(length=50), nullable=False),
-    sa.Column('firstname', sa.String(length=50), nullable=True),
-    sa.Column('lastname', sa.String(length=60), nullable=True),
+    sa.Column('password', sa.String(length=350), nullable=False),
+    sa.Column('username', sa.String(length=100), nullable=True),
+    sa.Column('firstname', sa.String(length=80), nullable=True),
+    sa.Column('lastname', sa.String(length=90), nullable=True),
     sa.Column('dateofbirth', sa.String(), nullable=True),
     sa.Column('phone', sa.String(), nullable=True),
-    sa.Column('avatar_image', sa.String(length=100), nullable=False),
+    sa.Column('avatar_image', sa.String(length=100), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
@@ -45,9 +45,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user1_id', sa.Integer(), nullable=False),
     sa.Column('user2_id', sa.Integer(), nullable=True),
-    sa.Column('onlinegames_id', sa.Integer(), nullable=True),
+    sa.Column('onlinegame_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['onlinegames_id'], ['onlinegames.id'], ),
+    sa.ForeignKeyConstraint(['onlinegame_id'], ['onlinegames.id'], ),
     sa.ForeignKeyConstraint(['user1_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['user2_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -58,7 +58,7 @@ def upgrade():
     sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('genre', sa.String(length=60), nullable=True),
     sa.Column('difficulty_levels', sa.String(length=60), nullable=True),
-    sa.Column('character_name', sa.String(length=60), nullable=True),
+    sa.Column('character_name', sa.String(length=60), nullable=False),
     sa.Column('character_class', sa.String(length=60), nullable=False),
     sa.Column('experience_gained', sa.Integer(), nullable=True),
     sa.Column('story_branch', sa.String(length=200), nullable=True),
@@ -73,7 +73,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('sessions_played', sa.Integer(), nullable=False),
     sa.Column('wins', sa.Integer(), nullable=False),
-    sa.Column('stolemate', sa.Integer(), nullable=False),
+    sa.Column('stalemate', sa.Integer(), nullable=False),
     sa.Column('losses', sa.Integer(), nullable=False),
     sa.Column('last_played', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),

@@ -10,13 +10,13 @@ class Users(db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(50), nullable=False)
-    username: Mapped[str] = mapped_column(String(50), unique=True ,nullable=False)
-    firstname: Mapped[str] = mapped_column(String(50), nullable=True)
-    lastname: Mapped[str] = mapped_column(String(60), nullable=True)
+    password: Mapped[str] = mapped_column(String(350), nullable=False)
+    username: Mapped[str] = mapped_column(String(100), unique=True ,nullable=True)
+    firstname: Mapped[str] = mapped_column(String(80), nullable=True)
+    lastname: Mapped[str] = mapped_column(String(90), nullable=True)
     dateofbirth: Mapped[str] = mapped_column(nullable=True)
     phone: Mapped[str] = mapped_column(nullable=True)
-    avatar_image: Mapped[str] = mapped_column(String(100), nullable=False)
+    avatar_image: Mapped[str] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
     favorite1: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user1", foreign_keys=lambda: [Favorites.user1_id])
@@ -149,7 +149,7 @@ class IAsessions(db.Model):
     # inspiration_game_id: Mapped[int] = mapped_column(ForeignKey(".id"), nullable=False)
     # inspiration_game: Mapped["StoreGames"] = relationship(back_populates="ia_sessions")
 
-    ia_events: Mapped[List["IAevents"]] = relationship(back_populates="user_iaevents")
+    ia_events: Mapped[List["IAevents"]] = relationship(back_populates="session")
 
 
     def serialize(self):
@@ -180,8 +180,8 @@ class IAevents(db.Model):
     outcome: Mapped[str] = mapped_column(String(400), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
-    sessions_id: Mapped[int] = mapped_column(ForeignKey("iasessions.id"))
-    user_iaevents: Mapped["IAsessions"] = relationship(back_populates="ia_events")
+    sessions_id: Mapped[int] = mapped_column(ForeignKey("iasessions.id"), nullable=False)
+    session: Mapped["IAsessions"] = relationship(back_populates="ia_events")
 
     def serialize(self):
         return {
@@ -191,7 +191,7 @@ class IAevents(db.Model):
             "description": self.description,
             "outcome": self.outcome,
             "created_at": self.created_at.isoformat(),
-            "user_ia_events": self.user_iaevents.user_iasessions.username,
+            "character_name": self.session.character_name if self.session else None,
         }
 
 
