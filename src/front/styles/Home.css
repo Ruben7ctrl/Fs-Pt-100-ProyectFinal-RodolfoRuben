@@ -1,0 +1,96 @@
+.fondoPrincipal {
+    background-image: url('/src/front/assets/img/GLITCH.gif');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    position: relative;
+    z-index: 1;
+
+}
+
+/* .fondoPrincipal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+} */
+.structure {
+    text-align: center;
+    color: white;
+    margin-top: 40rem;
+    
+}
+
+.text_logo {
+    font-size: 5.5vw;
+    /* color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+    letter-spacing: 0.2rem; */
+    background: url('/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.12.14.png');
+    background-size: cover;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'SpeedBeast', sans-serif;
+}
+.invertir {
+    display: inline-block;
+    transform: scaleX(-1);
+    margin-left: 2px;
+    background: url('/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.13.39.png');
+    background-size: cover;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.buttons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.buttons button {
+    padding: 0.75rem 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background: none;
+    width: 50%;
+    color: white;
+    font-family: 'SonicTurbo', sans-serif;
+}
+@font-face {
+    font-family: 'SonicTurbo';
+    src: url('/src/front/assets/img/fonts/Sonic Turbo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'VideoGames';
+    src: url('/src/front/assets/img/fonts/video games.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'SpeedBeast';
+    src: url('/src/front/assets/img/fonts/SpeedBeast FREE.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'VerminVibes';
+    src: url('/src/front/assets/img/fonts/Vermin Vibes.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
