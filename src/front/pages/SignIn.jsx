@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useNavigate } from "react-router-dom";
 import "../styles/Autentication.css"
-import userServices from "../services/fluxAutentication";
+import userServices from "../services/flux";
 
 
 export const Signin = () => {
