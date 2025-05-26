@@ -9,11 +9,11 @@ export const Home = () => {
 	const navigate = useNavigate()
 
 	const handleSignup = () => {
-		navigate('/demo')
+		navigate('/signup')
 	}
 
 	const handleSignin = () => {
-		navigate('/single')
+		navigate('/signin')
 	}
 
 	const handleVisitor = () => {
