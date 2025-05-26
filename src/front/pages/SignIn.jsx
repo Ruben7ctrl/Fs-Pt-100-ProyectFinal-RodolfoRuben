@@ -32,7 +32,7 @@ export const Signin = () => {
                         password: ""
                     })
                 } else {
-                    navigate('/demo')
+                    navigate('/games')
                     setFormData({
                         identify: "",
                         password: ""
