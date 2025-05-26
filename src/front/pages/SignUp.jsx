@@ -81,6 +81,13 @@ export const Signup = () => {
 
     return (
         <div className={`fondo${avatar.nombre.toLowerCase()}`}>
+            <nav className="navbar">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/">
+                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44"/>
+                    </a>
+                </div>
+            </nav>
             <div className={`signup${avatar.nombre.toLowerCase()}`}>
                 <form className="container mt-2" onSubmit={handleSubmit}>
                     <div className="card-header d-flex justify-content-center">
@@ -127,7 +134,7 @@ export const Signup = () => {
 
                     <div className="d-flex flex-column justify-content-center gap-3 mt-3">
                         <button className="btn btn-secondary" onClick={handleClick}>Already account?</button>
-                        <input type="submit" className="btn btn-primary" value={"Sign Up"}/>
+                        <input type="submit" className="btn btn-primary" value={"Sign Up"} />
                     </div>
 
 
