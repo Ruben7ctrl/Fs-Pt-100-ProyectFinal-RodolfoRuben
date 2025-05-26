@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 
+
 const ScrollToTop = ({ location, children }) => {
     const prevLocation = useRef(location);
 
