@@ -24,8 +24,8 @@ export const Signin = () => {
         try {
             const data = await userServices.signin(formData)
 
-            if(data?.success) {
-                if(formData.identify?.includes("@admin")) {
+            if (data?.success) {
+                if (formData.identify?.includes("@admin")) {
                     navigate('/admin')
                     setFormData({
                         identify: "",
@@ -43,7 +43,7 @@ export const Signin = () => {
             }
         } catch (error) {
             console.log("Login error", error);
-            
+
         }
     }
 
@@ -55,29 +55,36 @@ export const Signin = () => {
 
     return (
         <div className="fondo">
+            <nav className="navbar">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/">
+                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
+                    </a>
+                </div>
+            </nav>
             <div className="center">
-            <div className="signin">
-                <form className="container mt-2" onSubmit={handleSubmit}>
-                    <div className="card-header d-flex justify-content-center">
-                        <h2>SignIn</h2>
-                    </div>
-                    <div className=" mt-3 col-sm-12 col-md-12">
-                        <label htmlFor="identify" className="form-label">Email/Username</label>
-                        <input type="text" className="form-control" placeholder="Email/Username" name="identify" value={formData.identify} onChange={handleChange} required />
-                    </div>
-                    <div className=" mt-3 col-sm-12 col-md-12">
-                        <label htmlFor="password" className="form-label">Password</label>
-                        <input type="password" className="form-control" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required />
-                    </div>
+                <div className="signin">
+                    <form className="container mt-2" onSubmit={handleSubmit}>
+                        <div className="card-header d-flex justify-content-center">
+                            <h2>SignIn</h2>
+                        </div>
+                        <div className=" mt-3 col-sm-12 col-md-12">
+                            <label htmlFor="identify" className="form-label">Email/Username</label>
+                            <input type="text" className="form-control" placeholder="Email/Username" name="identify" value={formData.identify} onChange={handleChange} required />
+                        </div>
+                        <div className=" mt-3 col-sm-12 col-md-12">
+                            <label htmlFor="password" className="form-label">Password</label>
+                            <input type="password" className="form-control" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required />
+                        </div>
 
-                    <div className="d-flex flex-column gap-3 mt-3">
-                        <button className="btn btn-secondary" onClick={handleClick}>Sign Up</button>
-                        <input type="submit" className="btn btn-primary" value={"Sign In"}/>
-                    </div>
+                        <div className="d-flex flex-column gap-3 mt-3">
+                            <button className="btn btn-secondary" onClick={handleClick}>Sign Up</button>
+                            <input type="submit" className="btn btn-primary" value={"Sign In"} />
+                        </div>
 
 
-                </form>
-            </div>
+                    </form>
+                </div>
             </div>
         </div>
     )
