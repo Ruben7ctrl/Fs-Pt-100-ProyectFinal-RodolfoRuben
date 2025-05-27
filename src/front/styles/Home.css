@@ -15,6 +15,44 @@
 
 }
 
+.demo path{
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+    fill-rule: evenodd;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    fill: none;
+    stroke: currentColor;
+
+}
+
+svg path{
+
+    fill: transparent;
+    stroke: rgb(255, 255, 255);
+    stroke-width: 2;
+    stroke-dasharray:50;
+    stroke-dashoffset: 50;
+    animation : textAnimation 2s ease-in-out 1 forwards;
+
+}
+
+@keyframes textAnimation{
+    0%{
+        
+        stroke-dashoffset: 50;
+    }
+    80%{
+        fill : transparent;
+         }
+    100%{
+       
+        fill : #fff;
+        stroke-dashoffset: 0;
+    }
+}
+
 /* .fondoPrincipal::before {
     content: "";
     position: absolute;
@@ -94,3 +132,111 @@
     font-weight: normal;
     font-style: normal;
 }
+
+.box {
+      position: relative;
+      width: 100vw;
+      max-width: 1000px;
+      height: 300px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 255, 225, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+.boxes:hover{
+
+    background-color:rgba(255, 255, 0, 0.411)
+}
+    .line {
+      position: absolute;
+      background-color: #00ffe1;
+      border-radius: 8px;
+    }
+
+   .main-line-left, .main-line-right {
+      height: 4px;
+      width: 0;
+      bottom: 0;
+      animation: drawMainLine 1s forwards;
+    }
+
+    .main-line-left {
+      left: 50%;
+      transform-origin: right;
+      animation-delay: 0s;
+    }
+
+    .main-line-right {
+      right: 50%;
+      transform-origin: left;
+      animation-delay: 0s;
+    }
+
+    .vertical-left, .vertical-right {
+      width: 4px;
+      height: 0;
+      animation: drawVertical 1s forwards;
+      animation-delay: 1s;
+    }
+
+    .vertical-left {
+      left: 0;
+      bottom: 0;
+    }
+
+    .vertical-right {
+      right: 0;
+      bottom: 0;
+    }
+
+    .top-line-left, .top-line-right {
+      height: 4px;
+      width: 0;
+      top: 0;
+      animation: drawTopHalf 1s forwards;
+      animation-delay: 2s;
+    }
+
+    .top-line-left {
+      left: 0;
+    }
+
+    .top-line-right {
+      right: 0;
+    }
+
+    .background-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: lab(82.11% -50.97 -0.74 / 0.568);
+      opacity: 0;
+      animation: showBackground 0.5s forwards;
+      animation-delay: 3s;
+      z-index: -1;
+      border-radius: 16px;
+    }
+
+    @keyframes drawMainLine {
+      from { width: 0; }
+      to { width: 50%; }
+    }
+
+    @keyframes drawVertical {
+      from { height: 0; }
+      to { height: 100%; }
+    }
+
+    @keyframes drawTopHalf {
+      from { width: 0; }
+      to { width: 50%; }
+    }
+
+    @keyframes showBackground {
+      to { opacity: 1; }
+    }
