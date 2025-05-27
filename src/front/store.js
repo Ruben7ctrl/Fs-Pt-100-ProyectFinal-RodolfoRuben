@@ -12,6 +12,8 @@ export const initialStore=()=>{
 export default function storeReducer(store, action = {}) {
   switch(action.type){
     case 'signin/signup':
+      localStorage.setItem('user', JSON.stringify(action.payload.user))
+      localStorage.setItem('token', action.payload.token)
       return {
         ...store,
         user: action.payload.user

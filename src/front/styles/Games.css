@@ -30,9 +30,9 @@
 
 .discover__sidebar_desktop {
   position: fixed;
-  top: 60px;
+  top: 4.5rem;
   left: 0;
-  width: 240px;
+  width: 14.5rem;
   height: calc(100vh - 60px);
   overflow-y: auto;
   z-index: 900;
@@ -41,14 +41,15 @@
 .page__content_wrap {
   margin-left: 240px;
   padding-top: 60px;
+  
 }
 
 .discover__sidebar {
   /* background-color: #8c8cff; */
   color: #ffffff;
-  width: 260px;
-  padding: 24px 16px;
-  border-radius: 16px;
+  /* width: 260px; */
+  padding: 3rem 1rem;
+  border-radius: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   font-family: 'Inter', sans-serif;
 }
@@ -57,7 +58,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
-  margin-bottom: 8px;
+  margin-bottom: 1rem;
   display: block;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
@@ -66,17 +67,17 @@
 .discover-sidebar__list {
   list-style: none;
   padding: 0;
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
 }
 
 .discover-sidebar__link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 1rem;
+  padding: 0.5rem 0.8rem;
   color: #cfcfcf;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 0.3rem;
   transition: background 0.2s, color 0.2s;
 }
 
@@ -119,4 +120,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.discover-sidebar__image {
+  margin-left: 0.5rem;
+  margin-right: 1rem;
 }
