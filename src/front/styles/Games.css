@@ -1,0 +1,122 @@
+.fondoGames {
+  background-image: url("/src/front/assets/img/FondoPrincipal.jpg");
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  position: relative;
+  z-index: 1;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4.5rem;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.discover__sidebar_desktop {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 240px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  z-index: 900;
+}
+
+.page__content_wrap {
+  margin-left: 240px;
+  padding-top: 60px;
+}
+
+.discover__sidebar {
+  /* background-color: #8c8cff; */
+  color: #ffffff;
+  width: 260px;
+  padding: 24px 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: 'Inter', sans-serif;
+}
+
+.discover-sidebar__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+.discover-sidebar__list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.discover-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #cfcfcf;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.discover-sidebar__link:hover {
+  background-color: #2c2c44;
+  color: #ffffff;
+}
+
+.discover-sidebar__icon-svg {
+  width: 20px;
+  height: 20px;
+  fill: #8c8cff;
+  transition: fill 0.3s;
+}
+
+.discover-sidebar__link:hover .discover-sidebar__icon-svg {
+  fill: #ffffff;
+}
+
+.discover-sidebar__label {
+  font-size: 0.95rem;
+}
+
+.discover-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  background-color: #8c8cff;
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -2,6 +2,7 @@
 import { useContext, useReducer, createContext, useEffect } from "react";
 import storeReducer, { initialStore } from "../store"  // Import the reducer and the initial state.
 import userServices from "../services/flux";
+import storeServices from "../services/fluxApis";
 
 // Create a context to hold the global state of the application
 // We will call this global state the "store" to avoid confusion while using local states
@@ -15,7 +16,7 @@ export function StoreProvider({ children }) {
     // Provide the store and dispatch method to all child components.
 
     useEffect(() => {
-        userServices.getJuegosMesa().then(data => dispatch({ type: 'load_juegosdemesa', payload: data}))
+        storeServices.getJuegosMesa().then(data => dispatch({ type: 'load_juegosdemesa', payload: data}))
     }, [])
 
     return <StoreContext.Provider value={{ store, dispatch }}>
