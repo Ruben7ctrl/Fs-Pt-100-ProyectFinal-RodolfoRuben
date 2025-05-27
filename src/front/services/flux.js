@@ -33,6 +33,7 @@ userServices.signin = async (formData) => {
         const data = await resp.json()
         console.log("login response", data)
         localStorage.setItem("token", data.token)
+        localStorage.setItem("user", JSON.stringify(data.user))
 
         return data
     } catch (error) {
