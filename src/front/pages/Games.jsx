@@ -24,9 +24,6 @@ export const Games = () => {
     )
   }, [page])
 
-  useEffect(() => {
-    
-  }, [])
 
   const juegosPorPagina = 6
 
