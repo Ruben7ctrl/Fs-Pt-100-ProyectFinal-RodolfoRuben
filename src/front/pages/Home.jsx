@@ -23,7 +23,7 @@ export const Home = () => {
 	}
 
 	const handleVisitor = () => {
-		navigate('/demo')
+		navigate('/games')
 		audioHome.pause();
 		
 	}
