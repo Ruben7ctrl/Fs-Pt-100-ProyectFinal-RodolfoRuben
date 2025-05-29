@@ -121,21 +121,21 @@ export const Games = () => {
     <>
       <div className="fondoGames">
         <div className="container">
-      <div className="ps5-grid">
-        {items.map(({ icon, label }, i) => (
-          <div
-            key={i}
-            className="char ps5-card"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div className="icon">{icon}</div>
-            <span className="label">{label}</span>
-          
+          <div className="ps5-grid">
+            {items.map(({ icon, label }, i) => (
+              <div
+                key={i}
+                className="char ps5-card"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="icon">{icon}</div>
+                <span className="label">{label}</span>
+
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
         <div className="discover-sidebar__nav__elements">
           <div className="page__content-wrap-centerer">
             <div className="page__content-wrap with-sidebar">
