@@ -89,7 +89,7 @@ export const Signup = () => {
                 </div>
             </nav>
             <div className={`signup${avatar.nombre.toLowerCase()}`}>
-                <form className="container mt-2" onSubmit={handleSubmit}>
+                <form className="container-fluid mt-2" onSubmit={handleSubmit}>
                     <div className="card-header d-flex justify-content-center">
                         <h2>SignUp</h2>
                     </div>
