@@ -53,7 +53,7 @@ export const Home = () => {
 					<div className="box">
                         <div className="background-fill"></div>
 						<div className="line main-line-left"></div>
-						<div className="line main-line-right"></div>
+							<div className="line main-line-right"></div>
 						<div className="line vertical-left"></div>
 						<div className="line vertical-right"></div>
 						<div className="line top-line-left"></div>
