@@ -1,0 +1,84 @@
+.chat-container {
+    height: 100vh;
+    width: 100vw;
+    background: url('/src/front/assets/img/FondoIA.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+    overflow: hidden;
+}
+
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.messages {
+    max-width: 85%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
+    word-wrap: break-word;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.messages.user {
+    align-self: flex-end;
+    background: rgba(0, 123, 255, 0.3);
+}
+
+.messages.assistant {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 0.5rem;
+}
+
+.input-container input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.chat-container button {
+    margin-top: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #00c3ff;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    align-items: flex-end;
+    transition: background 0.3s;
+}
+
+.chat-container button:hover {
+    background-color: #007aad;
+}
