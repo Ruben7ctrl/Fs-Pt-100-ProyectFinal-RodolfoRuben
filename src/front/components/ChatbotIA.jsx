@@ -8,6 +8,53 @@ export const ChatbotIA = () => {
 
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('')
+    const [chapter, setChapter] = useState(1)
+
+    const [campaignConfig, setCampaignConfig] = useState({
+        difficulty_level: null,
+        characterName: null,
+        characterClass: null,
+    })
+
+    const detectarDatosCampaign = (input) => {
+        const nameMatch = input.match(/me llamo (\w+)/i);
+        const classMatch = input.match(/soy un[ae]? (\w+)/i);
+        const difficultyMatch = input.match(/dificultad es (\w+)/i);
+
+        setCampaignConfig(prev => ({
+            ...prev,
+            characterName: nameMatch?.[1] || prev.characterName,
+            characterClass: classMatch?.[1] || prev.characterClass,
+            difficulty_level: difficultyMatch?.[1] || prev.difficulty_level,
+        }))
+    }
+
+    useEffect(() => {
+        const tryStartCampaign = async () => {
+            const { characterName, characterClass, difficulty_level } = campaignConfig;
+            const activeSessionID = localStorage.getItem('activeSessionID');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userID = user.id || 'demo-user';
+
+            if (!activeSessionID && characterName && characterClass && difficulty_level) {
+                const sessionID = await openAiServices.startCampaign({
+                    difficulty_level,
+                    character_name: characterName,
+                    character_class: characterClass,
+                    user_id: userID,
+                });
+
+                if (sessionID) {
+                    localStorage.setItem('activeSessionID', sessionID);
+                } else {
+                    console.warn("No se pudo iniciar la sesión");
+                }
+            }
+        };
+
+        tryStartCampaign();
+    }, [campaignConfig]);
+
 
     useEffect(() => {
         openAiServices.createCampaign().then(data => {
@@ -16,13 +63,16 @@ export const ChatbotIA = () => {
     }, [])
 
     const handleSendMessage = async () => {
-        if(!input.trim()) return;
+        if (!input.trim()) return;
 
-        const userMessage = { text: input, sender: 'user'}
+        const userMessage = { text: input, sender: 'user' }
         const updatedMessages = [...messages, userMessage]
 
         setMessages([...messages, userMessage])
         setInput('')
+
+        detectarDatosCampaign(input);
+
         try {
             const history = updatedMessages.map(msg => ({
                 role: msg.sender === 'user' ? 'user' : 'assistant',
@@ -30,11 +80,45 @@ export const ChatbotIA = () => {
             }));
 
             const botMessages = await openAiServices.send(history, input)
+            const reply = botMessages.text
 
             setMessages(prev => [...prev, botMessages])
+
+            const activeSessionID = localStorage.getItem('activeSessionID')
+            if (activeSessionID) {
+                await openAiServices.saveDEcisionEvent(
+                    activeSessionID,
+                    chapter,
+                    input,
+                    reply,
+                    "progreso"
+                )
+                setChapter(prev => prev + 1)
+            }
+
+            const user = JSON.parse(localStorage.getItem('user') || '{')
+            const userID = user.id || 'demo-user'
+
+            if (
+                !activeSessionID && campaignConfig.characterName && campaignConfig.characterClass && campaignConfig.difficulty_level
+            ) {
+                const sessionID = await openAiServices.startCampaign({
+                    difficulty_level: campaignConfig.difficulty_level,
+                    characterName: campaignConfig.characterName,
+                    characterClass: campaignConfig.characterClass,
+                    userID: userID,
+                })
+
+                if (sessionID) {
+                    localStorage.setItem('activeSessionID', sessionID)
+                } else {
+                    console.warn("No se pudo iniciar la sesion")
+                }
+            }
+
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
@@ -44,24 +128,131 @@ export const ChatbotIA = () => {
     //     sender: msg.sender,
     //     preview: msg.text?.slice(0, 30) + (msg.text?.length > 30 ? '...' : '')
     // })));
-    
+
     // console.log('Renderizando mensage:', messages);
 
-    
+    // const [formValues, setFormValues] = useState({
+    //     title: "",
+    //     genre: "",
+    //     difficulty: "",
+    //     characterName: "",
+    //     characterClass: "",
+    // })
+
+    // const [started, setStarted] = useState(false);
+
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormValues((prev) => ({
+    //         ...prev,
+    //         [name]: value,
+    //     }))
+    // }
+
+    // const handleStartCampaign = async () => {
+    //     const data = await openAiServices.createCampaign();
+    //     setMessages([data])
+
+    //     const user = JSON.parse(localStorage.getItem('user') || '{')
+    //     const userID = user.id || 'demo-user'
+
+    //     const sessionID = await openAiServices.startCampaign(
+    //         formValues.title,
+    //         formValues.genre,
+    //         formValues.difficulty,
+    //         formValues.characterName,
+    //         formValues.characterClass,
+    //         userID
+    //     );
+
+    //     if (sessionID) {
+    //         localStorage.setItem('activeSessionID', sessionID)
+    //         setStarted(true)
+    //     } else {
+    //         console.warn('No se puede iniciar la sesion de RPG')
+    //     }
+    // }
+
+    // const handleSendMessage = async () => {
+    //     if(!input.trim()) return;
+
+    //     const userMessage = { text: input, sender: 'user'}
+    //     const updatedMessages = [...messages, userMessage]
+
+    //     setMessages([...messages, userMessage])
+    //     setInput('')
+
+    //     try {
+    //         const history = updatedMessages.map(msg => ({
+    //             role: msg.sender === 'user' ? 'user' : 'assistant',
+    //             content: msg.text
+    //         }));
+
+    //         const botMessages = await openAiServices.send(history, input)
+    //         const reply = botMessages.text
+
+    //         setMessages(prev => [...prev, botMessages])
+
+    //         const activeSessionID = localStorage.getItem('activeSessionID')
+    //         if(activeSessionID) {
+    //             await openAiServices.saveDEcisionEvent(
+    //                 activeSessionID,
+    //                 chapter,
+    //                 input,
+    //                 reply,
+    //                 "progreso"
+    //             )
+    //             setChapter(prev => prev + 1)
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+
+    //     } 
+
+    // }
 
     return (
         <div className="chat-container">
-            <div className="chat-box">
-                {
-                    messages.map((msg, index) => <MarkdownReader key={index} text={msg.text} sender={msg.sender}/>)
-                }
-            </div>
-            <div className="input-container">
-                <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key == 'Enter' && handleSendMessage()} placeholder="Escribir Mensaje" />
-            </div>
-            <button onClick={handleSendMessage}>
-                Enviar
-            </button>
+            {/* {!started ? (
+                <div className="form.container">
+                    <h2>Iniciar Campaña</h2>
+                    <input type="text" name="title" placeholder="Titulo" value={formValues.title} onChange={handleChange} />
+                    <select name="genre" value={formValues.genre} onChange={handleChange}>
+                        <option value="">Seleccionar Genero</option>
+                        <option value="Fantasia">Fantasía</option>
+                        <option value="Ciencia Ficcion">Ciencia Ficcion</option>
+                        <option value="Misterio">Misterio</option>
+                    </select>
+                    <select name="difficulty" value={formValues.difficulty} onChange={handleChange}>
+                        <option value="">Seleccionar Dificultad</option>
+                        <option value="Facil">Facil</option>
+                        <option value="Medio">Medio</option>
+                        <option value="Dificil">Dificil</option>
+                    </select>
+                    <input type="text" name="characterName" placeholder="Nombre del Personaje" value={formValues.characterName} onChange={handleChange} />
+                    <select name="characterClass" value={formValues.characterClass} onChange={handleChange}>
+                        <option value="">Seleccionar Clase</option>
+                        <option value="Maga">Maga</option>
+                        <option value="Asesino">Asesino</option>
+                        <option value="Soldado">Soldado</option>
+                    </select>
+                    <button onClick={handleStartCampaign}>Comenzar Aventura</button>
+                </div>
+            ) : ( */}
+            <>
+                <div className="chat-box">
+                    {
+                        messages.map((msg, index) => <MarkdownReader key={index} text={msg.text} sender={msg.sender} />)
+                    }
+                </div>
+                <div className="input-container">
+                    <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key == 'Enter' && handleSendMessage()} placeholder="Escribir Mensaje" />
+                </div>
+                <button onClick={handleSendMessage}>
+                    Enviar
+                </button>
+            </>
+            {/* )} */}
         </div>
     )
 }
