@@ -23,8 +23,9 @@ export const Home = () => {
 	}
 
 	const handleVisitor = () => {
-		audioHome.pause();
 		navigate('/games')
+		audioHome.pause();
+		
 	}
 
 	const audioHome = new Audio(ParaHome)
