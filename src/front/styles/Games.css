@@ -1,8 +1,6 @@
 .fondoGames {
   background-image: url("/src/front/assets/img/FondoPrincipal.jpg");
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  
   min-height: 100vh;
   padding: 1rem;
 
@@ -10,8 +8,7 @@
   background-repeat: no-repeat;
   background-size: cover;
 
-  position: relative;
-  z-index: 1;
+ 
 }
 
 .navbar {
@@ -29,7 +26,7 @@
 }
 
 .discover__sidebar_desktop {
-  position: fixed;
+ 
   top: 60px;
   left: 0;
   width: 240px;
@@ -119,4 +116,50 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}
+
+.ps5-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ps5-card {
+  width: 100px;
+  height: 100px;
+  background: #0741e200;
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px #d207e4e5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  transform: translateY(0) scale(1);
+}
+
+.ps5-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 20px ;
+}
+
+.icon {
+  margin-bottom: 0.3rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: #ccc;
+  letter-spacing: 0.5px;
+  text-align: center;
 }
