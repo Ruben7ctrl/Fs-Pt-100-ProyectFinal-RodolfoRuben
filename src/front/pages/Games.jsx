@@ -7,11 +7,13 @@ import "../styles/Games.css"
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
-import { House, MagnifyingGlass, Gear, FolderSimple, ChatCircle, User } from "phosphor-react";
+import { House, MagnifyingGlass, Gear, GameController, PuzzlePiece, User } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
+import { useNavigate } from "react-router-dom";
 
 export const Games = () => {
+ 
   // Access the global state and dispatch function using the useGlobalReducer hook.
   const { store, dispatch } = useGlobalReducer()
   const [page, setPage] = useState(1)
@@ -19,8 +21,9 @@ export const Games = () => {
   const [pagina, setPagina] = useState(1)
   const [letra, setLetra] = useState("a")
   const [cargando, setCargando] = useState(false)
+  const [showSearchCanvas, setShowSearchCanvas] = useState(false);
   const audioBotones = new Audio(botones)
-
+  const navigate = useNavigate();
   const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -68,8 +71,9 @@ export const Games = () => {
   // AQUI EMPIEZA LOS RECUADROS DE ARRIBA//
 
   const handleMouseEnter = (e) => {
-    audioBotones.play();
+
     anime.remove(e.currentTarget);
+    audioBotones.play();
 
     anime({
       targets: e.currentTarget,
@@ -77,12 +81,15 @@ export const Games = () => {
         { value: -44, easing: "easeOutExpo", duration: 600 },
         { value: 0, easing: "easeOutBounce", duration: 800, delay: 100 }
       ],
+
       rotate: {
         value: "-1turn", // ✅ Gira completamente
         duration: 1000,
         easing: "easeInOutSine"
+
       },
       delay: 0
+
     });
 
   };
@@ -102,14 +109,31 @@ export const Games = () => {
   };
 
   const items = [
-    { icon: <House size={32} weight="fill" />, label: "Home" },
+    { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
     { icon: <Gear size={32} weight="fill" />, label: "Settings" },
-    { icon: <FolderSimple size={32} weight="fill" />, label: "Files" },
-    { icon: <ChatCircle size={32} weight="fill" />, label: "Messages" },
+    { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
+    { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames" },
     { icon: <User size={32} weight="fill" />, label: "Profile" }
   ];
 
+ const handleClick = (route, label) => {
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+
+  if (label === "Search") {
+    const canvasEl = document.getElementById("staticBackdrop");
+    const bsCanvas = new window.bootstrap.Offcanvas(canvasEl);
+    bsCanvas.show();
+    return;
+  }
+
+  if (label === "Profile" && !storedUser) {
+    navigate('/signin');
+    return;
+  }
+
+  navigate(route);
+};
 
   // AQUI TERMINA LOS RECUADROS DE ARRIBA//
 
@@ -122,12 +146,13 @@ export const Games = () => {
       <div className="fondoGames">
         <div className="container">
           <div className="ps5-grid">
-            {items.map(({ icon, label }, i) => (
+            {items.map(({ icon, label, route }, i) => (
               <div
                 key={i}
                 className="char ps5-card"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={() => handleClick(route, label)}
               >
                 <div className="icon">{icon}</div>
                 <span className="label">{label}</span>
@@ -136,7 +161,17 @@ export const Games = () => {
             ))}
           </div>
         </div>
-        <div className="discover-sidebar__nav__elements">
+
+  
+
+<div class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="staticBackdropLabel">Offcanvas</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      <div className="discover-sidebar__nav__elements">
           <div className="page__content-wrap-centerer">
             <div className="page__content-wrap with-sidebar">
               <div>
@@ -177,7 +212,7 @@ export const Games = () => {
                                       <stop offset="100%" stop-color="#429321" />
                                     </linearGradient>
                                   </defs>
-                                  <path fill="url(#a)" fill-rule="evenodd" d="M6.465 11.4c-.956 0-1.733.769-1.733 1.714v10.457c0 .946.777 1.715 1.733 1.715h17.07c.956 0 1.733-.77 1.733-1.715V13.114c0-.945-.777-1.714-1.733-1.714H6.465zm0 15.6C4.554 27 3 25.462 3 23.571V13.114c0-1.89 1.554-3.428 3.465-3.428h17.07c1.911 0 3.465 1.537 3.465 3.428v10.457C27 25.462 25.446 27 23.535 27H6.465zM9.496 4.714a.86.86 0 01-.866-.857A.86.86 0 019.496 3h11.008c.478 0 .866.383.866.857a.861.861 0 01-.866.857H9.496zM7.244 8.058a.861.861 0 01-.866-.858c0-.474.388-.857.866-.857h15.512c.478 0 .866.383.866.857a.861.861 0 01-.866.858H7.244z" />
+                                  <path fill="url(#a)" fillRule="evenodd" d="M6.465 11.4c-.956 0-1.733.769-1.733 1.714v10.457c0 .946.777 1.715 1.733 1.715h17.07c.956 0 1.733-.77 1.733-1.715V13.114c0-.945-.777-1.714-1.733-1.714H6.465zm0 15.6C4.554 27 3 25.462 3 23.571V13.114c0-1.89 1.554-3.428 3.465-3.428h17.07c1.911 0 3.465 1.537 3.465 3.428v10.457C27 25.462 25.446 27 23.535 27H6.465zM9.496 4.714a.86.86 0 01-.866-.857A.86.86 0 019.496 3h11.008c.478 0 .866.383.866.857a.861.861 0 01-.866.857H9.496zM7.244 8.058a.861.861 0 01-.866-.858c0-.474.388-.857.866-.857h15.512c.478 0 .866.383.866.857a.861.861 0 01-.866.858H7.244z" />
                                 </svg>
                               </span>
                               <span className="discover-sidebar__label">Favorites</span>
@@ -237,17 +272,17 @@ export const Games = () => {
                           <a className="discover-sidebar__link" href="/games/nintendo-switch">
                             <span className="SVGInline discover-sidebar__icon">
                               <svg className="SVGInline-svg discover-sidebar__icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 16">
-                                <path fill="#FFF" fill-rule="evenoddd" d="M 8 0 h 5 a 8 8 0 1 1 0 16 H 8 A 8 8 0 1 1 8 0 Z m -0.135 1.935 a 6.065 6.065 0 0 0 0 12.13 h 5.12 a 6.065 6.065 0 0 0 0 -12.13 h -5.12 Z m -1.33 2.304 h 2.401 l 3.199 5.175 V 4.24 h 2.346 v 7.495 H 12.18 L 8.864 6.537 v 5.201 H 6.53 l 0.005 -7.499 Z" />
+                                <path fill="#FFF" fillRule="evenoddd" d="M 8 0 h 5 a 8 8 0 1 1 0 16 H 8 A 8 8 0 1 1 8 0 Z m -0.135 1.935 a 6.065 6.065 0 0 0 0 12.13 h 5.12 a 6.065 6.065 0 0 0 0 -12.13 h -5.12 Z m -1.33 2.304 h 2.401 l 3.199 5.175 V 4.24 h 2.346 v 7.495 H 12.18 L 8.864 6.537 v 5.201 H 6.53 l 0.005 -7.499 Z" />
                               </svg>
                             </span>
                             <span className="discover-sidebar__label">Nintendo Switch</span>
                           </a>
                         </li>
                         <li className="discover-sidebar__item">
-                          <div className="discover-sidebar__link discover-sidebar__link_toggle discover-sidebar__link_toggle-collapsed" role="button" tabindex="0">
+                          <div className="discover-sidebar__link discover-sidebar__link_toggle discover-sidebar__link_toggle-collapsed" role="button" tabIndex="0">
                             <span className="SVGInline discover-sidebar__icon">
                               <svg className="SVGInline-svg discover-sidebar__icon-svg" viewBox="0 0 19 35" width="19" height="35" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18.414 16.476l-15-15A2 2 0 10.586 4.304L14.172 17.89.586 31.476a2 2 0 102.828 2.828l15-15a2 2 0 000-2.828z" fill="#FFF" fill-rule="evenodd" />
+                                <path d="M18.414 16.476l-15-15A2 2 0 10.586 4.304L14.172 17.89.586 31.476a2 2 0 102.828 2.828l15-15a2 2 0 000-2.828z" fill="#FFF" fillRule="evenodd" />
                               </svg>
                             </span>
                             <span className="discover-sidebar__label">Show all</span>
@@ -319,6 +354,15 @@ export const Games = () => {
             </div>
           </div>
         </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
       </div>
     </>
   );
