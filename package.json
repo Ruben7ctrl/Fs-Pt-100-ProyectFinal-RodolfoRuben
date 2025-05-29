@@ -12,6 +12,10 @@
 		"build": "vite build",
 		"lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview"
+		"start": "vite",
+		"build": "vite build",
+		"lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+		"preview": "vite preview"
 	},
 	"author": {
 		"name": "Alejandro Sanchez",
@@ -54,8 +58,6 @@
 		]
 	},
 	"dependencies": {
-		"animejs": "^3.2.1",
-		"phosphor-react": "^1.4.1",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
