@@ -131,6 +131,7 @@ export const Games = () => {
           >
             <div className="icon">{icon}</div>
             <span className="label">{label}</span>
+          
           </div>
         ))}
       </div>
