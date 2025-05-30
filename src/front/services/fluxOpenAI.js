@@ -3,7 +3,7 @@ const openAiServices = {};
 const apiKey =  import.meta.env.VITE_OPENIA;
 openAiServices.createCampaign = async () => {
   try {
-    const payload = `Eres un dungeon master, generame una historia de campaña de RPG tipo dungeons and dragons donde se puedan seleccionar 3 tipos de personajes, cada uno con una clase diferente (guerrero, mago y cazador) y estadisticas para cada uno acorde a sus clases.
+    const payload = `Eres un dungeon master, generame una historia de campaña de RPG tipo dungeons and dragons donde se puedan seleccionar 3 tipos de personajes, cada uno con una clase diferente (soldado, maga y asesino) y estadisticas para cada uno acorde a sus clases.
 A partir de lo que el usuario te responda, iras guiando y respondiendo a todas las acciones que realice el jugador (usuario). 
 Lo primero que tendra que hacer el jugador, es seleccionar que heroe va a ser, despues el nombre que quiere poner a su heroe y la dificultad de la historia que generes.
 Una vez seleccionado el heroe con su nombre y la dificultad, vas a devolver una lista de acciones para el escenario que le generes y se enfrente el jugador 

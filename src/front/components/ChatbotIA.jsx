@@ -28,6 +28,7 @@ export const ChatbotIA = () => {
             difficulty_level: difficultyMatch?.[1] || prev.difficulty_level,
         }))
     }
+    
 
     useEffect(() => {
         if (campaignConfig.characterName != null) {

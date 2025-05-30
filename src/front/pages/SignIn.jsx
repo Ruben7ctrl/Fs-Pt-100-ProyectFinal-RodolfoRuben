@@ -64,7 +64,7 @@ export const Signin = () => {
             </nav>
             <div className="center">
                 <div className="signin">
-                    <form className="container mt-2" onSubmit={handleSubmit}>
+                    <form className="container-fluid mt-2" onSubmit={handleSubmit}>
                         <div className="card-header d-flex justify-content-center">
                             <h2>SignIn</h2>
                         </div>
