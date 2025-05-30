@@ -30,29 +30,32 @@ export const ChatbotIA = () => {
     }
 
     useEffect(() => {
-        const tryStartCampaign = async () => {
-            const { characterName, characterClass, difficulty_level } = campaignConfig;
-            const activeSessionID = localStorage.getItem('activeSessionID');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const userID = user.id || 'demo-user';
+        if (campaignConfig.characterName != null) {
 
-            if (!activeSessionID && characterName && characterClass && difficulty_level) {
-                const sessionID = await openAiServices.startCampaign({
-                    difficulty_level,
-                    character_name: characterName,
-                    character_class: characterClass,
-                    user_id: userID,
-                });
+            const tryStartCampaign = async () => {
+                const { characterName, characterClass, difficulty_level } = campaignConfig;
+                const activeSessionID = localStorage.getItem('activeSessionID');
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userID = user.id || 'demo-user';
 
-                if (sessionID) {
-                    localStorage.setItem('activeSessionID', sessionID);
-                } else {
-                    console.warn("No se pudo iniciar la sesión");
+                if (!activeSessionID && characterName && characterClass && difficulty_level) {
+                    const sessionID = await openAiServices.startCampaign(
+                        difficulty_level,
+                        characterName,
+                        characterClass,
+                        userID,
+                    );
+
+                    if (sessionID) {
+                        localStorage.setItem('activeSessionID', sessionID);
+                    } else {
+                        console.warn("No se pudo iniciar la sesión");
+                    }
                 }
-            }
-        };
+            };
 
-        tryStartCampaign();
+            tryStartCampaign();
+        }
     }, [campaignConfig]);
 
 
@@ -69,9 +72,9 @@ export const ChatbotIA = () => {
         const updatedMessages = [...messages, userMessage]
 
         setMessages([...messages, userMessage])
+        detectarDatosCampaign(input);
         setInput('')
 
-        detectarDatosCampaign(input);
 
         try {
             const history = updatedMessages.map(msg => ({
@@ -102,12 +105,12 @@ export const ChatbotIA = () => {
             if (
                 !activeSessionID && campaignConfig.characterName && campaignConfig.characterClass && campaignConfig.difficulty_level
             ) {
-                const sessionID = await openAiServices.startCampaign({
-                    difficulty_level: campaignConfig.difficulty_level,
-                    characterName: campaignConfig.characterName,
-                    characterClass: campaignConfig.characterClass,
-                    userID: userID,
-                })
+                const sessionID = await openAiServices.startCampaign(
+                    campaignConfig.difficulty_level,
+                    campaignConfig.characterName,
+                    campaignConfig.characterClass,
+                    userID,
+                )
 
                 if (sessionID) {
                     localStorage.setItem('activeSessionID', sessionID)

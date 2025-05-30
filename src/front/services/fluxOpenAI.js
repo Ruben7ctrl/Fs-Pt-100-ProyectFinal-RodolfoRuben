@@ -1,6 +1,6 @@
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const openAiServices = {};
-
+const apiKey =  import.meta.env.VITE_OPENIA;
 openAiServices.createCampaign = async () => {
   try {
     const payload = `Eres un dungeon master, generame una historia de campaña de RPG tipo dungeons and dragons donde se puedan seleccionar 3 tipos de personajes, cada uno con una clase diferente (guerrero, mago y cazador) y estadisticas para cada uno acorde a sus clases.
@@ -13,7 +13,7 @@ deveulvemelo como un md`;
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer '
+            'Authorization': 'Bearer ' + apiKey
         },
         body: JSON.stringify({
             model: 'gpt-3.5-turbo',
@@ -48,7 +48,7 @@ openAiServices.send = async (history, body) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ',
+                'Authorization': 'Bearer ' + apiKey,
             },
             body: JSON.stringify({
                 model: 'gpt-3.5-turbo',
@@ -85,13 +85,13 @@ openAiServices.send = async (history, body) => {
     }
 }
 
-openAiServices.startCampaign = async (dificulty_level, characterName, characterClass, userID) => {
+openAiServices.startCampaign = async (difficulty_level, character_name, character_class, user_id) => {
     try {
         const body = {
-            difficulty_levels: dificulty_level,
-            characterName,
-            characterClass,
-            userID
+            difficulty_level,
+            character_name,
+            character_class,
+            user_id
         }
         const token = localStorage.getItem('token')
         console.log('Token usado', token);
@@ -122,10 +122,10 @@ openAiServices.startCampaign = async (dificulty_level, characterName, characterC
     }
 }
 
-openAiServices.saveDEcisionEvent = async (sessionID, chapterNumber, decision, description, outcome) => {
+openAiServices.saveDEcisionEvent = async (sessionID, chapter_number, decision, description, outcome) => {
     try {
         const body = {
-            chapter_number: chapterNumber,
+            chapter_number,
             decision,
             description,
             outcome,
