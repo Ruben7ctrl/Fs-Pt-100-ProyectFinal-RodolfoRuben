@@ -108,8 +108,10 @@ openAiServices.startCampaign = async (difficulty_level, character_name, characte
 
         const data = await resp.json()
         if (resp.ok) {
-            localStorage.setItem('activeSessionID', data.id)
-            return data.id
+            const sessionID = data.id
+            localStorage.setItem(`sessionID-${user_id}`, sessionID)
+            localStorage.setItem('activeSessionID', sessionID)
+            return sessionID
         } else {
             console.log('error en respuesta', data.error);
             return null
@@ -150,6 +152,60 @@ openAiServices.saveDEcisionEvent = async (sessionID, chapter_number, decision, d
         return data
     } catch (error) {
         console.log(error);
+        
+    }
+}
+
+openAiServices.getIAsession = async (activeSessionID) => {
+    
+    try {
+        const resp = await fetch(backendUrl + `/api/ia_sessions/${activeSessionID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+
+        })
+
+        const data = await resp.json()
+        if(!resp.ok) {
+            console.error(`Error guardando evento. Status ${resp.status}`, data);
+            throw new Error(data.error || "Fallo al guardad el evento");
+            
+        }
+
+        return data
+
+    } catch (error) {
+        console.log('error', error);
+        
+    }
+}
+
+openAiServices.getIAevents = async (activeSessionID) => {
+    
+    try {
+        const resp = await fetch(backendUrl + `/api/ia_sessions/${activeSessionID}/ia_events`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+
+        })
+
+        const data = await resp.json()
+        if(!resp.ok) {
+            console.error(`Error guardando evento. Status ${resp.status}`, data);
+            throw new Error(data.error || "Fallo al guardad el evento");
+            
+        }
+
+        return data
+
+    } catch (error) {
+        console.log('error', error);
         
     }
 }

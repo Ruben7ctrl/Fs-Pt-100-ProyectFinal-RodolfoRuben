@@ -2,56 +2,61 @@ import React, { useEffect, useState } from "react";
 import openAiServices from "../services/fluxOpenAI";
 import { MarkdownReader } from "./MarkdownReader";
 import "../styles/IAsession.css"
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 
 export const ChatbotIA = () => {
 
+    const { store, dispatch } = useGlobalReducer()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('')
     const [chapter, setChapter] = useState(1)
 
     const [campaignConfig, setCampaignConfig] = useState({
         difficulty_level: null,
-        characterName: null,
-        characterClass: null,
+        character_name: null,
+        character_class: null,
     })
 
     const detectarDatosCampaign = (input) => {
-        const nameMatch = input.match(/me llamo (\w+)/i);
-        const classMatch = input.match(/soy un[ae]? (\w+)/i);
-        const difficultyMatch = input.match(/dificultad es (\w+)/i);
+        const nameMatch = input.match(/me llamo ([\wáéíóúñ]+(?:\s[\wáéíóúñ]+)?)/i);
+        const classMatch = input.match(/soy un[ae]? ([\wáéíóúñ]+)/i);
+        const difficultyMatch = input.match(/dificultad es ([\wáéíóúñ]+)/i);
 
         setCampaignConfig(prev => ({
             ...prev,
-            characterName: nameMatch?.[1] || prev.characterName,
-            characterClass: classMatch?.[1] || prev.characterClass,
+            character_name: nameMatch?.[1] || prev.character_name,
+            character_class: classMatch?.[1] || prev.character_class,
             difficulty_level: difficultyMatch?.[1] || prev.difficulty_level,
         }))
     }
-    
+
 
     useEffect(() => {
-        if (campaignConfig.characterName != null) {
+        if (campaignConfig.character_name != null) {
 
             const tryStartCampaign = async () => {
-                const { characterName, characterClass, difficulty_level } = campaignConfig;
+                const { character_name, character_class, difficulty_level } = campaignConfig;
                 const activeSessionID = localStorage.getItem('activeSessionID');
                 const user = JSON.parse(localStorage.getItem('user') || '{}');
                 const userID = user.id || 'demo-user';
 
-                if (!activeSessionID && characterName && characterClass && difficulty_level) {
+                if (!activeSessionID && character_name && character_class && difficulty_level) {
                     const sessionID = await openAiServices.startCampaign(
                         difficulty_level,
-                        characterName,
-                        characterClass,
+                        character_name,
+                        character_class,
                         userID,
                     );
 
                     if (sessionID) {
-                        localStorage.setItem('activeSessionID', sessionID);
+                        localStorage.setItem('activeSessionID', sessionID)
+                        localStorage.setItem(`sessionID-${userID}`, sessionID)
+                        dispatch({ type: 'set_sessionID', payload: sessionID });
                     } else {
                         console.warn("No se pudo iniciar la sesión");
                     }
+
                 }
             };
 
@@ -61,9 +66,34 @@ export const ChatbotIA = () => {
 
 
     useEffect(() => {
-        openAiServices.createCampaign().then(data => {
-            setMessages([data])
-        })
+        const user = JSON.parse(localStorage.getItem('user'))
+
+        if (user) {
+            const savedSessionID = localStorage.getItem(`sessionID-${user.id}`)
+
+            if (savedSessionID) {
+                openAiServices.getIAsession(savedSessionID).then(sessionData => {
+                    console.log('session existente cargada', sessionData)
+                    localStorage.setItem('activeSesionID', savedSessionID)
+                    dispatch({ type: 'set_sessionID', payload: savedSessionID})
+
+                    openAiServices.getIAevents(savedSessionID).then(data => {
+                        const formattedMessages = data.map(e => ({
+                            text: e.description || '',
+                            sender: e.role === 'user' ? 'user' : 'assistant'
+                        }))
+                        setMessages(formattedMessages)
+                    })
+
+                }).catch(err => console.error('Error cargando sesion existente', err))
+            } else {
+                openAiServices.createCampaign().then(data => {
+                    console.log('Campaña nueva Creada:', data);
+                    setMessages([data])
+                })
+            }
+        }
+
     }, [])
 
     const handleSendMessage = async () => {
@@ -100,25 +130,25 @@ export const ChatbotIA = () => {
                 setChapter(prev => prev + 1)
             }
 
-            const user = JSON.parse(localStorage.getItem('user') || '{')
-            const userID = user.id || 'demo-user'
+            // const user = JSON.parse(localStorage.getItem('user') || '{')
+            // const userID = user.id || 'demo-user'
 
-            if (
-                !activeSessionID && campaignConfig.characterName && campaignConfig.characterClass && campaignConfig.difficulty_level
-            ) {
-                const sessionID = await openAiServices.startCampaign(
-                    campaignConfig.difficulty_level,
-                    campaignConfig.characterName,
-                    campaignConfig.characterClass,
-                    userID,
-                )
+            // if (
+            //     !activeSessionID && campaignConfig.characterName && campaignConfig.characterClass && campaignConfig.difficulty_level
+            // ) {
+            //     const sessionID = await openAiServices.startCampaign(
+            //         campaignConfig.difficulty_level,
+            //         campaignConfig.characterName,
+            //         campaignConfig.characterClass,
+            //         userID,
+            //     )
 
-                if (sessionID) {
-                    localStorage.setItem('activeSessionID', sessionID)
-                } else {
-                    console.warn("No se pudo iniciar la sesion")
-                }
-            }
+            //     if (sessionID) {
+            //         localStorage.setItem('activeSessionID', sessionID)
+            //     } else {
+            //         console.warn("No se pudo iniciar la sesion")
+            //     }
+            // }
 
         } catch (error) {
             console.log(error);

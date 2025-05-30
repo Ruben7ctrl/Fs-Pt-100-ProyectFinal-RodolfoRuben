@@ -3,6 +3,7 @@ import { act } from "react"
 export const initialStore=()=>{
   return{
     user: JSON.parse(localStorage.getItem('user'))? JSON.parse(localStorage.getItem('user')): null,
+    sessionID: localStorage.getItem('activeSessionID') || null,
     videojuegos: [],
     juegosdemesa: [],
     jdmdatos: []
@@ -14,16 +15,35 @@ export default function storeReducer(store, action = {}) {
     case 'signin/signup':
       localStorage.setItem('user', JSON.stringify(action.payload.user))
       localStorage.setItem('token', action.payload.token)
+
+      const sessionID = localStorage.getItem(`sessionID-${user.id}`);
+      if (sessionID) {
+        localStorage.setItem('activeSessionID', sessionID)
+      }
       return {
         ...store,
-        user: action.payload.user
+        user,
+        sessionID,
       }
     case 'logout':
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+      // localStorage.removeItem('activeSessionID')
       return {
         ...store,
-        user: null
+        user: null,
+        // sessionID: null,
+      }
+    case 'clear_sessionID':
+      localStorage.removeItem('activeSessionID');
+      return {
+        sessionID: null,
+      }
+    case 'set_sessionID':
+      localStorage.setItem('activeSessionID', action.payload)
+      return {
+        ...store,
+        sessionID: action.payload
       }
     case 'load_videojuegos':
       return {
