@@ -187,9 +187,9 @@ const handleClickCard = (id) => {
                 <div className="page__content-wrap-centerer">
                   <div className="page__content-wrap with-sidebar">
                     <div>
-                      <aside className="discover__sidebar discover__sidebar_desktop">
+                      {/* <aside className="discover__sidebar discover__sidebar_desktop">
                         <nav className="discover-sidebar__nav discover-sidebar__nav_desktop">
-                          <div className="discover-sidebar__menu">
+                          <div className="discover-sidebar__menu"> */}
                             <a className="discover-sidebar__title" href="/">Home</a>
                             <ul className="discover-sidebar__list"></ul>
                           </div>
@@ -197,7 +197,7 @@ const handleClickCard = (id) => {
                             <div className="discover-sidebar__menu">
                               <span className="discover-sidebar__title">
                                 <a className="discover-sidebar__user" href="/profile">
-                                  <span className="discover-sidebar__username">{localStorage.getItem("username")}</span>
+                                  <span className="discover-sidebar__username">{JSON.parse(localStorage.getItem("user"))?.username}</span>
                                   {/* <div className="avatar avatar_default-1" >
                               <span className="avatar__initials" >RC</span>
                             </div> */}
@@ -359,9 +359,9 @@ const handleClickCard = (id) => {
                                 </a>
                               </li>
                             </ul>
-                          </div>
+                          {/* </div>
                         </nav>
-                      </aside>
+                      </aside> */}
                     </div>
                   </div>
                 </div>
