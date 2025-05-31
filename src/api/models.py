@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, DateTime, ForeignKey
+from sqlalchemy import String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import List
@@ -176,7 +176,7 @@ class IAevents(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     chapter_number: Mapped[int] = mapped_column(nullable=True)
     decision: Mapped[str] = mapped_column(String(400), nullable=False)
-    description: Mapped[str] = mapped_column(String(400), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     outcome: Mapped[str] = mapped_column(String(400), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 

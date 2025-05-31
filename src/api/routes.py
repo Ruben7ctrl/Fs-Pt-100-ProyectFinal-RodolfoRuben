@@ -487,6 +487,7 @@ def create_ia_sesion():
     try:
 
         data = request.get_json()
+        print(data)
         if not data or "character_class" not in data or "character_name" not in data or "user_id" not in data:
             return jsonify({"error": "Missing data"}), 400
 
@@ -494,7 +495,7 @@ def create_ia_sesion():
             title=data.get("title", None),
             description=data.get("description", None),
             genre=data.get("genre", None),
-            difficulty_levels=data.get("difficulty_levels", None),
+            difficulty_levels=data.get("difficulty_level", None),
             character_name=data["character_name"],
             character_class=data["character_class"],
             experience_gained=data.get("experience_gained", None),
@@ -502,7 +503,7 @@ def create_ia_sesion():
             result=data.get("result", None),
             user_id=data["user_id"]
         )
-
+    
         db.session.add(new_ia_session)
         db.session.commit()
 
@@ -607,7 +608,8 @@ def create_ia_events(id):
     try:
 
         data = request.get_json()
-        if not data or "decision" not in data or "description" not in data or "outcome" not in data:
+        print('data ', data)
+        if not data or "decision" not in data or "description" not in data or "outcome" not in data or "chapter_number" not in data:
             return jsonify({"error": "Missing data"}), 400
             
         

@@ -1,9 +1,9 @@
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const openAiServices = {};
-
+const apiKey =  import.meta.env.VITE_OPENIA;
 openAiServices.createCampaign = async () => {
   try {
-    const payload = `Eres un dungeon master, generame una historia de campaña de RPG tipo dungeons and dragons donde se puedan seleccionar 3 tipos de personajes, cada uno con una clase diferente (guerrero, mago y cazador) y estadisticas para cada uno acorde a sus clases.
+    const payload = `Eres un dungeon master, generame una historia de campaña de RPG tipo dungeons and dragons donde se puedan seleccionar 3 tipos de personajes, cada uno con una clase diferente (soldado, maga y asesino) y estadisticas para cada uno acorde a sus clases.
 A partir de lo que el usuario te responda, iras guiando y respondiendo a todas las acciones que realice el jugador (usuario). 
 Lo primero que tendra que hacer el jugador, es seleccionar que heroe va a ser, despues el nombre que quiere poner a su heroe y la dificultad de la historia que generes.
 Una vez seleccionado el heroe con su nombre y la dificultad, vas a devolver una lista de acciones para el escenario que le generes y se enfrente el jugador 
@@ -13,7 +13,7 @@ deveulvemelo como un md`;
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer '
+            'Authorization': 'Bearer ' + apiKey
         },
         body: JSON.stringify({
             model: 'gpt-3.5-turbo',
@@ -48,7 +48,7 @@ openAiServices.send = async (history, body) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ',
+                'Authorization': 'Bearer ' + apiKey,
             },
             body: JSON.stringify({
                 model: 'gpt-3.5-turbo',
@@ -85,13 +85,13 @@ openAiServices.send = async (history, body) => {
     }
 }
 
-openAiServices.startCampaign = async (dificulty_level, characterName, characterClass, userID) => {
+openAiServices.startCampaign = async (difficulty_level, character_name, character_class, user_id) => {
     try {
         const body = {
-            difficulty_levels: dificulty_level,
-            characterName,
-            characterClass,
-            userID
+            difficulty_level,
+            character_name,
+            character_class,
+            user_id
         }
         const token = localStorage.getItem('token')
         console.log('Token usado', token);
@@ -108,8 +108,10 @@ openAiServices.startCampaign = async (dificulty_level, characterName, characterC
 
         const data = await resp.json()
         if (resp.ok) {
-            localStorage.setItem('activeSessionID', data.id)
-            return data.id
+            const sessionID = data.id
+            localStorage.setItem(`sessionID-${user_id}`, sessionID)
+            localStorage.setItem('activeSessionID', sessionID)
+            return sessionID
         } else {
             console.log('error en respuesta', data.error);
             return null
@@ -122,10 +124,10 @@ openAiServices.startCampaign = async (dificulty_level, characterName, characterC
     }
 }
 
-openAiServices.saveDEcisionEvent = async (sessionID, chapterNumber, decision, description, outcome) => {
+openAiServices.saveDEcisionEvent = async (sessionID, chapter_number, decision, description, outcome) => {
     try {
         const body = {
-            chapter_number: chapterNumber,
+            chapter_number,
             decision,
             description,
             outcome,
@@ -150,6 +152,60 @@ openAiServices.saveDEcisionEvent = async (sessionID, chapterNumber, decision, de
         return data
     } catch (error) {
         console.log(error);
+        
+    }
+}
+
+openAiServices.getIAsession = async (activeSessionID) => {
+    
+    try {
+        const resp = await fetch(backendUrl + `/api/ia_sessions/${activeSessionID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+
+        })
+
+        const data = await resp.json()
+        if(!resp.ok) {
+            console.error(`Error guardando evento. Status ${resp.status}`, data);
+            throw new Error(data.error || "Fallo al guardad el evento");
+            
+        }
+
+        return data
+
+    } catch (error) {
+        console.log('error', error);
+        
+    }
+}
+
+openAiServices.getIAevents = async (activeSessionID) => {
+    
+    try {
+        const resp = await fetch(backendUrl + `/api/ia_sessions/${activeSessionID}/ia_events`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+
+        })
+
+        const data = await resp.json()
+        if(!resp.ok) {
+            console.error(`Error guardando evento. Status ${resp.status}`, data);
+            throw new Error(data.error || "Fallo al guardad el evento");
+            
+        }
+
+        return data
+
+    } catch (error) {
+        console.log('error', error);
         
     }
 }
