@@ -12,6 +12,7 @@ import { Games } from "./pages/Games";
 import { Signup } from "./pages/SignUp";
 import { Signin } from "./pages/SignIn";
 import { IAsession } from "./pages/IAsession";
+import { GameDetail } from "./pages/GameDetail";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -31,6 +32,7 @@ export const router = createBrowserRouter(
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
+        <Route path="/game/:id" element={<GameDetail />} />
       </Route>
     )
 );
