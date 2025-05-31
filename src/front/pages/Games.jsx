@@ -373,7 +373,7 @@ const handleClickCard = (id) => {
                         <p className="game-description">{e.rating}⭐</p>
                         <button className="game-button">Buy</button>
                         <button className="game-button">❤️</button>
-                        <Link to={`/game/${e.id}`} className="game-button">
+                        <Link to={`/games/${e.id}`} className="game-button">
                             Info
                         </Link>
                     </div>
