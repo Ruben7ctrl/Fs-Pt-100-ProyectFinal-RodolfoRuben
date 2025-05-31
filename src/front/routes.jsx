@@ -32,7 +32,7 @@ export const router = createBrowserRouter(
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
-        <Route path="/game/:id" element={<GameDetail />} />
+        <Route path="/games/:id" element={<GameDetail />} />
       </Route>
     )
 );

@@ -4,6 +4,7 @@ export const initialStore=()=>{
   return{
     user: JSON.parse(localStorage.getItem('user'))? JSON.parse(localStorage.getItem('user')): null,
     videojuegos: [],
+    unvideojuego: [],
     juegosdemesa: [],
     jdmdatos: []
   }
@@ -29,6 +30,11 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         videojuegos: action.payload
+      }
+    case 'get_videojuego':
+      return {
+        ...store,
+        unvideojuego: action.payload
       }
     case 'load_juegosdemesa':
       return {

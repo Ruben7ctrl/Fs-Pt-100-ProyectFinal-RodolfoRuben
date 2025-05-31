@@ -15,6 +15,23 @@ storeServices.videojuegos = async (page = 1) => {
         
     }
 }
+
+storeServices.getOneVideojuegos = async (id) => {
+
+    try {
+        const resp = await fetch(`https://api.rawg.io/api/games/${id}?key=c5df4513c2584cc68477a27dce6e0f27`)
+        console.log(resp);
+        
+        if (!resp.ok) throw new Error('Error fetch data')
+        const data = await resp.json()
+        return data
+    } catch (error) {
+        console.log(error);
+        return null
+
+    }
+}
+
 storeServices.getJuegosMesa = async (leters) => {
 
     try {
