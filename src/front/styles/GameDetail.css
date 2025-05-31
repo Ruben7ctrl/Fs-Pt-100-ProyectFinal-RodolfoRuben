@@ -1,0 +1,146 @@
+.game-detail {
+    width: 100vw;
+    height: 100vh;
+    background-image: 
+        linear-gradient(90deg, rgba(0, 0, 0, 0.75) 25%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0) 100%),
+        var(--background-url);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    
+}
+
+/* Panel izquierdo */
+.game-info-panel {
+    position: relative;
+    z-index: 1;
+    width: 40%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #00bfff;
+    border-radius: 15px;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 0 20px #00bfff;
+    backdrop-filter: blur(8px);
+    max-height: 80vh;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: fadeSlideIn 0.8s forwards;
+}
+
+/* Animación entrada panel */
+@keyframes fadeSlideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.game-detail-title {
+    font-size: 2em;
+    color: #00bfff;
+    margin-bottom: 15px;
+}
+
+.game-detail-description {
+    font-size: 1em;
+    color: #ccc;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.game-detail-rating {
+    font-size: 1.2em;
+    color: #0ff;
+    margin-top: 10px;
+}
+
+/* Header superior izquierdo */
+.game-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 3;
+}
+
+/* Botón volver en esquina superior derecha */
+.game-back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+}
+
+.icon-button {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00bfff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.icon-button:hover {
+    background: #00bfff;
+    color: #000;
+    transform: scale(1.1);
+}
+
+/* 🚀 RESPONSIVE 🚀 */
+
+@media (max-width: 1024px) {
+    .game-info-panel {
+        width: 60%;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-detail {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 20px;
+    }
+
+    .game-info-panel {
+        width: 90%;
+        margin-top: 100px;
+        backdrop-filter: blur(12px); /* más blur en móvil */
+    }
+
+    .game-header {
+        top: 15px;
+        left: 15px;
+    }
+
+    .game-back {
+        top: 15px;
+        right: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-info-panel {
+        width: 95%;
+        padding: 16px;
+        font-size: 0.95em;
+    }
+
+    .game-detail-title {
+        font-size: 1.5em;
+    }
+}

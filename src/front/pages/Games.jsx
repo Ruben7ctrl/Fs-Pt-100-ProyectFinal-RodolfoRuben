@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
 import { useEffect, useState } from "react";
 import userServices from "../services/flux";
-import "../styles/Games.css"
+import "../styles/Games.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
@@ -170,7 +170,7 @@ const handleClickCard = (id) => {
 
         <div className="offcanvas offcanvas-start" data-bs-backdrop="static" tabIndex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
           <div className="offcanvas-header">
-            <h5 className="offcanvas-title" id="staticBackdropLabel">Offcanvas</h5>
+            <h5 className="offcanvas-title" id="staticBackdropLabel">{JSON.parse(localStorage.getItem("user"))?.username}</h5>
             <button type="button" className="btn-close bg-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div className="offcanvas-body">
@@ -179,9 +179,9 @@ const handleClickCard = (id) => {
                 <div className="page__content-wrap-centerer">
                   <div className="page__content-wrap with-sidebar">
                     <div>
-                      <aside className="discover__sidebar discover__sidebar_desktop">
+                      {/* <aside className="discover__sidebar discover__sidebar_desktop">
                         <nav className="discover-sidebar__nav discover-sidebar__nav_desktop">
-                          <div className="discover-sidebar__menu">
+                          <div className="discover-sidebar__menu"> */}
                             <a className="discover-sidebar__title" href="/">Home</a>
                             <ul className="discover-sidebar__list"></ul>
                           </div>
@@ -189,7 +189,7 @@ const handleClickCard = (id) => {
                             <div className="discover-sidebar__menu">
                               <span className="discover-sidebar__title">
                                 <a className="discover-sidebar__user" href="/profile">
-                                  <span className="discover-sidebar__username">{localStorage.getItem("username")}</span>
+                                  <span className="discover-sidebar__username"></span>
                                   {/* <div className="avatar avatar_default-1" >
                               <span className="avatar__initials" >RC</span>
                             </div> */}
@@ -351,9 +351,9 @@ const handleClickCard = (id) => {
                                 </a>
                               </li>
                             </ul>
-                          </div>
+                          {/* </div>
                         </nav>
-                      </aside>
+                      </aside> */}
                     </div>
                   </div>
                 </div>
