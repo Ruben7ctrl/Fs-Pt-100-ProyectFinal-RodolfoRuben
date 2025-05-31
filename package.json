@@ -55,6 +55,7 @@
 	},
 	"dependencies": {
 		"animejs": "^3.2.1",
+		"bootstrap": "^5.3.6",
 		"he": "^1.2.0",
 		"phosphor-react": "^1.4.1",
 		"prop-types": "^15.8.1",
