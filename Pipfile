@@ -20,9 +20,11 @@ typing-extensions = "*"
 wtforms = "==3.1.2"
 sqlalchemy = "*"
 faker = "*"
-flask-jwt-extended = "*"
 werkzeug = "*"
-
+flask-jwt-extended = "*"
+flask-mail = "*"
+itsdangerous = "*"
+axios = "*"
 
 [requires]
 python_version = "3.13"
