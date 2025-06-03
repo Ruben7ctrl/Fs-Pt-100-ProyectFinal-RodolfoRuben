@@ -1,21 +1,17 @@
 .game-detail {
-    width: 100vw;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     background-image: 
         linear-gradient(90deg, rgba(0, 0, 0, 0.75) 25%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0) 100%),
         var(--background-url);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 40px;
+    padding: 140px;
     position: relative;
     overflow: hidden;
-    
 }
-
 /* Panel izquierdo */
 .game-info-panel {
     position: relative;
@@ -143,4 +139,101 @@
     .game-detail-title {
         font-size: 1.5em;
     }
+}
+
+.ps5-recommended-line {
+    display: flex;
+    flex-direction: row; /* 🚀 importante */
+    overflow-x: auto;
+    gap: 16px;
+    padding: 20px 20px 40px 20px;
+    margin-top: 40px;
+    margin-bottom: 40px; /* 🚀 para que no se corte abajo */
+    scrollbar-width: none; /* Firefox */
+    scroll-snap-type: x mandatory;
+    align-items: flex-end;
+}
+.ps5-recommended-line::-webkit-scrollbar {
+    display: none;
+}
+
+.ps5-recommended-card {
+    flex: 0 0 auto;
+    width: 150px;
+    height: 120px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid transparent;
+    scroll-snap-align: start;
+    background-color: #111;
+}
+
+.ps5-recommended-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px #00bfff, 0 0 24px #00bfff inset;
+    border: 2px solid #00bfff;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ps5-recommended-card {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ps5-recommended-card {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+.main-content {
+    display: flex;
+    align-items: flex-start; /* 👈 para que el panel no se centre verticalmente */
+    justify-content: flex-start;
+    flex: 1;
+    width: 100%;
+    margin-top: 80px; /* 🚀 SEPARACIÓN DEL HEADER */
+}
+
+
+
+
+.game-video-box {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    width: 320px;
+    height: 180px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+    
+}
+
+.game-video-box video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 10px;
+    font-size: 2rem;
+    background-color: #000;
+    color: white;
 }

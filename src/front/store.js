@@ -6,12 +6,25 @@ export const initialStore=()=>{
     videojuegos: [],
     unvideojuego: [],
     juegosdemesa: [],
-    jdmdatos: []
+    jdmdatos: [],
+    recomendados:[],
+    videos:[]
+  
   }
 }
 
 export default function storeReducer(store, action = {}) {
   switch(action.type){
+    case 'get_videos':
+      return {
+        ...store,
+        videos: action.payload
+      }
+    case 'get_recomendados':
+      return {
+        ...store,
+        recomendados: action.payload
+      }
     case 'signin/signup':
       localStorage.setItem('user', JSON.stringify(action.payload.user))
       localStorage.setItem('token', action.payload.token)
