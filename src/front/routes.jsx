@@ -13,6 +13,8 @@ import { Signup } from "./pages/SignUp";
 import { Signin } from "./pages/SignIn";
 import { IAsession } from "./pages/IAsession";
 import { GameDetail } from "./pages/GameDetail";
+import { BoardGames } from "./pages/BoardG";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -33,6 +35,7 @@ export const router = createBrowserRouter(
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
         <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/boardgames" element={<BoardGames />} />
       </Route>
     )
 );

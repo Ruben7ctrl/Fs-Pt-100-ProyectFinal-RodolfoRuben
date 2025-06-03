@@ -6,6 +6,7 @@ import ParaHome from './../assets/ParaHome.mp3'
 
 
 
+
 export const Home = () => {
     const audioHome = new Audio(ParaHome)
 	const [animar, setAnimar] = useState(false);

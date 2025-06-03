@@ -1,0 +1,164 @@
+
+import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
+import { useEffect, useState, useRef } from "react";
+import userServices from "../services/flux";
+import "../styles/BoardGames.css";
+import { NavbarVisitor } from "../components/NavbarVisitor";
+import storeServices from "../services/fluxApis";
+import { House, MagnifyingGlass,ArrowLeft, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
+import anime from "animejs";
+import botones from './../assets/botones.mp3'
+import { useNavigate } from "react-router-dom";
+import fallbackImage from './../assets/img/fallbackimage.jpg';
+import Botonsiguiente from './../assets/Botonsiguiente.mp3'
+import { Loading } from "../components/loading";
+
+
+export const BoardGames = () => {
+
+    // Access the global state and dispatch function using the useGlobalReducer hook.
+    const { store, dispatch } = useGlobalReducer()
+    const [letra, setLetra] = useState("a")
+    const [cargando, setCargando] = useState(false)
+    const [pagina, setPagina] = useState(1)
+    const [juegos, setJuegos] = useState([])
+    const audioBotones = new Audio(botones)
+    const navigate = useNavigate();
+    const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const username = user?.username
+
+
+
+
+
+    const juegosPorPagina = 6
+
+    useEffect(() => {
+        const cargar = async () => {
+            setCargando(true)
+            try {
+                const lista = await storeServices.getJuegosMesa(letra)
+                console.log("Juegos recibidos", lista);
+
+
+                const detalles = await Promise.all(
+                    lista.slice((pagina - 1) * juegosPorPagina, pagina * juegosPorPagina).map(async (j) => {
+                        try {
+                            const detalle = await storeServices.JuegosMesaDatos(j.id)
+                            console.log("detalle cargado", detalle)
+                            return detalle
+                        } catch (error) {
+                            console.warn(`Error cargando juego con id ${j.id}:`, error)
+                            return null
+                        }
+                    })
+                )
+                setJuegos(detalles.filter(j => j !== null))
+            } catch (error) {
+                console.error("Error cargando juegos:", error)
+                setJuegos([])
+            }
+            setCargando(false)
+        }
+        cargar()
+    }, [pagina, letra])
+
+ const hoverSoundRef = useRef(new Audio(Botonsiguiente));
+
+  const playHoverSound = () => {
+    const sound = hoverSoundRef.current;
+    sound.currentTime = 0; // 🔥 Esta línea es clave
+    sound.play().catch(e => {
+      console.log("Playback prevented:", e);
+    });
+  };
+
+  return (
+    <div className="fondoGames">
+
+        <div className="boardgames-pageB">
+
+            {/* Botón Volver */}
+            <div className="boardgames-backB">
+                <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                    <ArrowLeft size={24} weight="bold" />
+                </button>
+            </div>
+
+            <h2 className="boardgames-titleB">🎲 Juegos de Mesa ({letra.toUpperCase()})</h2>
+
+            {/* Letras */}
+            <div className="boardgames-lettersB">
+                {letras.map(l => (
+                    <button
+                        key={l}
+                        onClick={() => { setLetra(l.toLowerCase()); setPagina(1) }}
+                        className={`letter-buttonB ${l.toLowerCase() === letra ? "active" : ""}`}
+                    >
+                        {l}
+                    </button>
+                ))}
+            </div>
+
+            {/* Juegos */}
+            {cargando ? (
+                <Loading/>
+            ) : (
+                <div className="boardgames-gridB">
+                    {juegos.map(juego => (
+                        <div key={juego.id} className="boardgames-cardB">
+
+                            {/* Imagen arriba */}
+                            
+                                <img
+                                    src={juego.image ? juego.image : fallbackImage } 
+                                    alt={juego.name}
+                                    className="boardgames-card-image"
+                                />
+                            
+
+                            {/* Info abajo */}
+                            <div className="boardgames-card-contentB">
+                                <h4>{juego.name}</h4>
+                                <p>{juego.year}</p>
+                                <p>🎯 {juego.minPlayers} - {juego.maxPlayers} jugadores</p>
+                                <p>⏱️ {juego.playTime} min</p>
+                                <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
+                                <p className="categoriesB">{juego.categories?.join(", ")}</p>
+                            </div>
+
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Paginación */}
+            <div className="boardgames-paginationB">
+                <button
+                    disabled={pagina === 1}
+                    onClick={() => {setPagina(p => p - 1); playHoverSound() }}
+                    
+                    className="pagination-buttonB"
+                >
+                    <ArrowLeft size={20} weight="bold" /> Anterior
+                </button>
+                <span className="pagination-pageB">Página {pagina}</span>
+                <button
+                    onClick={() => {setPagina(p => p + 1); playHoverSound() }}
+                    className="pagination-buttonB"
+                >
+                    Siguiente <CaretRight size={20} weight="bold" />
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+);
+
+
+
+
+};
