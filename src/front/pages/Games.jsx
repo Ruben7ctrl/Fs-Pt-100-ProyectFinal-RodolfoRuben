@@ -121,7 +121,7 @@ const handleMouseLeave = (e) => {
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
-    { icon: <Gear size={32} weight="fill" />, label: "Settings" },
+    { icon: <Globe size={32} weight="fill" />, label: "OnlineGames" },
     { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
     { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames" },
     { icon: <User size={32} weight="fill" />, label: "Profile" }
