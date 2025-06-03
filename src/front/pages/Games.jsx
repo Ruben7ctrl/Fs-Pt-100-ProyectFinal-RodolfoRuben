@@ -37,40 +37,48 @@ export const Games = () => {
     )
   }, [page])
 
+//   useEffect(() => {
+//     const sessionID = store.sessionID || localStorage.getItem('activeSessionID');
+//     if (sessionID) {
+//       openAiServices.getIAsession(sessionID);
+//     } else {
+//       console.warn("No hay sessionID definido");
+//     }
+// }, [])
 
-  const juegosPorPagina = 6
+const juegosPorPagina = 6
 
-  useEffect(() => {
-    const cargar = async () => {
-      setCargando(true)
-      try {
-        const lista = await storeServices.getJuegosMesa(letra)
-        console.log("Juegos recibidos", lista);
+useEffect(() => {
+  const cargar = async () => {
+    setCargando(true)
+    try {
+      const lista = await storeServices.getJuegosMesa(letra)
+      console.log("Juegos recibidos", lista);
 
 
-        const detalles = await Promise.all(
-          lista.slice((pagina - 1) * juegosPorPagina, pagina * juegosPorPagina).map(async (j) => {
-            try {
-              const detalle = await storeServices.JuegosMesaDatos(j.id)
-              console.log("detalle cargado", detalle)
-              return detalle
-            } catch (error) {
-              console.warn(`Error cargando juego con id ${j.id}:`, error)
-              return null
-            }
-          })
-        )
-        setJuegos(detalles.filter(j => j !== null))
-      } catch (error) {
-        console.error("Error cargando juegos:", error)
-        setJuegos([])
-      }
-      setCargando(false)
+      const detalles = await Promise.all(
+        lista.slice((pagina - 1) * juegosPorPagina, pagina * juegosPorPagina).map(async (j) => {
+          try {
+            const detalle = await storeServices.JuegosMesaDatos(j.id)
+            console.log("detalle cargado", detalle)
+            return detalle
+          } catch (error) {
+            console.warn(`Error cargando juego con id ${j.id}:`, error)
+            return null
+          }
+        })
+      )
+      setJuegos(detalles.filter(j => j !== null))
+    } catch (error) {
+      console.error("Error cargando juegos:", error)
+      setJuegos([])
     }
-    cargar()
-  }, [pagina, letra])
+    setCargando(false)
+  }
+  cargar()
+}, [pagina, letra])
 
-  // AQUI EMPIEZA LOS RECUADROS DE ARRIBA//
+// AQUI EMPIEZA LOS RECUADROS DE ARRIBA//
 
   const handleMouseEnter = (e) => {
 
@@ -94,21 +102,21 @@ export const Games = () => {
 
     });
 
-  };
+};
 
-  const handleMouseLeave = (e) => {
-    anime.remove(e.currentTarget);
+const handleMouseLeave = (e) => {
+  anime.remove(e.currentTarget);
 
-    anime({
-      targets: e.currentTarget,
-      translateY: 0,
-      rotate: 0, // ✅ Asegura que vuelve al ángulo original
-      scale: 1,
-      duration: 400,
-      easing: "easeOutQuad"
-    });
+  anime({
+    targets: e.currentTarget,
+    translateY: 0,
+    rotate: 0, // ✅ Asegura que vuelve al ángulo original
+    scale: 1,
+    duration: 400,
+    easing: "easeOutQuad"
+  });
 
-  };
+};
 
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
@@ -137,7 +145,7 @@ export const Games = () => {
     navigate(route);
   };
 
-  // AQUI TERMINA LOS RECUADROS DE ARRIBA//
+// AQUI TERMINA LOS RECUADROS DE ARRIBA//
 
   const handleClickCard = (id) => {
     setClickedCard(id);
