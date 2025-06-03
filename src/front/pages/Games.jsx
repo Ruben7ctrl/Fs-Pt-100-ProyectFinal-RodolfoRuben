@@ -7,7 +7,7 @@ import "../styles/Games.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
-import { House, MagnifyingGlass, Gear, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
+import { House, MagnifyingGlass, Gear,Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
