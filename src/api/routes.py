@@ -1,6 +1,8 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, Users, OnlineGames, Favorites, OnlineStats, Purchases, UserContacts, IAsessions, IAevents
 from api.utils import generate_sitemap, APIException
@@ -8,21 +10,16 @@ from flask_cors import CORS
 from sqlalchemy import select, or_
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_mail import Mail, Message
+from api.mail.mailer import send_mail
+from flask import current_app 
+
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
 
-
-# @api.route('/hello', methods=['POST', 'GET'])
-# def handle_hello():
-
-#     response_body = {
-#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-#     }
-
-#     return jsonify(response_body), 200
 
 
 @api.route('/users', methods=['GET'])
@@ -51,38 +48,37 @@ def signup():
 
         if not data["email"] or not data["password"]:
             raise Exception({"error": "Missing Data"})
-        
+
         stmt = select(Users).where(Users.email == data["email"])
         existing_user = db.session.execute(stmt).scalar_one_or_none()
 
         if existing_user:
             raise Exception({"error": "Existing email, try to SignIn"})
-        
+
         hashed_password = generate_password_hash(data["password"])
-        
 
         new_user = Users(
-            email = data["email"],
-            password = hashed_password,
-            username = data.get("username"),
-            firstname = data.get("firstname", None) ,
-            lastname = data.get("lastname", None),
-            dateofbirth = data.get("dateofbirth", None),
-            phone = data.get("phone", None),
-            avatar_image = data.get("avatar_image", None),
-            is_active = True
+            email=data["email"],
+            password=hashed_password,
+            username=data.get("username"),
+            firstname=data.get("firstname", None),
+            lastname=data.get("lastname", None),
+            dateofbirth=data.get("dateofbirth", None),
+            phone=data.get("phone", None),
+            avatar_image=data.get("avatar_image", None),
+            is_active=True
         )
 
         db.session.add(new_user)
         db.session.commit()
         return jsonify(new_user.serialize()), 201
-    
+
     except Exception as e:
         print(e)
 
         db.session.rollback()
         return jsonify({"error": "somthing went wrong"}), 400
-    
+
 
 @api.route('/signin', methods=['POST'])
 def signin():
@@ -91,48 +87,95 @@ def signin():
 
         if not data.get("password") or not data.get("identify"):
             return jsonify({"error": "missing data"})
-        
-        stmt = select(Users).where(or_(Users.email == data["identify"], Users.username == data["identify"]))
+
+        stmt = select(Users).where(
+            or_(Users.email == data["identify"], Users.username == data["identify"]))
         user = db.session.execute(stmt).scalar_one_or_none()
 
         if not user:
             raise Exception({"error": "Email/Username not found"})
-        
+
         if not check_password_hash(user.password, data["password"]):
             return jsonify({"success": False, "error": "wrong email/password"})
-        
+
         token = create_access_token(identity=str(user.id))
 
         return jsonify({"success": True, "token": token, "msg": "SignIn OK", "user": user.serialize()}), 201
-    
+
     except Exception as e:
         print(e)
 
         db.session.rollback()
         return jsonify({"error": "somthing went wrong"}), 400
+    
+@api.route('/mailer/<address>', methods=['POST'])
+def handle_mail(address):
+    return send_mail(address)
 
-# @api.route('/users', methods=['POST'])
-# def create_user():
-#     data = request.get_json()
-#     if not data or "email" not in data or "password" not in data or "username" not in data:
-#         return jsonify({"error": "Missing Data"}), 404
+@api.route('/token', methods=['GET'])
+@jwt_required()
+def check_jwt():
+    user_id = get_jwt_identity()
+    users = Users.query.get(user_id)
+
+    if users:
+        return jsonify({"success": True, "user": users.serialize()}), 200
+    return jsonify({"success": False, "msg": "Bad token"}), 401
+
+
+
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+
+    try:
+        data = request.get_json()
+
+        user = db.session.query(Users).filter_by(email=data["email"]).first()
+        if not user:
+            return jsonify({"success": False, "error": "Email no encontrado"}), 404
+
+        token = create_access_token(identity=str(user.id))
+        result = send_mail(data["email"], token)
+        print(result)
+
+
+        return jsonify({"success": True, "token": token, "email":data["email"]}), 200
+
+    except Exception as e:
+        print("Error enviando correo:", str(e))
+        return jsonify({"success": False, 'msg': 'Error enviando email', 'error': str(e)}), 500
+
     
 
-#     new_user = Users(
-#         email = data["email"],
-#         password = data["password"],
-#         username = data["username"],
-#         firstname = data.get("firstname", None) ,
-#         lastname = data.get("lastname", None),
-#         dateofbirth = data.get("dateofbirth", None),
-#         phone = data.get("phone", None),
-#         avatar_image = data.get("avatar_image", None),
-#         is_active = True
-#     )
 
-#     db.session.add(new_user)
-#     db.session.commit()
-#     return jsonify(new_user.serialize()), 201
+@api.route('/reset-password', methods=['PUT'])
+@jwt_required()
+def reset_password():
+    try:
+        data = request.get_json()
+        user_id = get_jwt_identity()
+        print("Datos recibidos", data)
+        print("password:", data.get("password"))
+
+        if not data or not data.get("password"):
+            return jsonify({"success": False, "msg": "PAssword is required"}), 422
+
+        user = Users.query.get(user_id)
+        print("user_id", user_id)
+
+        if not user:
+            return jsonify({"success": False, "msg": "User not found"}), 404
+
+        hashed_password = generate_password_hash(data["password"])
+        user.password = hashed_password
+        db.session.commit()
+
+        return jsonify({"success": True, "msg": "Contraseña actualizada"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print("Error al modificar password: {str(e)}")
+        return jsonify({"success": False, "msg": f"Error al modificar password: {str(e)}"})
+
 
 
 @api.route('/profile', methods=['GET'])
@@ -147,9 +190,9 @@ def get_profile():
 
         if not user_profile:
             return jsonify({"msg": "Profile is not working"})
-        
+
         return jsonify(user_profile.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing go very bad"}), 400
@@ -161,13 +204,13 @@ def update_profile():
     try:
         data = request.get_json()
         id = get_jwt_identity()
-        
+
         stmt = select(Users).where(Users.id == id)
         user = db.session.execute(stmt).scalar_one_or_none()
 
         if user is None:
             return jsonify({"error": "User not found"}), 404
-        
+
         user.email = data.get("email", user.email)
         user.password = data.get("password", user.password)
         user.username = data.get("username", user.username)
@@ -178,7 +221,7 @@ def update_profile():
         db.session.commit()
 
         return jsonify(user.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "Somthing you can`t update"})
@@ -192,7 +235,7 @@ def update_profile():
 
 #     if user is None:
 #         return jsonify({"error": "User not found"}), 404
-    
+
 #     user.email = data.get("email", user.email)
 #     user.password = data.get("password", user.password)
 #     user.username = data.get("username", user.username)
@@ -211,22 +254,21 @@ def delete_profile():
     try:
 
         id = get_jwt_identity()
-        
+
         stmt = select(Users).where(Users.id == id)
         profile = db.session.execute(stmt).scalar_one_or_none()
 
         if profile is None:
             return jsonify({"error": "Profile not found"}), 404
-        
+
         db.session.delete(profile)
         db.session.commit()
 
         return jsonify({"message": "Profile delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "Somthing went wrong, not delete the profile"})
-    
 
 
 # @api.route('/users/<int:id>', methods=['DELETE'])
@@ -237,7 +279,7 @@ def delete_profile():
 
 #     if user is None:
 #         return jsonify({"error": "User not found"}), 404
-    
+
 #     db.session.delete(user)
 #     db.session.commit()
 
@@ -304,12 +346,11 @@ def edit_game(id):
         db.session.commit()
 
         return jsonify(on_game.serialize()), 200
-    
+
     except Exception as e:
         print(e)
 
         return jsonify({"error": "somthing went wrong with update"}), 400
-
 
 
 @api.route('/onlinegames/<int:id>', methods=['DELETE'])
@@ -327,7 +368,7 @@ def delete_game(id):
         db.session.commit()
 
         return jsonify({"msg": "Online Game delete"}), 200
-    
+
     except Exception as e:
         print(e)
 
@@ -343,7 +384,7 @@ def get_stats():
         onlinestats = db.session.execute(stmt).scalars().all()
 
         return jsonify([stats.serialize() for stats in onlinestats]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong with get stats"})
@@ -361,7 +402,7 @@ def get_user_stats(id):
             return jsonify({"error": "User stats not Found"}), 400
 
         return jsonify([stats.serialize() for stats in user_stats]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong with user stats"})
@@ -371,15 +412,15 @@ def get_user_stats(id):
 @jwt_required()
 def get_game_stats(id):
     try:
-        
+
         stmt = select(OnlineStats).where(OnlineStats.online_game_id == id)
         onlinegame_stats = db.session.execute(stmt).scalars().all()
         if onlinegame_stats is None:
             return jsonify({"error": "User stats not Found"}), 400
 
         return jsonify([stats.serialize() for stats in onlinegame_stats]), 200
-    
-    except Exception as e: 
+
+    except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong with online game stats"})
 
@@ -406,7 +447,7 @@ def create_stats():
         db.session.commit()
 
         return jsonify(new_stats.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong with stats"})
@@ -444,7 +485,7 @@ def delete_stats(id):
         db.session.delete(stats)
         db.session.commit()
         return jsonify({"msg": "Stats delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong delete stats"})
@@ -458,7 +499,7 @@ def get_iasessions():
         stmt = select(IAsessions)
         iasessions = db.session.execute(stmt).scalars().all()
         return jsonify([ia.serialize() for ia in iasessions]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong with ia"})
@@ -475,7 +516,7 @@ def get_one_IaSession(id):
             return jsonify({"error": "IA Sesion not found"}),  400
 
         return jsonify(iaSesion.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong with one ia"})
@@ -503,12 +544,12 @@ def create_ia_sesion():
             result=data.get("result", None),
             user_id=data["user_id"]
         )
-    
+
         db.session.add(new_ia_session)
         db.session.commit()
 
         return jsonify(new_ia_session.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong post ia"})
@@ -526,7 +567,8 @@ def edit_iaSession(id):
             return jsonify({"error": "Sesion not found"}), 404
 
         ia_session.title = data.get("title", ia_session.title)
-        ia_session.description = data.get("description", ia_session.description)
+        ia_session.description = data.get(
+            "description", ia_session.description)
         ia_session.genre = data.get("genre", ia_session.genre)
         ia_session.difficulty_levels = data.get(
             "difficulty_levels", ia_session.difficulty_levels)
@@ -536,13 +578,14 @@ def edit_iaSession(id):
             "character_class", ia_session.character_class)
         ia_session.experience_gained = data.get(
             "experience_gained", ia_session.experience_gained)
-        ia_session.story_branch = data.get("story_branch", ia_session.story_branch)
+        ia_session.story_branch = data.get(
+            "story_branch", ia_session.story_branch)
         ia_session.result = data.get("result", ia_session.result)
 
         db.session.commit()
 
         return jsonify(ia_session.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "somthing went wrong with update"})
@@ -562,7 +605,7 @@ def delete_ia_sesion(id):
         db.session.commit()
 
         return jsonify({"msg": "IA Sesion delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete ia"})
@@ -579,7 +622,7 @@ def get_ia_events(id):
             return jsonify({"error": "IA Events not found"}), 400
 
         return jsonify([events.serialize() for events in ia_events]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong get events"})
@@ -596,7 +639,7 @@ def get_IaEvents(id):
             return jsonify({"error": "IA Events not found"}),  400
 
         return jsonify(iaEvents.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong events"})
@@ -611,8 +654,7 @@ def create_ia_events(id):
         print('data ', data)
         if not data or "decision" not in data or "description" not in data or "outcome" not in data or "chapter_number" not in data:
             return jsonify({"error": "Missing data"}), 400
-            
-        
+
         new_ia_events = IAevents(
             chapter_number=data["chapter_number"],
             decision=data.get("decision", None),
@@ -625,7 +667,7 @@ def create_ia_events(id):
         db.session.commit()
 
         return jsonify(new_ia_events.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong post events"})
@@ -642,7 +684,8 @@ def edit_iaEvents(id):
         if ia_events is None:
             return jsonify({"error": "Events not found"}), 404
 
-        ia_events.chapter_number = data.get("chapter_number", ia_events.chapter_number)
+        ia_events.chapter_number = data.get(
+            "chapter_number", ia_events.chapter_number)
         ia_events.decision = data.get("decision", ia_events.decision)
         ia_events.description = data.get("description", ia_events.description)
         ia_events.outcome = data.get("outcome", ia_events.outcome)
@@ -650,7 +693,7 @@ def edit_iaEvents(id):
         db.session.commit()
 
         return jsonify(ia_events.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong update events"})
@@ -670,7 +713,7 @@ def delete_events(id):
         db.session.commit()
 
         return jsonify({"msg": "IA Event delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete events"})
@@ -684,7 +727,7 @@ def get_purchases():
         stmt = select(Purchases)
         purchases = db.session.execute(stmt).scalars().all()
         return jsonify([money.serialize() for money in purchases]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong get purchases"})
@@ -699,9 +742,9 @@ def get_one_purchases(id):
         purchases = db.session.execute(stmt).scalar_one_or_none()
         if purchases is None:
             return jsonify({"error": "Purchases not found"}),  400
-        
+
         return jsonify(purchases.serialize()), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong purchase"})
@@ -715,19 +758,19 @@ def create_purchases():
         data = request.get_json()
         if not data or "amount" not in data or "payment_method" not in data or "user_id" not in data:
             return jsonify({"error": "Missing data"}), 400
-        
+
         new_purchases = Purchases(
-            amount = data["amount"],
-            payment_method = data["payment_method"],
-            status = data.get("status", None),
-            user_id= data["user_id"]
+            amount=data["amount"],
+            payment_method=data["payment_method"],
+            status=data.get("status", None),
+            user_id=data["user_id"]
         )
 
         db.session.add(new_purchases)
         db.session.commit()
 
         return jsonify(new_purchases.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong create purchase"})
@@ -742,9 +785,9 @@ def get_user_purchases(id):
         user_purchases = db.session.execute(stmt).scalars().all()
         if user_purchases is None:
             return jsonify({"error": "Purchases not found"}),  400
-        
+
         return jsonify([user.serialize() for user in user_purchases]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong user purchases"})
@@ -759,9 +802,9 @@ def get_user_favorites(id):
         user_favorites = db.session.execute(stmt).scalars().all()
         if user_favorites is None:
             return jsonify({"error": "Favorites not found"}), 400
-        
+
         return jsonify([favs.serialize() for favs in user_favorites]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong user favorites"})
@@ -779,7 +822,7 @@ def create_favorites():
         onlinegame_id = data.get('onlinegame_id')
         if not user1_id or not user2_id or not onlinegame_id:
             return jsonify({"error": "User1 ID, User2 ID or OnlineGAme ID is required"}), 404
-        
+
         user1 = db.session.get(Users, user1_id)
         if not user1:
             return jsonify({"error": "User1 not found"}), 404
@@ -787,22 +830,22 @@ def create_favorites():
         user2 = db.session.get(Users, user2_id)
         if not user2:
             return jsonify({"error": "User2 not found"}), 404
-        
+
         onlinegame = db.session.get(OnlineGames, onlinegame_id)
         if not onlinegame:
             return jsonify({"error": "Online Game not found"}), 404
-        
+
         new_favorite = Favorites(
-            user1_id = user1_id,
-            user2_id = user2_id,
-            onlinegame_id = onlinegame_id,
+            user1_id=user1_id,
+            user2_id=user2_id,
+            onlinegame_id=onlinegame_id,
         )
 
         db.session.add(new_favorite)
         db.session.commit()
 
         return jsonify(new_favorite.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong create favorite"})
@@ -822,11 +865,11 @@ def delete_favorites(id):
         db.session.commit()
 
         return jsonify({"msg": "Favorite delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete favorite"})
-    
+
 
 @api.route('/users/<int:id>/contacts', methods=['GET'])
 @jwt_required()
@@ -837,13 +880,13 @@ def get_user_contacts(id):
         user_contacts = db.session.execute(stmt).scalars().all()
         if user_contacts is None:
             return jsonify({"error": "Contacts not found"}), 400
-        
+
         return jsonify([favs.serialize() for favs in user_contacts]), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong user Contacts"})
-    
+
 
 @api.route('/contacts', methods=['POST'])
 @jwt_required()
@@ -856,7 +899,7 @@ def create_contacts():
         contact_user_id = data.get('contact_user_id')
         if not user_id or not contact_user_id:
             return jsonify({"error": "User ID, Contact User ID is required"}), 404
-        
+
         user = db.session.get(Users, user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
@@ -864,22 +907,21 @@ def create_contacts():
         contact_user = db.session.get(Users, contact_user_id)
         if not contact_user:
             return jsonify({"error": "Contact User not found"}), 404
-        
-        
+
         new_contact = UserContacts(
-            user_id = user_id,
-            contact_user_id = contact_user_id,
+            user_id=user_id,
+            contact_user_id=contact_user_id,
         )
 
         db.session.add(new_contact)
         db.session.commit()
 
         return jsonify(new_contact.serialize()), 201
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong create contact"})
-    
+
 
 @api.route('/contacts/<int:id>', methods=['DELETE'])
 @jwt_required()
@@ -895,7 +937,7 @@ def delete_contacts(id):
         db.session.commit()
 
         return jsonify({"msg": "Contact delete"}), 200
-    
+
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete contact"})
