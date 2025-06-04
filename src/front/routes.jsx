@@ -39,6 +39,7 @@ export const router = createBrowserRouter(
         <Route path="/games/:id" element={<GameDetail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/boardgames" element={<BoardGames />} />
       </Route>
     )
 );
