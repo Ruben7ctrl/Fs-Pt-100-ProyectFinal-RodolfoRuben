@@ -15,6 +15,8 @@ import { IAsession } from "./pages/IAsession";
 import { GameDetail } from "./pages/GameDetail";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
+import { BoardGames } from "./pages/BoardG";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -35,8 +37,6 @@ export const router = createBrowserRouter(
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
         <Route path="/games/:id" element={<GameDetail />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
     )
 );

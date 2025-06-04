@@ -1,17 +1,19 @@
 // Import necessary components from react-router-dom and other parts of the application.
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
-import { useEffect, useState , useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import userServices from "../services/flux";
 import "../styles/Games.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
-import { House, MagnifyingGlass, Gear,Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
+import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
 import { useNavigate } from "react-router-dom";
+import { BoardGames } from "./BoardG";
+
 
 export const Games = () => {
 
@@ -37,48 +39,18 @@ export const Games = () => {
     )
   }, [page])
 
-//   useEffect(() => {
-//     const sessionID = store.sessionID || localStorage.getItem('activeSessionID');
-//     if (sessionID) {
-//       openAiServices.getIAsession(sessionID);
-//     } else {
-//       console.warn("No hay sessionID definido");
-//     }
-// }, [])
-
-const juegosPorPagina = 6
-
-useEffect(() => {
-  const cargar = async () => {
-    setCargando(true)
-    try {
-      const lista = await storeServices.getJuegosMesa(letra)
-      console.log("Juegos recibidos", lista);
+  //   useEffect(() => {
+  //     const sessionID = store.sessionID || localStorage.getItem('activeSessionID');
+  //     if (sessionID) {
+  //       openAiServices.getIAsession(sessionID);
+  //     } else {
+  //       console.warn("No hay sessionID definido");
+  //     }
+  // }, [])
 
 
-      const detalles = await Promise.all(
-        lista.slice((pagina - 1) * juegosPorPagina, pagina * juegosPorPagina).map(async (j) => {
-          try {
-            const detalle = await storeServices.JuegosMesaDatos(j.id)
-            console.log("detalle cargado", detalle)
-            return detalle
-          } catch (error) {
-            console.warn(`Error cargando juego con id ${j.id}:`, error)
-            return null
-          }
-        })
-      )
-      setJuegos(detalles.filter(j => j !== null))
-    } catch (error) {
-      console.error("Error cargando juegos:", error)
-      setJuegos([])
-    }
-    setCargando(false)
-  }
-  cargar()
-}, [pagina, letra])
 
-// AQUI EMPIEZA LOS RECUADROS DE ARRIBA//
+  // AQUI EMPIEZA LOS RECUADROS DE ARRIBA//
 
   const handleMouseEnter = (e) => {
 
@@ -102,28 +74,28 @@ useEffect(() => {
 
     });
 
-};
+  };
 
-const handleMouseLeave = (e) => {
-  anime.remove(e.currentTarget);
+  const handleMouseLeave = (e) => {
+    anime.remove(e.currentTarget);
 
-  anime({
-    targets: e.currentTarget,
-    translateY: 0,
-    rotate: 0, // ✅ Asegura que vuelve al ángulo original
-    scale: 1,
-    duration: 400,
-    easing: "easeOutQuad"
-  });
+    anime({
+      targets: e.currentTarget,
+      translateY: 0,
+      rotate: 0, // ✅ Asegura que vuelve al ángulo original
+      scale: 1,
+      duration: 400,
+      easing: "easeOutQuad"
+    });
 
-};
+  };
 
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
-    { icon: <Globe size={32} weight="fill" />, label: "OnlineGames" },
+    { icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames" },
     { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
-    { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames" },
+    { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
     { icon: <User size={32} weight="fill" />, label: "Profile" }
   ];
 
@@ -145,17 +117,17 @@ const handleMouseLeave = (e) => {
     navigate(route);
   };
 
-// AQUI TERMINA LOS RECUADROS DE ARRIBA//
+  // AQUI TERMINA LOS RECUADROS DE ARRIBA//
 
   const handleClickCard = (id) => {
     setClickedCard(id);
     setTimeout(() => setClickedCard(null), 500); // Glitch dura 500ms
   };
 
- 
-    const hoverSoundRef = useRef(new Audio(Botonsiguiente));
 
- const playHoverSound = () => {
+  const hoverSoundRef = useRef(new Audio(Botonsiguiente));
+
+  const playHoverSound = () => {
     const sound = hoverSoundRef.current;
     sound.currentTime = 0; // 🔥 Esta línea es clave
     sound.play().catch(e => {
@@ -401,29 +373,30 @@ const handleMouseLeave = (e) => {
           ))}
 
         </div>
+        
+            <div className="pagination-container">
 
-        <div className="pagination-container">
-            
 
-            <button
-                 onClick={() => { setPage(prev => Math.max(prev - 1, 1)); playHoverSound(); }}
-        disabled={page === 1}
+              <button
+                onClick={() => { setPage(prev => Math.max(prev - 1, 1)); playHoverSound(); }}
+                disabled={page === 1}
                 className={`pagination-button ${page === 1 ? 'disabled' : ''}`}
-            >
+              >
                 <CaretLeft size={20} weight="bold" />
                 Página anterior
-            </button>
+              </button>
 
-            <span className="pagination-page">Página {page}</span>
+              <span className="pagination-page">Página {page}</span>
 
-            <button
-                 onClick={() => { setPage(prev => prev + 1); playHoverSound(); }}
+              <button
+                onClick={() => { setPage(prev => prev + 1); playHoverSound(); }}
                 className="pagination-button"
-            >
+              >
                 Página siguiente
                 <CaretRight size={20} weight="bold" />
-            </button>
-        </div>
+              </button>
+            </div>
+        
       </div>
     </>
   );
