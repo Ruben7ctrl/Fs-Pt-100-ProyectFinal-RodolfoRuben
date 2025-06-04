@@ -37,6 +37,7 @@ export const router = createBrowserRouter(
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
         <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/boardgames" element={<BoardGames />} />
       </Route>
     )
 );
