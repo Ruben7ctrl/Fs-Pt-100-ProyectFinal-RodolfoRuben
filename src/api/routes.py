@@ -13,7 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from api.mail.mailer import send_mail
 from flask import current_app 
-
+from datetime import datetime
 
 api = Blueprint('api', __name__)
 
@@ -452,6 +452,54 @@ def create_stats():
         print(e)
         return jsonify({"error": "somthing went wrong with stats"})
 
+
+@api.route('/stats/update_results', methods=['POST'])
+@jwt_required()
+def update_result():
+    try:
+        data = request.get_json()
+        print("Datos recibidos para update_result:", data)
+        user_id = data.get("user_id")
+        game_id = data.get("online_game_id")
+        result = data.get("result")
+        move_count = data.get("move_count")
+
+        if not user_id or not game_id or result not in ["win", "loss", "stalemate"] or move_count is None:
+            return jsonify({"error": "Missing or invalid data"}), 400
+        
+        stmt = select(OnlineStats).where(OnlineStats.user_id == user_id, OnlineStats.online_game_id == game_id)
+        stat = db.session.execute(stmt).scalar_one_or_none()
+
+        if stat is None:
+            stat = OnlineStats(
+                user_id=user_id,
+                online_game_id=game_id,
+                sessions_played= 1,
+                wins= 1 if result == "win" else 0,
+                losses= 1 if result == "loss" else 0,
+                stalemate= 1 if result == "stalemate" else 0,
+                move_count= move_count,
+                last_played= datetime.utcnow()
+            )
+            db.session.add(stat)
+        else:
+            stat.sessions_played += 1
+            if result == "win":
+                stat.wins += 1
+            elif result == "loss":
+                stat.losses += 1
+            elif result == "stalemate":
+                stat.stalemate += 1
+            stat.move_count += move_count
+            stat.last_played = datetime.utcnow()
+
+        db.session.commit()
+        return jsonify(stat.serialize()), 200
+    
+    except Exception as e:
+        print("Error actualizado stats:", e)
+        return jsonify({"error": "Something went wrong"}), 500
+    
 
 @api.route('/stats/<int:id>', methods=['PUT'])
 @jwt_required()

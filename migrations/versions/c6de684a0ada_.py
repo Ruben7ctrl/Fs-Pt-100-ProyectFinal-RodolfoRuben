@@ -1,14 +1,8 @@
 """empty message
 
-<<<<<<<< HEAD:migrations/versions/075da8676d6d_.py
-Revision ID: 075da8676d6d
+Revision ID: c6de684a0ada
 Revises: 
-Create Date: 2025-05-30 11:14:03.180219
-========
-Revision ID: 6e4f7da7ac38
-Revises: 
-Create Date: 2025-05-30 09:43:58.747545
->>>>>>>> d71c9a67ff60338114a3168542867d87ae810085:migrations/versions/6e4f7da7ac38_.py
+Create Date: 2025-06-04 19:37:06.521110
 
 """
 from alembic import op
@@ -16,11 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/075da8676d6d_.py
-revision = '075da8676d6d'
-========
-revision = '6e4f7da7ac38'
->>>>>>>> d71c9a67ff60338114a3168542867d87ae810085:migrations/versions/6e4f7da7ac38_.py
+revision = 'c6de684a0ada'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -85,6 +75,7 @@ def upgrade():
     sa.Column('wins', sa.Integer(), nullable=False),
     sa.Column('stalemate', sa.Integer(), nullable=False),
     sa.Column('losses', sa.Integer(), nullable=False),
+    sa.Column('move_count', sa.Integer(), nullable=False),
     sa.Column('last_played', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('online_game_id', sa.Integer(), nullable=False),
