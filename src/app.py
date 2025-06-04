@@ -11,6 +11,14 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
+from flask_jwt_extended.exceptions import NoAuthorizationError
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
+from flask_cors import CORS
+from api.mail.mail_config import mail, init_mail
+
+
+
 
 # from models import Person
 
@@ -20,9 +28,30 @@ static_file_dir = os.path.join(os.path.dirname(
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+
+
+
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 jwt = JWTManager(app)
+
+
+#Configuracion recuperacion contraseña
+
+# app.config['SECRET_KEY'] = os.getenv('FLASK_APP_KEY')
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+# app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+# app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
+
+init_mail(app)
+
+# app.config['MAIL_ASCII_ATTACHMENTS'] = False
+
+mail = Mail(app)
+
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
