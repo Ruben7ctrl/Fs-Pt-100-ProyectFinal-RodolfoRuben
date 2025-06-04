@@ -73,7 +73,7 @@
     display: flex;
     flex-direction: column;
     width: 250px;
-    max-height: 450px; /* 👈 altura máxima para que no crezca infinito */
+    max-height: 450px; /* altura máxima para que no crezca infinito */
 }
 
 .boardgames-cardB:hover {
@@ -83,7 +83,7 @@
 
 .boardgames-card-image {
    width: 100%;
-    height: 200px; /* 👈 altura fija imagen */
+    height: 200px; /*  altura fija imagen */
     object-fit: cover;
     display: block;
 }
@@ -96,8 +96,8 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    overflow-y: auto; /* 👈 scroll si hay mucho texto */
-    max-height: calc(450px - 200px); /* 👈 altura calculada (restando imagen) */
+    overflow-y: auto; /* scroll si hay mucho texto */
+    max-height: calc(450px - 200px); /*  altura calculada (restando imagen) */
     
     
 }
