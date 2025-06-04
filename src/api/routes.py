@@ -10,37 +10,16 @@ from flask_cors import CORS
 from sqlalchemy import select, or_
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
-import smtplib
+from api.mail.mailer import send_mail
 from flask import current_app 
-import urllib.parse
-# from app import mail, serializer
-# from app import mail, serializer
-# from api.routes import set_mail_and_serializer
-# import hashlib
-# from email.mime.text import MIMEText
-# from email.mime.multipart import MIMEMultipart
 
-api = Blueprint('api_blueprint', __name__)
+
+api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
-# CORS(api, origins=["https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev"], supports_credentials=True)
+CORS(api)
 
-
-mail = None
-serializer = None
-
-
-def set_mail_and_serializer(m, s):
-    global mail, serializer
-    mail = m
-    serializer = s
-
-
-# mail = Mail(api)
-# serializer = URLSafeTimedSerializer(api.config['SECRET_KEY'])
-# set_mail_and_serializer(mail, serializer)
 
 
 @api.route('/users', methods=['GET'])
@@ -128,96 +107,75 @@ def signin():
 
         db.session.rollback()
         return jsonify({"error": "somthing went wrong"}), 400
+    
+@api.route('/mailer/<address>', methods=['POST'])
+def handle_mail(address):
+    return send_mail(address)
+
+@api.route('/token', methods=['GET'])
+@jwt_required()
+def check_jwt():
+    user_id = get_jwt_identity()
+    users = Users.query.get(user_id)
+
+    if users:
+        return jsonify({"success": True, "user": users.serialize()}), 200
+    return jsonify({"success": False, "msg": "Bad token"}), 401
+
 
 
 @api.route('/forgot-password', methods=['POST'])
 def forgot_password():
-    data = request.get_json()
-    email = data.get('email')
-
-    if not email:
-        return jsonify({'msg': 'Email is required'}), 400
-
-    user = db.session.query(Users).filter_by(email=email).first()
-    if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    token = serializer.dumps(email, salt='password-reset-salt')
-    encoded_token = urllib.parse.quote(token)
-    link = f'https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev/reset-password/{encoded_token}'
 
     try:
-        msg = Message(
-            subject="Recupera tu clave",
-            sender=current_app.config['MAIL_DEFAULT_SENDER'],
-            recipients=[email],
-        )
-        
-        msg.body = f"Hola, usa este link para restablecer la clave\n{link}"
-        msg.charset = 'utf-8'
+        data = request.get_json()
 
-        msg.headers = {
-            'Content-Type': 'text/plain; charset=utf-8',
-            'Content-Transfer-Encoding': 'quoted-printable'
-        }
+        user = db.session.query(Users).filter_by(email=data["email"]).first()
+        if not user:
+            return jsonify({"success": False, "error": "Email no encontrado"}), 404
 
-        mail.send(msg)
+        token = create_access_token(identity=str(user.id))
+        result = send_mail(data["email"], token)
+        print(result)
 
-        return jsonify({"msg": "Email enviado"}), 200
+
+        return jsonify({"success": True, "token": token, "email":data["email"]}), 200
 
     except Exception as e:
         print("Error enviando correo:", str(e))
-        return jsonify({'msg': 'Error enviando email', 'error': str(e)}), 500
+        return jsonify({"success": False, 'msg': 'Error enviando email', 'error': str(e)}), 500
 
     
 
 
-@api.route('/reset-password/<token>', methods=['POST'])
-def reset_password(token):
-    data = request.get_json()
-    new_password = data.get("password")
-    if not new_password:
-        return jsonify({"error": "Password is required"}), 400
-
+@api.route('/reset-password', methods=['PUT'])
+@jwt_required()
+def reset_password():
     try:
-        email = serializer.loads(
-            token, salt='password-reset-salt', max_age=3600)
-    except:
-        return jsonify({"error": "Token invalido o expirado"}), 400
+        data = request.get_json()
+        user_id = get_jwt_identity()
+        print("Datos recibidos", data)
+        print("password:", data.get("password"))
 
-    user = db.session.query(Users).filter_by(email=email).first()
-    if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        if not data or not data.get("password"):
+            return jsonify({"success": False, "msg": "PAssword is required"}), 422
 
-    # hashed = hashlib.sha256(new_password.encode()).hexdigest()
-    # data[email]['password'] = hashed
-    user.password = generate_password_hash(new_password)
-    db.session.commit()
+        user = Users.query.get(user_id)
+        print("user_id", user_id)
 
-    return jsonify({"msg": "Clave actualizada"}), 200
+        if not user:
+            return jsonify({"success": False, "msg": "User not found"}), 404
 
-# @api.route('/users', methods=['POST'])
-# def create_user():
-#     data = request.get_json()
-#     if not data or "email" not in data or "password" not in data or "username" not in data:
-#         return jsonify({"error": "Missing Data"}), 404
+        hashed_password = generate_password_hash(data["password"])
+        user.password = hashed_password
+        db.session.commit()
 
+        return jsonify({"success": True, "msg": "Contraseña actualizada"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print("Error al modificar password: {str(e)}")
+        return jsonify({"success": False, "msg": f"Error al modificar password: {str(e)}"})
 
-#     new_user = Users(
-#         email = data["email"],
-#         password = data["password"],
-#         username = data["username"],
-#         firstname = data.get("firstname", None) ,
-#         lastname = data.get("lastname", None),
-#         dateofbirth = data.get("dateofbirth", None),
-#         phone = data.get("phone", None),
-#         avatar_image = data.get("avatar_image", None),
-#         is_active = True
-#     )
-
-#     db.session.add(new_user)
-#     db.session.commit()
-#     return jsonify(new_user.serialize()), 201
 
 
 @api.route('/profile', methods=['GET'])

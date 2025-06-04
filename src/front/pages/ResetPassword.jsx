@@ -1,37 +1,70 @@
-import axios from 'axios'
-import { useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
-
-
-
+import React, { useState, useEffect, useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+// import { Context } from "../store/appContext";
+import userServices from "../services/flux";
 
 export const ResetPassword = () => {
-    const { token } =useParams()
-    // const [searchParams] = useSearchParams()
-    // const token = searchParams.get('token')
-    const [password, setPassword] = useState('')
-    const [msg, setMsg] = useState('')
+	// const { store, actions } = useContext(Context);
+	//utilizamos useLocation para poder manejar valores grandes ya que useParams no permite este tipo de valores 
+	const location = useLocation();
+	//almacenamos en variable queryParams la busqueda realizada que se encuentra en el url
+	const queryParams = new URLSearchParams(location.search);
+	//extraemos el token del queryPArams
+	const token = queryParams.get('token');
+	const [password, setPassword] = useState('')
+	const [user, setUser] = useState()
+	const navigate = useNavigate()
+	const [success, setSuccess] = useState(null)
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const resp = await axios.post(`https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev/reset-password/${token}`,  {
-                password,
-            });
-            setMsg(resp.data.msg)
-        } catch (err) {
-            setMsg("Error: " + err.response.data.error)
-        }
-    }
+	useEffect(() => {
+		if (token) {
+			//creamos funcion async para que el correcto uso del useEffect 
+			const fetchData = async () => {
 
-    return (
-        <div>
-            <h2>Resetear Contraseña</h2>
-            <form onSubmit={handleSubmit}>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password' />
-                <button type='submit'>Actualizar</button>
-            </form>
-            <p>{msg}</p>
-        </div>
-    )
-}
+				//verificamos que el token sea correcto y podemos saber que usuario es el que esta accediendo con la identidad del token
+				const resp = await userServices.checkAuth(token);
+				setUser(resp?.user)
+			}
+			fetchData()
+		}
+		else {
+			alert('Link expiró, intentelo de nuevo')
+		}
+	}, [token]);
+
+
+	const handleClick = async () => {
+		//pasamos a la actions.updatePassword el password y el token
+		const resp = await userServices.updatePassword(password, token)
+		if (resp && resp.success) {
+			setSuccess(true)
+			setTimeout(() => navigate('/'), 1000)
+
+		}
+		else {
+			setSuccess(false)
+		}
+	}
+
+	return (
+		<div className="card w-75">
+			<h2>Cambio de contraseña</h2>
+			<p>Hola {user && user.email}, vamos a cambiar la contraseña</p>
+			<input
+				type="password"
+				onChange={e => setPassword(e.target.value)}
+				value={password}
+			/>
+			<button onClick={handleClick}>change password</button>
+
+			{
+				success !== null && (
+					success ? (
+						<div className="container bg-success"> se ha actualizado la contraseña exitosamente</div>
+				) : (
+						<div className="container bg-danger"> hubo un problema</div>
+				)
+			)}
+		</div>
+	);
+};

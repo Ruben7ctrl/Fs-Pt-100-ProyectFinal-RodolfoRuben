@@ -11,16 +11,13 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_cors import CORS
-# from api.routes import set_mail_instance
-from api.routes import set_mail_and_serializer
-# from api import routes
-# from app import mail, serializer
+from api.mail.mail_config import mail, init_mail
 
-# routes.mail = mail
-# routes.serializer = serializer
+
 
 
 # from models import Person
@@ -30,37 +27,31 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-CORS(app, resources={r"/api/*": {"origins": "https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev"}}, supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
+
+
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 jwt = JWTManager(app)
 
+
 #Configuracion recuperacion contraseña
-# app.config.update({
-#     'SECRET_KEY': 'secret-key',
-#     'MAIL_SERVER': 'smtp.gmail.com',
-#     'MAIL_PORT': 587,
-#     'MAIL_USE_TLS': True,
-#     'MAIL_USERNAME': 'tucorreo@gmail.com',
-#     'MAIL_PASSWORD': 'tu-contraseña-o-app-contraseña'
-# })
 
-app.config['SECRET_KEY'] = os.getenv('FLASK_APP_KEY')
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
+# app.config['SECRET_KEY'] = os.getenv('FLASK_APP_KEY')
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+# app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+# app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
-app.config['MAIL_ASCII_ATTACHMENTS'] = False
+init_mail(app)
+
+# app.config['MAIL_ASCII_ATTACHMENTS'] = False
 
 mail = Mail(app)
-serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-# set_mail_instance(mail)
 
-set_mail_and_serializer(mail, serializer)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -107,14 +98,6 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
-
-# @app.after_request
-# def apply_cors_headers(response):
-#     response.headers["Access-Control-Allow-Origin"] = "https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev"
-#     response.headers["Access-Control-Allow-Credentials"] = "true"
-#     response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
-#     response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
-#     return response
 
 
 # this only runs if `$ python src/main.py` is executed

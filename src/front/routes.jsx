@@ -36,7 +36,7 @@ export const router = createBrowserRouter(
         <Route path="/ia_sessions" element={<IAsession />} />
         <Route path="/games/:id" element={<GameDetail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
     )
 );
