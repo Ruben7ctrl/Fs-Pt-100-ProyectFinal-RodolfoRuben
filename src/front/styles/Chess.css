@@ -7,7 +7,7 @@
     width: fit-content;
 }
 
-.square {
+.squares {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,15 +46,15 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
-.square.light {
+.squares.light {
     background-color: #f0d9b5;
 }
 
-.square.dark {
+.squares.dark {
     background-color: #b58863;
 }
 
-.square.selected {
+.squares.selected {
     outline: 2px solid red;
 }
 

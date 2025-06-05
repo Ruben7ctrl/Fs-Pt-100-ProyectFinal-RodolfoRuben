@@ -40,7 +40,7 @@ export const OnlineGames = () => {
 
     const handleJoinGame = (gameId) => {
         localStorage.setItem('gameId', gameId);
-        navigate("/chess")
+        navigate(`/onlinegame/${gameId}`)
     }
 
 
