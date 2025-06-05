@@ -106,6 +106,7 @@ class OnlineStats(db.Model):
     wins: Mapped[int] = mapped_column(nullable=False)
     stalemate: Mapped[int] = mapped_column(nullable=False)
     losses: Mapped[int] = mapped_column(nullable=False)
+    move_count: Mapped[int] = mapped_column(nullable=False, default=0)
     last_played: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -122,6 +123,7 @@ class OnlineStats(db.Model):
             "wins": self.wins if self.wins else None,
             "stalemate": self.stalemate if self.stalemate else None,
             "losses": self.losses if self.losses else None,
+            "move_count": self.move_count,
             "last_played": self.last_played.isoformat(),
             "user_stats": self.user_stats.username,
             "online_game_stats": self.online_game_stats.name
