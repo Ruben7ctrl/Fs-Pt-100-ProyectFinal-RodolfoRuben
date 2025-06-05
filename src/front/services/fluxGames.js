@@ -1,19 +1,19 @@
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const gamesServices = {};
 
-gamesServices.updateStats = async (result, gameId, userId, moveCount, token) => {
+gamesServices.updateStats = async (result, gameId, userId, moveCount) => {
+  const token = localStorage.getItem("token");
+  console.log('token', token);
+  
   try {
-    // const token = localStorage.getItem("token");
-    // if (!token || !userId || !onlineGameId) {
-    //   throw new Error("Faltan datos para actualizar estadisticas");
-    // }
+
     console.log("Enviando stats:", {
       result,
       moveCount,
       gameId,
       userId,
     });
-    const resp = await fetch(backendUrl + "/api/stats/update_result", {
+    const resp = await fetch(backendUrl + "/api/stats/update_results", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
