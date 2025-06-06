@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/TresEnRaya.css"
+import gamesServices from "../services/fluxGames";
 
 const TURNS = {
     X: 'x',
@@ -95,6 +96,29 @@ function App() {
     }
 
     useEffect(() => {
+        if (winner !== null) {
+            const result = winner === false
+                ? 'stalemate'
+                : winner === TURNS.X
+                ? 'win'
+                : 'loss';
+            
+                const moveCount = board.filter((cell) => cell !== null).length;
+                const gameId = localStorage.getItem("gameId");
+                const user = JSON.parse(localStorage.getItem("user"));
+                const userId = user?.id;
+
+                if (!gameId || !userId) {
+                    console.warn("Faltan datos para actualizar estadisticas");
+                    return;
+                    
+                }
+
+                gamesServices.updateStats(result, gameId, userId, moveCount);
+        }
+    }, [winner])
+
+    useEffect(() => {
         if (turn === TURNS.O && !winner) {
             const timeout = setTimeout(() => {
                 const emptyIndices = board.map((val, idx) => (val === null ? idx : null)).filter(idx => idx !== null);
@@ -137,7 +161,7 @@ function App() {
                     {
 
                         winner !== null && (
-                            <section className="winners">
+                            <section className="winner">
                                 <div className="texts">
 
                                     <h2>
@@ -149,7 +173,7 @@ function App() {
 
 
                                     </h2>
-                                    <header className="wins">
+                                    <header className="win">
                                         {winner && <Square>{winner}</Square>}
 
                                     </header>
