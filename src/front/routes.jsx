@@ -16,6 +16,9 @@ import { GameDetail } from "./pages/GameDetail";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { BoardGames } from "./pages/BoardG";
+import { Chess } from "./pages/ChessGame";
+import { OnlineGames } from "./pages/OnlineG";
+import { TresEnRaya } from "./pages/TresEnRaya";
 
 
 export const router = createBrowserRouter(
@@ -40,6 +43,9 @@ export const router = createBrowserRouter(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/boardgames" element={<BoardGames />} />
+        <Route path="/onlinegame/11" element={<Chess />} />
+        <Route path="/onlinegames" element={<OnlineGames />} />
+        <Route path="/onlinegame/12" element={<TresEnRaya />} />
       </Route>
     )
 );
