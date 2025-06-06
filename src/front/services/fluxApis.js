@@ -17,19 +17,28 @@ storeServices.videojuegos = async (page = 1) => {
 }
 
 
-storeServices.getRecomendados = async (genre_slug) => {
+storeServices.getRecomendados = async ({ genre_slug = null, platform_id = null, page = 1 }) => {
     try {
-        const resp = await fetch(`https://api.rawg.io/api/games?genres=${genre_slug}&page_size=10&key=c5df4513c2584cc68477a27dce6e0f27`);
-        console.log(resp);
+        const url = new URL("https://api.rawg.io/api/games");
+        url.searchParams.set("key", "c5df4513c2584cc68477a27dce6e0f27");
+        url.searchParams.set("page", page);
+        url.searchParams.set("page_size", 10);
 
+        if (genre_slug && genre_slug !== "all") url.searchParams.set("genres", genre_slug);
+        if (platform_id && platform_id !== "all") url.searchParams.set("platforms", platform_id);
+
+        console.log("Fetching URL:", url.toString());  // <--- para debug
+
+        const resp = await fetch(url.toString());
         if (!resp.ok) throw new Error('Error fetch data');
         const data = await resp.json();
         return data.results;
     } catch (error) {
         console.log(error);
-        return null;
+        return [];
     }
 };
+
 
 
 

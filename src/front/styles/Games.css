@@ -53,10 +53,9 @@
 
 .discover-sidebar__title {
   font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
+  font-weight: 700;
+ 
   margin-bottom: 1rem;
-  display: block;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
 }
@@ -64,23 +63,32 @@
 .discover-sidebar__list {
   list-style: none;
   padding: 0;
-  margin-bottom: 2rem;
+  margin: 0;
+}
+
+.discover-sidebar__item {
+  margin-bottom: 1rem;
 }
 
 .discover-sidebar__link {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.5rem 0.8rem;
-  color: #cfcfcf;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  color: #ccc;
   text-decoration: none;
-  border-radius: 0.3rem;
-  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
 }
 
 .discover-sidebar__link:hover {
-  background-color: #2c2c44;
-  color: #ffffff;
+  transform: translateX(5px);
+  border-color: #0ff;
+  box-shadow: 0 0 15px #0ff;
+  color: #fff;
 }
 
 .discover-sidebar__icon-svg {
@@ -335,4 +343,37 @@
 
 .pagination-page:hover {
     transform: scale(1.05);
+}
+
+
+.sidebar-cyber {
+  background: linear-gradient(180deg, #101020 0%, #181830 100%);
+  border-right: 2px solid #ff00ff;
+  box-shadow: 0 0 20px #ff00ff;
+  color: #fff;
+  padding: 2rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar-cyber .offcanvas-header .btn-close {
+  filter: invert(1);
+}
+
+.sidebar-cyber .offcanvas-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #0ff;
+  text-shadow: 0 0 5px #0ff;
+  margin-bottom: 1rem;
+}
+
+.genre-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.active-genre {
+  border-color: #f0f;
+  box-shadow: 0 0 20px #f0f;
+  color: #fff;
 }
