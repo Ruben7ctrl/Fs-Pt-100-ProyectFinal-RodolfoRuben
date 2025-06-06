@@ -19,7 +19,7 @@ export const ChessBoard = () => {
 
     const engine = useRef(null)
 
-    
+
 
     const updateStats = (result) => {
         const token = localStorage.getItem('token')
@@ -31,6 +31,8 @@ export const ChessBoard = () => {
         console.log("token:", token);
         console.log("userId:", userId);
         console.log("onlineGameId:", gameId);
+        console.log("moveCount", moveCount);
+
 
         if (!token || !userId || !gameId) {
             console.warn("Faltan datos para actualizar stats");
@@ -38,7 +40,7 @@ export const ChessBoard = () => {
 
         }
 
-        gamesServices.updateStats(result, moveCount, gameId, userId)
+        gamesServices.updateStats(result, gameId, userId, moveCount)
         // .then(() => setStatsUpdated(true)).catch((e) => console.error("Error updating stats:", e))
 
     }
@@ -66,7 +68,7 @@ export const ChessBoard = () => {
     }
 
     useEffect(() => {
-        engine.current = new Worker("stockfish.js");
+        engine.current = new Worker("/stockfish.js");
 
         engine.current.onmessage = (event) => {
             const line = event.data;
@@ -123,7 +125,7 @@ export const ChessBoard = () => {
             const gameId = localStorage.getItem("gameId")
             const userId = localStorage.getItem("userId")
 
-            updateStats(result, moveCount, gameId, userId)
+            updateStats(result, gameId, userId, moveCount)
         }
     }, [gameOver, statsUpdated, chess])
 
@@ -204,7 +206,19 @@ export const ChessBoard = () => {
                 <div className="game-over-popup">
                     <h2>Fin del Juego</h2>
                     <p>{gameResult}</p>
-                    <button onClick={() => window.location.reload()}>Reiniciar partida</button>
+                    <button onClick={() => {
+                        const newGame = new Chess();
+                        setChess(newGame);
+                        setBoard(newGame.board());
+                        setSelected(null);
+                        setTurn("w");
+                        setPromotion(null);
+                        setCapturedBlack([]);
+                        setCapturedWhite([]);
+                        SetGameResult(null);
+                        setGameOver(false);
+                        setStatsUpdated(false);
+                    }}>Reiniciar partida</button>
                 </div>
             )}
         </>
