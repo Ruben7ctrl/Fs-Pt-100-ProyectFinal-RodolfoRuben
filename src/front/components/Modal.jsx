@@ -95,38 +95,69 @@ function App() {
         }
     }
 
-    useEffect(() => {
-        if (winner !== null) {
-            const result = winner === false
-                ? 'stalemate'
-                : winner === TURNS.X
-                ? 'win'
-                : 'loss';
-            
-                const moveCount = board.filter((cell) => cell !== null).length;
-                const gameId = localStorage.getItem("gameId");
-                const user = JSON.parse(localStorage.getItem("user"));
-                const userId = user?.id;
+    const getBestMove = (board, player) => {
+        let bestScore = -Infinity;
+        let move = -1;
 
-                if (!gameId || !userId) {
-                    console.warn("Faltan datos para actualizar estadisticas");
-                    return;
-                    
+        board.forEach((cell, idx) => {
+            if (cell === null) {
+                const newBoard = [...board];
+                newBoard[idx] = player;
+                const score = minimax(newBoard, 0, false);
+                if (score > bestScore) {
+                    bestScore = score;
+                    move = idx
                 }
+            }
+        });
 
-                gamesServices.updateStats(result, gameId, userId, moveCount);
+        return move;
+    }
+
+    const minimax = (board, depth, isMaximizing) => {
+        const result = checkWinner(board);
+        if (result === TURNS.O) return 10 - depth;
+        if (result === TURNS.X) return depth - 10;
+        if (checkEndGame(board)) return 0;
+
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            board.forEach((cell, idx) => {
+                if (cell === null) {
+                    const newBoard = [...board];
+                    newBoard[idx] = TURNS.O;
+                    const score = minimax(newBoard, depth + 1, false);
+                    bestScore = Math.max(score, bestScore)
+                }
+            });
+
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            board.forEach((cell, idx) => {
+                if (cell === null) {
+                    const newBoard = [...board];
+                    newBoard[idx] = TURNS.X;
+                    const score = minimax(newBoard, depth + 1, true);
+                    bestScore = Math.min(score, bestScore)
+                }
+            });
+            return bestScore;
         }
-    }, [winner])
+    }
 
     useEffect(() => {
         if (turn === TURNS.O && !winner) {
             const timeout = setTimeout(() => {
-                const emptyIndices = board.map((val, idx) => (val === null ? idx : null)).filter(idx => idx !== null);
-
-                if (emptyIndices.length > 0) {
-                    const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-                    updateBoard(randomIndex)
+                // const emptyIndices = board.map((val, idx) => (val === null ? idx : null)).filter(idx => idx !== null);
+                const bestMove = getBestMove(board, TURNS.O)
+                // if (emptyIndices.length > 0) {
+                //     const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+                //     updateBoard(randomIndex)
+                if (bestMove !== -1) {
+                    updateBoard(bestMove)
                 }
+
             }, 500);
 
             return () => clearTimeout(timeout)
