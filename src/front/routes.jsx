@@ -19,6 +19,7 @@ import { BoardGames } from "./pages/BoardG";
 import { Chess } from "./pages/ChessGame";
 import { OnlineGames } from "./pages/OnlineG";
 import { TresEnRaya } from "./pages/TresEnRaya";
+import { Gameboarddetail } from "./pages/GamesBoardDetails";
 
 
 export const router = createBrowserRouter(
@@ -40,6 +41,7 @@ export const router = createBrowserRouter(
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
         <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/boardgame/:id" element={<Gameboarddetail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/boardgames" element={<BoardGames />} />

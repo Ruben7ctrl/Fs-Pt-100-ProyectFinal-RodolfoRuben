@@ -1,0 +1,148 @@
+/* Fondo principal con la imagen del juego */
+.boardgames-detail {
+    background-image: var(--background-url);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header (esquina superior izquierda) */
+.boardgames-detail-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 2;
+}
+
+/* Botón Volver (esquina superior derecha) */
+.boardgames-detail-back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+}
+
+/* Panel de información (con fondo semitransparente) */
+.boardgames-detail-info-panel {
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 800px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
+}
+
+/* Título */
+.boardgames-detail-title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+/* Descripción */
+.boardgames-detail-description {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* Rating, Año, Jugadores, etc */
+.boardgames-detail-rating {
+    font-size: 1rem;
+    margin: 8px 0;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtítulo */
+.boardgames-detail-subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+/* A PARTIR DE AQUI SON PARA LA VISTA ONLINE*/
+
+/* Botón de partida online */
+
+.fondoCampaña {
+    background-image: url("/src/front/assets/img/fondoCampaña.png");
+    min-height: 100vh;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 0.5s ease;
+}
+
+
+
+.fondoAjedrez {
+    background-image: url("/src/front/assets/img/fondoAjedrez.png");
+    min-height: 100vh;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 0.5s ease;
+}
+.fondoTresEnRaya {
+    background-image: url("/src/front/assets/img/fondoTresEnRaya.png");
+    min-height: 100vh;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 0.5s ease;
+}
+
+.online-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.online-game-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-align: center;
+}
+
+.online-game-card:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.online-game-card-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.online-game-card-content p {
+    font-size: 1rem;
+    margin: 0;
+}
+
+
