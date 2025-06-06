@@ -5,13 +5,14 @@ import userServices from "../services/flux";
 import "../styles/BoardGames.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
-import { House, MagnifyingGlass,ArrowLeft, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
+import { House, MagnifyingGlass, ArrowLeft, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import { useNavigate } from "react-router-dom";
 import fallbackImage from './../assets/img/fallbackimage.jpg';
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
 import { Loading } from "../components/loading";
+import { Link } from "react-router-dom";
 
 
 export const BoardGames = () => {
@@ -65,98 +66,99 @@ export const BoardGames = () => {
         cargar()
     }, [pagina, letra])
 
- const hoverSoundRef = useRef(new Audio(Botonsiguiente));
+    const hoverSoundRef = useRef(new Audio(Botonsiguiente));
 
-  const playHoverSound = () => {
-    const sound = hoverSoundRef.current;
-    sound.currentTime = 0; // 🔥 Esta línea es clave
-    sound.play().catch(e => {
-      console.log("Playback prevented:", e);
-    });
-  };
+    const playHoverSound = () => {
+        const sound = hoverSoundRef.current;
+        sound.currentTime = 0; // 🔥 Esta línea es clave
+        sound.play().catch(e => {
+            console.log("Playback prevented:", e);
+        });
+    };
 
-  return (
-    <div className="fondoGames">
+    return (
+        <div className="fondoGames">
 
-        <div className="boardgames-pageB">
+            <div className="boardgames-pageB">
 
-            {/* Botón Volver */}
-            <div className="boardgames-backB">
-                <button className="icon-buttonB" onClick={() => navigate('/games')}>
-                    <ArrowLeft size={24} weight="bold" />
-                </button>
-            </div>
-
-            <h2 className="boardgames-titleB">🎲 Juegos de Mesa ({letra.toUpperCase()})</h2>
-
-            {/* Letras */}
-            <div className="boardgames-lettersB">
-                {letras.map(l => (
-                    <button
-                        key={l}
-                        onClick={() => { setLetra(l.toLowerCase()); setPagina(1) }}
-                        className={`letter-buttonB ${l.toLowerCase() === letra ? "active" : ""}`}
-                    >
-                        {l}
+                {/* Botón Volver */}
+                <div className="boardgames-backB">
+                    <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                        <ArrowLeft size={24} weight="bold" />
                     </button>
-                ))}
-            </div>
+                </div>
 
-            {/* Juegos */}
-            {cargando ? (
-                <Loading/>
-            ) : (
-                <div className="boardgames-gridB">
-                    {juegos.map(juego => (
-                        <div key={juego.id} className="boardgames-cardB">
+                <h2 className="boardgames-titleB">🎲 Juegos de Mesa ({letra.toUpperCase()})</h2>
 
-                            {/* Imagen arriba */}
-                            
-                                <img
-                                    src={juego.image ? juego.image : fallbackImage } 
-                                    alt={juego.name}
-                                    className="boardgames-card-image"
-                                />
-                            
-
-                            {/* Info abajo */}
-                            <div className="boardgames-card-contentB">
-                                <h4>{juego.name}</h4>
-                                <p>{juego.year}</p>
-                                <p>🎯 {juego.minPlayers} - {juego.maxPlayers} jugadores</p>
-                                <p>⏱️ {juego.playTime} min</p>
-                                <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
-                                <p className="categoriesB">{juego.categories?.join(", ")}</p>
-                            </div>
-
-                        </div>
+                {/* Letras */}
+                <div className="boardgames-lettersB">
+                    {letras.map(l => (
+                        <button
+                            key={l}
+                            onClick={() => { setLetra(l.toLowerCase()); setPagina(1) }}
+                            className={`letter-buttonB ${l.toLowerCase() === letra ? "active" : ""}`}
+                        >
+                            {l}
+                        </button>
                     ))}
                 </div>
-            )}
 
-            {/* Paginación */}
-            <div className="boardgames-paginationB">
-                <button
-                    disabled={pagina === 1}
-                    onClick={() => {setPagina(p => p - 1); playHoverSound() }}
-                    
-                    className="pagination-buttonB"
-                >
-                    <ArrowLeft size={20} weight="bold" /> Anterior
-                </button>
-                <span className="pagination-pageB">Página {pagina}</span>
-                <button
-                    onClick={() => {setPagina(p => p + 1); playHoverSound() }}
-                    className="pagination-buttonB"
-                >
-                    Siguiente <CaretRight size={20} weight="bold" />
-                </button>
+                {/* Juegos */}
+                {cargando ? (
+                    <Loading />
+                ) : (
+                    <div className="boardgames-gridB">
+                        {juegos.map(juego => (
+                            <div key={juego.id} className="boardgames-cardB">
+                                <Link to={`/boardgame/${juego.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                    {/* Imagen arriba */}
+
+                                    <img
+                                        src={juego.image ? juego.image : fallbackImage}
+                                        alt={juego.name}
+                                        className="boardgames-card-image"
+                                    />
+
+
+                                    {/* Info abajo */}
+                                    <div className="boardgames-card-contentB">
+                                        <h4>{juego.name}</h4>
+                                        <p>{juego.year}</p>
+                                        <p>🎯 {juego.minPlayers} - {juego.maxPlayers} jugadores</p>
+                                        <p>⏱️ {juego.playTime} min</p>
+                                        <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
+                                        <p className="categoriesB">{juego.categories?.join(", ")}</p>
+                                    </div>
+                                </Link>
+                            </div>
+
+                        ))}
+                    </div>
+                )}
+
+                {/* Paginación */}
+                <div className="boardgames-paginationB">
+                    <button
+                        disabled={pagina === 1}
+                        onClick={() => { setPagina(p => p - 1); playHoverSound() }}
+
+                        className="pagination-buttonB"
+                    >
+                        <ArrowLeft size={20} weight="bold" /> Anterior
+                    </button>
+                    <span className="pagination-pageB">Página {pagina}</span>
+                    <button
+                        onClick={() => { setPagina(p => p + 1); playHoverSound() }}
+                        className="pagination-buttonB"
+                    >
+                        Siguiente <CaretRight size={20} weight="bold" />
+                    </button>
+                </div>
+
             </div>
 
         </div>
-
-    </div>
-);
+    );
 
 
 
