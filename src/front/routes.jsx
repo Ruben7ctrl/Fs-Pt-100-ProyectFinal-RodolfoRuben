@@ -20,6 +20,7 @@ import { Chess } from "./pages/ChessGame";
 import { OnlineGames } from "./pages/OnlineG";
 import { TresEnRaya } from "./pages/TresEnRaya";
 import { Gameboarddetail } from "./pages/GamesBoardDetails";
+import { BattleShip } from "./pages/BattleShip";
 
 
 export const router = createBrowserRouter(
@@ -48,6 +49,7 @@ export const router = createBrowserRouter(
         <Route path="/onlinegame/11" element={<Chess />} />
         <Route path="/onlinegames" element={<OnlineGames />} />
         <Route path="/onlinegame/12" element={<TresEnRaya />} />
+        <Route path="/onlinegame/13" element={<BattleShip />} />
       </Route>
     )
 );
