@@ -3,6 +3,8 @@ import openAiServices from "../services/fluxOpenAI";
 import { MarkdownReader } from "./MarkdownReader";
 import "../styles/IAsession.css"
 import useGlobalReducer from "../hooks/useGlobalReducer";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
 
 
 export const ChatbotIA = () => {
@@ -11,6 +13,7 @@ export const ChatbotIA = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('')
     const [chapter, setChapter] = useState(1)
+     const navigate = useNavigate();
 
     const [campaignConfig, setCampaignConfig] = useState({
         difficulty_level: null,
@@ -180,6 +183,11 @@ export const ChatbotIA = () => {
                 <button onClick={handleSendMessage}>
                     Enviar
                 </button>
+                <div className="boardgames-backB">
+                <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                    <ArrowLeft size={24} weight="bold" />
+                </button>
+            </div>
             </>
             {/* )} */}
         </div>
