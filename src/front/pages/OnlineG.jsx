@@ -55,6 +55,8 @@ const handleClick = ()=>{
     if (hoveredGame === 'ajedrez') return 'fondoAjedrez';
     if (hoveredGame === 'tres en raya') return 'fondoTresEnRaya';
     if (hoveredGame === 'campaña') return 'fondoCampaña';
+    if (hoveredGame === 'hundir la flota') return 'fondoHundirflota';
+
     return 'fondoGames';
 };
 

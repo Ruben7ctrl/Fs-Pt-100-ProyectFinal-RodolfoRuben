@@ -3,6 +3,8 @@ import { Square } from "./Squares";
 import { CapturedPieces } from "./CapturedPieces";
 import { Chess } from "chess.js";
 import gamesServices from "../services/fluxGames";
+import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
+import { useNavigate } from "react-router-dom";
 
 
 export const ChessBoard = () => {
@@ -16,7 +18,7 @@ export const ChessBoard = () => {
     const [gameResult, SetGameResult] = useState(null);
     const [gameOver, setGameOver] = useState(false);
     const [statsUpdated, setStatsUpdated] = useState(false);
-
+    const navigate = useNavigate();
     const engine = useRef(null)
 
 
@@ -181,47 +183,79 @@ export const ChessBoard = () => {
     }
 
     return (
-        <>
-            <CapturedPieces pieces={capturedBlack} color="black" />
+        <div className="chess-game-container "> {/* Nuevo contenedor */}
 
-            <div className="chess-board">
-                {board.map((row, rIdx) =>
-                    row.map((cell, cIdx) => (
-                        <Square key={`${rIdx}-${cIdx}`} row={rIdx} col={cIdx} piece={cell} selected={selected?.[0] === rIdx && selected?.[1] === cIdx} onClick={() => handleClick(rIdx, cIdx)} />
-                    )))}
+            <div className="boardgames-backB">
+                <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                    <ArrowLeft size={24} weight="bold" />
+                </button>
             </div>
 
-            <CapturedPieces pieces={capturedWhite} color="white" />
 
+            {/* Captured pieces Black */}
+            <div className="captured-pieces-section top">
+                <CapturedPieces pieces={capturedBlack} color="black" />
+            </div>
+
+            <div className="chess-board-section">
+                <div className="chess-board">
+                    {board.map((row, rIdx) =>
+                        row.map((cell, cIdx) => (
+                            <Square
+                                key={`${rIdx}-${cIdx}`}
+                                row={rIdx}
+                                col={cIdx}
+                                piece={cell}
+                                selected={selected?.[0] === rIdx && selected?.[1] === cIdx}
+                                onClick={() => handleClick(rIdx, cIdx)}
+                            />
+                        ))
+                    )}
+                </div>
+            </div>
+
+            {/* Captured pieces White */}
+            <div className="captured-pieces-section bottom">
+                <CapturedPieces pieces={capturedWhite} color="white" />
+            </div>
+
+            {/* Promotion popup */}
             {promotion && (
                 <div className="promotion-popup">
                     <p>Promocionar a:</p>
                     {["queen", "rook", "bishop", "knight"].map((type) => (
-                        <button key={type} onClick={() => setPromotion(type[0])}>{type}</button>
+                        <button key={type} onClick={() => setPromotion(type[0])}>
+                            {type}
+                        </button>
                     ))}
                 </div>
             )}
 
+            {/* Game Over popup */}
             {gameResult && (
                 <div className="game-over-popup">
                     <h2>Fin del Juego</h2>
                     <p>{gameResult}</p>
-                    <button onClick={() => {
-                        const newGame = new Chess();
-                        setChess(newGame);
-                        setBoard(newGame.board());
-                        setSelected(null);
-                        setTurn("w");
-                        setPromotion(null);
-                        setCapturedBlack([]);
-                        setCapturedWhite([]);
-                        SetGameResult(null);
-                        setGameOver(false);
-                        setStatsUpdated(false);
-                    }}>Reiniciar partida</button>
+                    <button
+                        onClick={() => {
+                            const newGame = new Chess();
+                            setChess(newGame);
+                            setBoard(newGame.board());
+                            setSelected(null);
+                            setTurn("w");
+                            setPromotion(null);
+                            setCapturedBlack([]);
+                            setCapturedWhite([]);
+                            SetGameResult(null);
+                            setGameOver(false);
+                            setStatsUpdated(false);
+                        }}
+                    >
+                        Reiniciar partida
+                    </button>
                 </div>
             )}
-        </>
-    )
+        </div>
+    );
 }
 

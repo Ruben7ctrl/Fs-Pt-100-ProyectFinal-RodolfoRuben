@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../styles/TresEnRaya.css"
 import gamesServices from "../services/fluxGames";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
 
 const TURNS = {
     X: 'x',
     O: 'o'
 }
+
+
 
 const WINNER_COMBOS = [
     [0, 1, 2],
@@ -36,6 +40,8 @@ const Square = ({ children, isSelected, updateBoard, index }) => {
 
 //create your first component
 function App() {
+
+    const navigate = useNavigate();
 
     const [board, setBoard] = useState(Array(9).fill(null))
     const [winner, setWinner] = useState(null)//null es que no hay ganador,false es que hay un empate
@@ -166,6 +172,11 @@ function App() {
 
     return (
         <main className="board-container">
+            <div className="boardgames-backB">
+                <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                    <ArrowLeft size={24} weight="bold" />
+                </button>
+            </div>
             <div className="board-box">
                 <div className="board">
                     <h1> TIC TAC TOE</h1>

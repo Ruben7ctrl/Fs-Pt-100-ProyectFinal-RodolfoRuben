@@ -3,6 +3,8 @@ import { Board } from "./Board";
 import { generateEmptyBoard, placeAllShipsRandomly, isGameOver, performAttack } from '../utils/ShipUtils.js';
 import { ShipPlacer } from "./ShipPlacer.jsx";
 import { GameOverModal } from "./GameOverModal.jsx";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
 
 
 export const Game = () => {
@@ -15,6 +17,7 @@ export const Game = () => {
     const [winner, setWinner] = useState(null);
     const [gameStarted, setGameStarted] = useState(false);
     const [playerShipsPlaced, setPlayerShipsPlaced] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const [newAIBoard, ships] = placeAllShipsRandomly(generateEmptyBoard());
@@ -78,11 +81,26 @@ export const Game = () => {
     }, [playerTurn])
 
     const restartGame = () => {
-        window.location.reload();
+
+          const [newAIBoard, ships] = placeAllShipsRandomly(generateEmptyBoard());
+        setAiBoard(newAIBoard);
+        setAiShips(ships);
+       
+        setPlayerShips(null);
+        setPlayerShipsPlaced(null);
+        
+        setGameStarted(true)
+        
+
     }
 
     return (
         <div className="game">
+              <div className="boardgames-backB">
+                            <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                                <ArrowLeft size={24} weight="bold" />
+                            </button>
+                        </div>
             {!playerShipsPlaced ? (
                 <ShipPlacer onPlaceShips={startGame} />
             ) : (
@@ -92,7 +110,7 @@ export const Game = () => {
                         <Board title='IA' board={aiBoard} onCellClick={handlePlayerAttack} hideShips={true} />
                     </div>
                     <p>{message}</p>
-                    <button onClick={restartGame}>Reiniciar</button>
+                    <button className="BotonBarco" onClick={restartGame}>Reiniciar</button>
                     {winner && (
                         <GameOverModal
                             winner={winner}
@@ -100,7 +118,7 @@ export const Game = () => {
                         />
                     )}
                 </>
-            
+
             )}
         </div>
     )

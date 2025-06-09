@@ -7,7 +7,7 @@ export const BattleShip = () => {
 
     return (
         <div className="App">
-            <h1>Hundir la Flota</h1>
+            
             <Game />
         </div>
     )
