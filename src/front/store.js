@@ -1,4 +1,5 @@
 import { act } from "react"
+import { StaticElement } from "three/examples/jsm/transpiler/AST.js"
 
 export const initialStore=()=>{
   return{
@@ -9,7 +10,8 @@ export const initialStore=()=>{
     juegosdemesa: [],
     jdmdatos: [],
     recomendados:[],
-    videos:[]
+    videos:[], 
+    cart: []
   
   }
 }
@@ -78,6 +80,21 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         jdmdatos: action.payload
+      }
+    case 'add_to_cart': 
+      return {
+        ...store,
+        cart: [...store.cart, action.payload]
+      };
+    case 'remove_from_cart':
+      return {
+        ...store,
+        cart: store.cart.filter((item) => item.id !== action.payload)
+      }
+    case 'clean_cart':
+      return {
+        ...store,
+        cart: []
       }
     default:
       throw Error('Unknown action.');

@@ -54,6 +54,8 @@
 		]
 	},
 	"dependencies": {
+		"@react-three/drei": "^10.1.2",
+		"@react-three/fiber": "^9.1.2",
 		"@stripe/react-stripe-js": "^3.7.0",
 		"@stripe/stripe-js": "^7.3.1",
 		"animejs": "^3.2.1",
@@ -68,6 +70,7 @@
 		"react-markdown": "^10.1.0",
 		"react-router-dom": "^6.18.0",
 		"remark-gfm": "^4.0.1",
-		"stockfish": "^16.0.0"
+		"stockfish": "^16.0.0",
+		"three": "^0.177.0"
 	}
 }
