@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, Users, OnlineGames, Favorites, OnlineStats, Purchases, UserContacts, IAsessions, IAevents
+from api.models import db, Users, OnlineGames, Favorites, OnlineStats, Purchases, UserContacts, IAsessions, IAevents, GamePurchase, OwnGames, StoreItem
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select, or_
@@ -14,14 +14,19 @@ from flask_mail import Mail, Message
 from api.mail.mailer import send_mail
 from flask import current_app 
 from datetime import datetime
+import os
+
+import stripe
 
 api = Blueprint('api', __name__)
+
+stripe.api_key = os.getenv('STRIPE_SECRET')
 
 # Allow CORS requests to this API
 CORS(api)
 
 
-
+FRONT = 'https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev/'
 @api.route('/users', methods=['GET'])
 def get_users():
 
@@ -176,7 +181,128 @@ def reset_password():
         print("Error al modificar password: {str(e)}")
         return jsonify({"success": False, "msg": f"Error al modificar password: {str(e)}"})
 
+#ruta para crear una session de pago con stripe
+@api.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        body = request.get_json()
+        if not body or 'items' not in body:
+            return jsonify({"error": "Invalid request, 'items' is required"}), 400
+        
+        session = stripe.checkout.Session.create(
+            ui_mode = 'embedded',
+            line_items=body['items'],
+            mode='payment',
+            return_url=FRONT + 'return?session_id={CHECKOUT_SESSION_ID}',
+        )
+    except Exception as e:
+        return str(e)
 
+    return jsonify({"clientSecret":session.client_secret})
+
+
+#ruta que se encarga de recibir el id de la session y devolver el estado del pago
+@api.route('/session-status', methods=['GET'])
+def session_status():
+  session = stripe.checkout.Session.retrieve(request.args.get('session_id'))
+
+  return jsonify(status=session.status, customer_email=session.customer_details.email)
+
+
+@api.route('/store-purchase', methods=['POST'])
+def store_purchase():
+    try:
+        data = request.get_json()
+
+        session_id = data.get("session_id")
+        user_id = data.get("user_id")
+        game_api_id = data.get("game_api_id")
+        game_name = data.get("game_name")
+
+        if not all([session_id, user_id, game_api_id, game_name]):
+            return jsonify({"error": "Missing required fields"}), 400
+        
+        session = stripe.checkout.Session.retrieve(session_id, expand=['line_items'])
+        if session.payment_status != "paid":
+            return jsonify({"error": "Payment not complete"}), 400
+        
+        amount = session.amount_total
+        currency = session.currency
+        stripe_price_id = session.line_items.data[0].price.id if session.line_items and session.line_items.data else "unknown" 
+
+        new_purchase = GamePurchase(
+            game_api_id=game_api_id,
+            name=game_name,
+            stripe_price_id=stripe_price_id,
+            amount_paid=amount,
+            currency=currency
+        )
+
+        db.session.add(new_purchase)
+        db.session.commit()
+
+        own_game = OwnGames(
+            user_id=user_id,
+            purchase_id=new_purchase.id
+        )
+
+        db.session.add(own_game)
+        db.session.commit()
+
+        return jsonify({"message": "Purchase store successfully"}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/items', methods=['GET'])
+def get_store_items():
+
+    stmt = select(StoreItem)
+    items = db.session.execute(stmt).scalars().all()
+
+    return jsonify([item.serialize() for item in items]), 200
+
+
+@api.route('/items', methods=['POST'])
+def create_store_item():
+    data = request.get_json()
+
+    game_api_id = data.get("game_api_id")
+    name = data.get("name")
+    stripe_price_id = data.get("stripe_price_id")
+    price = data.get("price")
+    currency = data.get("currency", "eur")
+
+    if not all([game_api_id, name, stripe_price_id, price, currency]):
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    new_item = StoreItem(
+        game_api_id= game_api_id,
+        name= name,
+        stripe_price_id= stripe_price_id,
+        price= price,
+        currency= currency,
+    )
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    return jsonify(new_item.serialize()), 200
+
+
+@api.route('/items/<int:item_id>', methods=['DELETE'])
+def delete_store_item(item_id):
+
+    stmt = select(StoreItem).where(StoreItem.id == item_id)
+    storegame = db.session.execute(stmt).scalar_one_or_none()
+    if storegame is None:
+        return jsonify({"error": "Store Game not found"}), 400
+
+    db.session.delete(storegame)
+    db.session.commit()
+
+    return jsonify({"msg": "Store Game delete"}), 200
 
 @api.route('/profile', methods=['GET'])
 @jwt_required()
@@ -866,26 +992,31 @@ def create_favorites():
         data = request.get_json()
 
         user1_id = data.get('user1_id')
-        user2_id = data.get('user2_id')
+        # user2_id = data.get('user2_id')
+        game_api_id = data.get('game_api_id')
         onlinegame_id = data.get('onlinegame_id')
-        if not user1_id or not user2_id or not onlinegame_id:
-            return jsonify({"error": "User1 ID, User2 ID or OnlineGAme ID is required"}), 404
+        if not user1_id:
+            return jsonify({"error": "User1 ID is required"}), 404
+        if not (onlinegame_id or game_api_id):
+            return jsonify({"error": "At least one of the onlinegame_id or game_api_id is required"})
 
         user1 = db.session.get(Users, user1_id)
         if not user1:
             return jsonify({"error": "User1 not found"}), 404
 
-        user2 = db.session.get(Users, user2_id)
-        if not user2:
-            return jsonify({"error": "User2 not found"}), 404
+        # user2 = db.session.get(Users, user2_id)
+        # if not user2:
+        #     return jsonify({"error": "User2 not found"}), 404
+        
 
-        onlinegame = db.session.get(OnlineGames, onlinegame_id)
-        if not onlinegame:
-            return jsonify({"error": "Online Game not found"}), 404
+        # onlinegame = db.session.get(OnlineGames, onlinegame_id)
+        # if not onlinegame:
+        #     return jsonify({"error": "Online Game not found"}), 404
 
         new_favorite = Favorites(
             user1_id=user1_id,
-            user2_id=user2_id,
+            # user2_id=user2_id,
+            game_api_id= game_api_id,
             onlinegame_id=onlinegame_id,
         )
 
