@@ -1,85 +1,110 @@
-import { act } from "react"
+import { act } from "react";
 
-export const initialStore=()=>{
-  return{
-    user: JSON.parse(localStorage.getItem('user'))? JSON.parse(localStorage.getItem('user')): null,
-    sessionID: localStorage.getItem('activeSessionID') || null,
+export const initialStore = () => {
+  return {
+    user: JSON.parse(localStorage.getItem("user"))
+      ? {
+          ...JSON.parse(localStorage.getItem("user")),
+          favorites: JSON.parse(localStorage.getItem("user")).favorites || [],
+        }
+      : null,
+    sessionID: localStorage.getItem("activeSessionID") || null,
     videojuegos: [],
     unvideojuego: [],
     juegosdemesa: [],
     jdmdatos: [],
-    recomendados:[],
-    videos:[]
-  
-  }
-}
+    recomendados: [],
+    videos: [],
+  };
+};
 
 export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'get_videos':
-      return {
-        ...store,
-        videos: action.payload
-      }
-    case 'get_recomendados':
-      return {
-        ...store,
-        recomendados: action.payload
-      }
-    case 'signin/signup':
-      localStorage.setItem('user', JSON.stringify(action.payload.user))
-      localStorage.setItem('token', action.payload.token)
+  switch (action.type) {
+    case "set_favorites":
+   return {
+     ...store,
+     user: { ...store.user, favorites: action.payload }
+   };
+    case "add_favorite":
+      if (!store.user) return store; // Asegurar que el usuario está logueado
 
-      const sessionID = localStorage.getItem(`sessionID-${user.id}`);
-      if (sessionID) {
-        localStorage.setItem('activeSessionID', sessionID)
-      }
+      const updatedFavorites = [...store.user.favorites, action.payload];
+      const updatedUser = { ...store.user, favorites: updatedFavorites };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
       return {
         ...store,
-        user,
-        sessionID,
+        user: updatedUser,
+      };
+
+    case "get_videos":
+      return {
+        ...store,
+        videos: action.payload,
+      };
+    case "get_recomendados":
+      return {
+        ...store,
+        recomendados: action.payload,
+      };
+    case "signin/signup":
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
+
+      const sessionID = localStorage.getItem(
+        `sessionID-${action.payload.user.id}`
+      );
+      if (sessionID) {
+        localStorage.setItem("activeSessionID", sessionID);
       }
-    case 'logout':
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+
+      return {
+        ...store,
+        user: action.payload.user,
+        sessionID,
+      };
+    case "logout":
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       // localStorage.removeItem('activeSessionID')
       return {
         ...store,
         user: null,
         // sessionID: null,
-      }
-    case 'clear_sessionID':
-      localStorage.removeItem('activeSessionID');
+      };
+    case "clear_sessionID":
+      localStorage.removeItem("activeSessionID");
       return {
         sessionID: null,
-      }
-    case 'set_sessionID':
-      localStorage.setItem('activeSessionID', action.payload)
+      };
+    case "set_sessionID":
+      localStorage.setItem("activeSessionID", action.payload);
       return {
         ...store,
-        sessionID: action.payload
-      }
-    case 'load_videojuegos':
+        sessionID: action.payload,
+      };
+    case "load_videojuegos":
       return {
         ...store,
-        videojuegos: action.payload
-      }
-    case 'get_videojuego':
+        videojuegos: action.payload,
+      };
+    case "get_videojuego":
       return {
         ...store,
-        unvideojuego: action.payload
-      }
-    case 'load_juegosdemesa':
+        unvideojuego: action.payload,
+      };
+    case "load_juegosdemesa":
       return {
         ...store,
-        juegosdemesa: action.payload
-      }
-    case 'load_jdmdatos':
+        juegosdemesa: action.payload,
+      };
+    case "load_jdmdatos":
       return {
         ...store,
-        jdmdatos: action.payload
-      }
+        jdmdatos: action.payload,
+      };
     default:
-      throw Error('Unknown action.');
-  }    
+      throw Error("Unknown action.");
+  }
 }

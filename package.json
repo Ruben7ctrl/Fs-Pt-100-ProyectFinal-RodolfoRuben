@@ -54,6 +54,9 @@
 		]
 	},
 	"dependencies": {
+		"@react-spring/three": "^10.0.1",
+		"@react-three/drei": "^9.56.14",
+		"@react-three/fiber": "^8.13.6",
 		"animejs": "^3.2.1",
 		"axios": "^1.9.0",
 		"bootstrap": "^5.3.6",
@@ -66,6 +69,7 @@
 		"react-markdown": "^10.1.0",
 		"react-router-dom": "^6.18.0",
 		"remark-gfm": "^4.0.1",
-		"stockfish": "^16.0.0"
+		"stockfish": "^16.0.0",
+		"three": "^0.177.0"
 	}
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/Chess.css"
-import { ChessBoard } from "../components/ChessBoard";
+import {ChessBoard} from "../components/ChessBoard";
 
 
 export const Chess = () => {
