@@ -7,8 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import app
 from api.models import db
 from seed_data import (
-    seed_users, seed_online_games, seed_purchases, seed_online_stats,
-    seed_ia_sessions, seed_ia_events, seed_favorites, seed_user_contacts
+    seed_users, seed_online_games, seed_purchases,
+    seed_ia_sessions, seed_ia_events, seed_favorites, seed_user_contacts,
+    seed_game_purchases, seed_own_games, seed_store_items
 )
 # from api import api
 
@@ -29,9 +30,9 @@ with app.app_context():
     db.session.add_all(purchases)
     db.session.commit()
 
-    stats = seed_online_stats(users, games)
-    db.session.add_all(stats)
-    db.session.commit()
+    # stats = seed_online_stats(users, games)
+    # db.session.add_all(stats)
+    # db.session.commit()
 
     ia_sessions = seed_ia_sessions(users)
     db.session.add_all(ia_sessions)
@@ -47,6 +48,18 @@ with app.app_context():
 
     contacts = seed_user_contacts(users)
     db.session.add_all(contacts)
+    db.session.commit()
+
+    game_purchases = seed_game_purchases()
+    db.session.add_all(game_purchases)
+    db.session.commit()
+
+    own_games = seed_own_games(users, game_purchases)
+    db.session.add_all(own_games)
+    db.session.commit()
+
+    store_items = seed_store_items()
+    db.session.add_all(store_items)
     db.session.commit()
 
     print("✅ Datos de prueba generados exitosamente.")

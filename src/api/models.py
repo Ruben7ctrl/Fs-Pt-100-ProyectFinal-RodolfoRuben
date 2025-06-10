@@ -20,7 +20,7 @@ class Users(db.Model):
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
     favorite1: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user1", foreign_keys=lambda: [Favorites.user1_id])
-    favorite2: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user2", foreign_keys=lambda: [Favorites.user2_id])
+    # favorite2: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user2", foreign_keys=lambda: [Favorites.user2_id])
 
     purchases: Mapped[List["Purchases"]] = relationship(back_populates="user_purchase")
 
@@ -29,6 +29,8 @@ class Users(db.Model):
     online_stats: Mapped[List["OnlineStats"]] = relationship(back_populates="user_stats")
 
     ia_sessions: Mapped[List["IAsessions"]] = relationship(back_populates="user_iasessions")
+
+    owned_games: Mapped[list["OwnGames"]] = relationship(back_populates="user")
 
 
     def serialize(self):
@@ -41,10 +43,11 @@ class Users(db.Model):
             "dateofbirth": self.dateofbirth if self.dateofbirth else None,
             "phone": self.phone if self.phone else None,
             "favorite1": [fav.serialize() for fav in self.favorite1],
-            "favorite2": [fav.serialize() for fav in self.favorite2],
+            # "favorite2": [fav.serialize() for fav in self.favorite2],
             "usercontact": [cont.serialize() for cont in self.usercontact],
             "online_stats": [stats.serialize() for stats in self.online_stats],
             "ia_sessions": [ia.serialize() for ia in self.ia_sessions],
+            "owned_games": [own.serialize() for own in self.owned_games],
         }
     
 
@@ -201,15 +204,15 @@ class Favorites(db.Model):
     __tablename__ = "favorites"
     id: Mapped[int] = mapped_column(primary_key=True)
     user1_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    user2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    # user2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     onlinegame_id: Mapped[int] = mapped_column(ForeignKey("onlinegames.id"), nullable=True)
-    # storegames_id: Mapped[int] = mapped_column(ForeignKey(".id"), primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=True)
 
 
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
     user1: Mapped["Users"] = relationship(back_populates="favorite1", foreign_keys=[user1_id])
-    user2: Mapped["Users"] = relationship(back_populates="favorite2", foreign_keys=[user2_id])
+    # user2: Mapped["Users"] = relationship(back_populates="favorite2", foreign_keys=[user2_id])
     onlinegamesFav: Mapped["OnlineGames"] = relationship(back_populates="favourite")
     # storegamesFAv: Mapped[""] = relationship(back_populates="favourite")
 
@@ -218,12 +221,13 @@ class Favorites(db.Model):
         return {
             "id": self.id,
             "user1_id": self.user1_id,
-            "user2_id": self.user2_id,
+            # "user2_id": self.user2_id,
+            "game_api_id": self.game_api_id,
             "onlinegame_id": self.onlinegame_id,
             # "storegames_id": self.storegames_id,
             "user1": self.user1.username if self.user1 else None,
-            "user2": self.user2.username if self.user2 else None,
-            "onlinegamesFav": self.onlinegamesFav.name if self.onlinegamesFav.name else None,
+            # "user2": self.user2.username if self.user2 else None,
+            "onlinegamesFav": self.onlinegamesFav.name if self.onlinegamesFav else None,
             # "storegamesFav": self.storegamesFav.name if self.storegamesFav.name else None,
             "created_at": self.created_at.isoformat(),
         }
@@ -249,3 +253,69 @@ class UserContacts(db.Model):
         }
     
 
+class GamePurchase(db.Model):
+    __tablename__ = "game_purchase"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=True)
+    stripe_price_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    amount_paid: Mapped[int] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="eur")
+    purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
+
+
+    owners: Mapped[list["OwnGames"]] = relationship(back_populates="purchase")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.game_api_id,
+            "name": self.name,
+            "stripe_price_id": self.stripe_price_id,
+            "amount_price": self.amount_paid,
+            "currency": self.currency,
+            "purchased_at": self.purchased_at.isoformat()
+        }
+    
+    
+class StoreItem(db.Model):
+    __tablename__ = "store_item"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=True)
+    stripe_price_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    price: Mapped[int] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="eur")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.game_id,
+            "name": self.name,
+            "stripe_price_id": self.stripe_price_id,
+            "price": self.price,
+            "currency": self.currency,
+        }
+    
+
+class OwnGames(db.Model):
+    __tablename__ = "owngames"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    purchase_id: Mapped[int] = mapped_column(ForeignKey("game_purchase.id"), nullable=False)
+    acquired_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
+
+    
+    user: Mapped["Users"] = relationship(back_populates="owned_games")
+    purchase: Mapped["GamePurchase"] = relationship(back_populates="owners")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "purchase": self.purchase,
+            "acquired_at": self.acquired_at.isoformat()
+        }
