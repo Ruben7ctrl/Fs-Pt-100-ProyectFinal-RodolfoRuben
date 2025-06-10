@@ -72,6 +72,7 @@
 		"react-router-dom": "^6.18.0",
 		"remark-gfm": "^4.0.1",
 		"stockfish": "^16.0.0",
+		"stripe": "^18.2.1",
 		"three": "^0.177.0"
 	}
 }
