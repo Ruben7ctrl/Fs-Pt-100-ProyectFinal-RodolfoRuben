@@ -25,6 +25,7 @@ itsdangerous = "*"
 axios = "*"
 flask-mail = "*"
 flask-cors = "*"
+stripe = "*"
 
 [requires]
 python_version = "3.13"

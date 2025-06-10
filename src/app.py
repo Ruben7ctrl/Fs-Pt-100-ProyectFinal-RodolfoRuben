@@ -17,7 +17,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_cors import CORS
 from api.mail.mail_config import mail, init_mail
 
-
+import stripe
 
 
 # from models import Person
