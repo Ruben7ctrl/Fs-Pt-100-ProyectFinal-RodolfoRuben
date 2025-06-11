@@ -420,9 +420,6 @@ const handleClick = () => {
                 ) : (
                   <button className="game-button disabled">BBS</button>
                 )}
-                  
-                <button className="game-button">❤️</button>
-                <button className="game-button">Buy</button>
                 <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
