@@ -13,6 +13,8 @@ import fallbackImage from './../assets/img/fallbackimage.jpg';
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
 import { Loading } from "../components/loading";
 import { Link } from "react-router-dom";
+import { Clock } from "phosphor-react";
+import stripeServices from "../services/fluxStore";
 
 
 export const BoardGames = () => {
@@ -56,7 +58,19 @@ export const BoardGames = () => {
                         }
                     })
                 )
-                setJuegos(detalles.filter(j => j !== null))
+                const storeItems = await stripeServices.getItemsFromStore();
+
+                const JuegosConPrecio = detalles
+                    .filter(j => j !== null)
+                    .map(juego => {
+                        const item = storeItems.find(si => si.game_api_id.toString() === juego.id.toString());
+                        return {
+                            ...juego,
+                            stripe_price_id: item ? item.stripe_price_id : null,
+                        }
+                    })
+
+                setJuegos(JuegosConPrecio)
             } catch (error) {
                 console.error("Error cargando juegos:", error)
                 setJuegos([])
@@ -129,7 +143,16 @@ export const BoardGames = () => {
                                         <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
                                         <p className="categoriesB">{juego.categories?.join(", ")}</p>
                                     </div>
+
                                 </Link>
+                                <div className="buttons-mesa">
+                                    {juego?.stripe_price_id ? (
+                                        <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: juego })}>Buy</button>
+                                    ) : (
+                                        <button className="game-bottons" disabled><Clock size={27} /></button>
+                                    )}
+                                    <button className="game-button" >❤️</button>
+                                </div>
                             </div>
 
                         ))}

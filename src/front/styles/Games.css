@@ -283,7 +283,17 @@
     color: #fff;
 }
 
-
+.game-buttons {
+    background: gray;
+    color: #000;
+    border: none;
+    padding: 8px 12px 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: not-allowed;
+    transition: background 0.3s, color 0.3s;
+    margin: 0px 3px 3px 3px;
+}
 
 /* // aqui empieza botones prevview --- next // */
 
@@ -376,4 +386,22 @@
   border-color: #f0f;
   box-shadow: 0 0 20px #f0f;
   color: #fff;
+}
+
+.buttons-mesa {
+  display: flex;
+  justify-content: center;
+  background: black;
+}
+
+.game-bottons {
+    background: gray;
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: not-allowed;
+    transition: background 0.3s, color 0.3s;
+    margin: 0px 3px 3px 3px;
 }

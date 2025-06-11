@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/Autentication.css"
 import userServices from "../services/flux";
 
@@ -78,8 +78,11 @@ export const Signin = () => {
                         </div>
 
                         <div className="d-flex flex-column gap-3 mt-3">
-                            <button className="btn btn-secondary" onClick={handleClick}>Sign Up</button>
                             <input type="submit" className="btn btn-primary" value={"Sign In"} />
+                            <button className="btn btn-secondary" onClick={handleClick}>Sign Up</button>
+                            <Link to="/forgot-password">
+                                <span className="h6 d-flex justify-content-center">Forgot your password?</span>
+                            </Link>
                         </div>
 
 
