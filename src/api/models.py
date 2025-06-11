@@ -292,7 +292,7 @@ class StoreItem(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "game_api_id": self.game_id,
+            "game_api_id": self.game_api_id,
             "name": self.name,
             "stripe_price_id": self.stripe_price_id,
             "price": self.price,

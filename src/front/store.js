@@ -13,10 +13,12 @@ export const initialStore = () => {
     unvideojuego: [],
     juegosdemesa: [],
     jdmdatos: [],
-    recomendados: [],
-    videos: [],
-  };
-};
+    recomendados:[],
+    videos:[], 
+    cart: []
+  
+  }
+}
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
@@ -102,8 +104,23 @@ export default function storeReducer(store, action = {}) {
     case "load_jdmdatos":
       return {
         ...store,
-        jdmdatos: action.payload,
+        jdmdatos: action.payload
+      }
+    case 'add_to_cart': 
+      return {
+        ...store,
+        cart: [...store.cart, action.payload]
       };
+    case 'remove_from_cart':
+      return {
+        ...store,
+        cart: store.cart.filter((item) => item.id !== action.payload)
+      }
+    case 'clean_cart':
+      return {
+        ...store,
+        cart: []
+      }
     default:
       throw Error("Unknown action.");
   }

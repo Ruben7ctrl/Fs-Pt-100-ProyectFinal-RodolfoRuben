@@ -21,7 +21,7 @@ import shooterImg from "../assets/img/Shooter.png";
 import sportImg from "../assets/img/Sport.png";
 import rpgImg from "../assets/img/RPG.png";
 import strategyImg from "../assets/img/Strategy.png";
-
+import stripeServices from "../services/fluxStore";
 
 
 export const Games = () => {
@@ -61,23 +61,23 @@ export const Games = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const username = user?.username
 
-  useEffect(() => {
-    if (!activeGenre && !activePlatform) {
-      // Caso general
-      storeServices.videojuegos(page).then((data) =>
-        dispatch({ type: "load_videojuegos", payload: data })
-      );
-    } else {
-      // Caso filtrado → llamar getRecomendados con page
-      storeServices.getRecomendados({
-        genre_slug: activeGenre,
-        platform_id: activePlatform,
-        page: page
-      }).then((data) => {
-        setGenreGames(data);
-      });
-    }
-  }, [page, activeGenre, activePlatform, dispatch]);
+// useEffect(() => {
+//   if (!activeGenre && !activePlatform) {
+//     // Caso general
+//     storeServices.videojuegos(page).then((data) =>
+//       dispatch({ type: "load_videojuegos", payload: data })
+//     );
+//   } else {
+//     // Caso filtrado → llamar getRecomendados con page
+//     storeServices.getRecomendados({
+//       genre_slug: activeGenre,
+//       platform_id: activePlatform,
+//       page: page
+//     }).then((data) => {
+//       setGenreGames(data);
+//     });
+//   }
+// }, [page, activeGenre, activePlatform, dispatch]);
 
 
 
@@ -276,8 +276,39 @@ export const Games = () => {
     setTimeout(() => setClickedCard(null), 500); // Glitch dura 500ms
   };
 
+  useEffect(() => {
+    const fetchGames = async () => {
+      const juegosApi = (activeGenre || activePlatform)
+        ? await storeServices.getRecomendados({
+          genre_slug: activeGenre,
+          platform_id: activePlatform,
+          page: page
+        })
+        : await storeServices.videojuegos(page);
 
+      const storeItems = await stripeServices.getItemsFromStore();
 
+      const juegosConPrecio = juegosApi.map(game => {
+        const item = storeItems.find(si => si.game_api_id === game.id);
+        return {
+          ...game,
+          stripe_price_id: item ? item.stripe_price_id : null,
+        }
+      })
+
+      if (activeGenre || activePlatform) {
+        setGenreGames(juegosConPrecio)
+      } else {
+        dispatch({ type: "load_videojuegos", payload: juegosConPrecio})
+      }
+      
+    }
+    fetchGames()
+  }, [page, activeGenre, activePlatform, dispatch])
+
+const handleClick = () => {
+  navigate('/cart')
+}
 
 
 
@@ -317,6 +348,12 @@ export const Games = () => {
         </div>
 
         <div className="offcanvas-body">
+          {/* Cesta */}
+          <div className="discover-sidebar__menu">
+            <button className="discover-sidebar__title btn-reset" onClick={handleClick}>
+              Cesta
+            </button>
+          </div>
           {/* ALL GAMES */}
           <div className="discover-sidebar__menu">
             <button className="discover-sidebar__title btn-reset" onClick={clearGenre}>
@@ -378,7 +415,11 @@ export const Games = () => {
               <div className="game-info">
                 <h2 className="game-title neon-text">{e.name}</h2>
                 <p className="game-description">{e.rating}⭐</p>
-                <button className="game-button">Buy</button>
+                {e.stripe_price_id ? (
+                  <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: e })}>Buy</button>
+                ) : (
+                  <button className="game-button disabled">BBS</button>
+                )}
                 <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
