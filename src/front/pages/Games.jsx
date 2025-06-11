@@ -26,11 +26,20 @@ import stripeServices from "../services/fluxStore";
 
 export const Games = () => {
 
+
+
+
+
   // Access the global state and dispatch function using the useGlobalReducer hook.
   const {
     store: { videojuegos },
     dispatch,
   } = useGlobalReducer();
+
+
+
+
+
 
 
   const [page, setPage] = useState(1)
@@ -77,7 +86,7 @@ export const Games = () => {
 
 
 
-  
+
 
   //   useEffect(() => {
   //     const sessionID = store.sessionID || localStorage.getItem('activeSessionID');
@@ -158,22 +167,22 @@ export const Games = () => {
     route && navigate(route);
   };
   // ------------------------  filtrado por género  -------------------- //
-const handleGenreClick = async (slug) => {
+  const handleGenreClick = async (slug) => {
     try {
-        setCargando(true);
-        setActiveGenre(slug);
-        setActivePlatform(null);  // reseteo plataforma
-        setPage(1);
-        const data = await storeServices.getRecomendados({
-            genre_slug: slug,
-            platform_id: null,
-            page: 1
-        });
-        setGenreGames(data);
+      setCargando(true);
+      setActiveGenre(slug);
+      setActivePlatform(null);  // reseteo plataforma
+      setPage(1);
+      const data = await storeServices.getRecomendados({
+        genre_slug: slug,
+        platform_id: null,
+        page: 1
+      });
+      setGenreGames(data);
     } finally {
-        setCargando(false);
+      setCargando(false);
     }
-};
+  };
 
   const clearGenre = () => {
     setActiveGenre(null);
@@ -183,6 +192,36 @@ const handleGenreClick = async (slug) => {
   };
 
   const juegosParaMostrar = (activeGenre || activePlatform) ? genreGames : videojuegos;
+  console.log(juegosParaMostrar)
+
+
+  const handleFavoriteClick = async (juegosParaMostrar, user2_id) => {
+
+
+
+    if (!juegosParaMostrar || !juegosParaMostrar.id) {
+      console.error("Error: El objeto juegosParaMostrar no tiene datos válidos.");
+      return;
+    }
+
+    // Construir el objeto con los datos correctos
+    const bodyData = {
+      user1_id: JSON.parse(localStorage.getItem("user")).id, // ID del usuario actual
+      user2_id: user2_id, // ID del segundo usuario (pásalo desde la UI)
+      onlinegame_id: juegosParaMostrar.id // ID del juego online
+    };
+
+    // Llamar a la API con el body correcto
+    const favoriteResponse = await userServices.addFavorite(bodyData);
+
+    // Actualizar el estado si la respuesta es válida
+    if (favoriteResponse && favoriteResponse.favorites) {
+      dispatch({ type: "set_favorites", payload: favoriteResponse.favorites });
+    } else {
+      console.error("Error al actualizar favoritos.");
+    }
+  };
+
 
   // -----------------------  array de géneros  ------------------------ //
   const genres = [
@@ -204,26 +243,26 @@ const handleGenreClick = async (slug) => {
     { id: 186, label: "Xbox Series X", icon: <GameController size={20} weight="bold" /> },
     { id: 7, label: "Nintendo Switch", icon: <GameController size={20} weight="bold" /> },
     { id: 4, label: "PC", icon: <DesktopTower size={20} weight="bold" /> },
- 
-  
+
+
   ];
 
-const handlePlatformClick = async (platform_id) => {
+  const handlePlatformClick = async (platform_id) => {
     try {
-        setCargando(true);
-        setActivePlatform(platform_id);
-        setActiveGenre(null);  // reseteo género
-        setPage(1);
-        const data = await storeServices.getRecomendados({
-            genre_slug: null,
-            platform_id: platform_id,
-            page: 1
-        });
-        setGenreGames(data);
+      setCargando(true);
+      setActivePlatform(platform_id);
+      setActiveGenre(null);  // reseteo género
+      setPage(1);
+      const data = await storeServices.getRecomendados({
+        genre_slug: null,
+        platform_id: platform_id,
+        page: 1
+      });
+      setGenreGames(data);
     } finally {
-        setCargando(false);
+      setCargando(false);
     }
-};
+  };
 
 
 
@@ -344,7 +383,7 @@ const handleClick = () => {
           <div className="discover-sidebar__menu">
             <span className="discover-sidebar__title">Platforms</span>
             <ul className="discover-sidebar__list">
-              {platforms.map(({ slug, label, icon,id }) => (
+              {platforms.map(({ slug, label, icon, id }) => (
                 <li key={id} className="discover-sidebar__item">
                   <button
                     className={`discover-sidebar__link btn-reset ${activePlatform === slug ? "active-genre" : ""}`}
@@ -383,6 +422,8 @@ const handleClick = () => {
                 )}
                   
                 <button className="game-button">❤️</button>
+                <button className="game-button">Buy</button>
+                <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
                 </Link>
@@ -393,30 +434,30 @@ const handleClick = () => {
       )}
 
       {/* ───────── PAGINACIÓN ───────── */}
-      
-        <div className="pagination-container">
-          <button
-            onClick={() => {
-              setPage((p) => Math.max(p - 1, 1));
-              playHoverSound();
-            }}
-            disabled={page === 1}
-            className={`pagination-button cyber-btn ${page === 1 ? "disabled" : ""}`}
-          >
-            <CaretLeft size={20} weight="bold" /> Página anterior
-          </button>
-          <span className="pagination-page">Página {page}</span>
-          <button
-            onClick={() => {
-              setPage((p) => p + 1);
-              playHoverSound();
-            }}
-            className="pagination-button cyber-btn"
-          >
-            Página siguiente <CaretRight size={20} weight="bold" />
-          </button>
-        </div>
-      
+
+      <div className="pagination-container">
+        <button
+          onClick={() => {
+            setPage((p) => Math.max(p - 1, 1));
+            playHoverSound();
+          }}
+          disabled={page === 1}
+          className={`pagination-button cyber-btn ${page === 1 ? "disabled" : ""}`}
+        >
+          <CaretLeft size={20} weight="bold" /> Página anterior
+        </button>
+        <span className="pagination-page">Página {page}</span>
+        <button
+          onClick={() => {
+            setPage((p) => p + 1);
+            playHoverSound();
+          }}
+          className="pagination-button cyber-btn"
+        >
+          Página siguiente <CaretRight size={20} weight="bold" />
+        </button>
+      </div>
+
     </div>
   );
 

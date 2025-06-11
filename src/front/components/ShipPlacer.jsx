@@ -38,9 +38,9 @@ export const ShipPlacer = ({ onPlaceShips }) => {
     }
 
     return (
-        <div>
-            <h2>Place your Ships {SHIPS[currentShipIndex]} squares</h2>
-            <button onClick={() => setIsVertical(!isVertical)}>
+        <div className="d-flex flex-column">
+            <h2 className="letraBarco">Place your Ships {SHIPS[currentShipIndex]} squares</h2>
+            <button className="BotonBarco" onClick={() => setIsVertical(!isVertical)}>
                 Rotate ({isVertical ? 'Vertical' : 'Horizontal'})
             </button>
             <div className="boarding">

@@ -112,6 +112,15 @@
     background-size: cover;
     transition: background-image 0.5s ease;
 }
+.fondoHundirflota {
+    background-image: url("/src/front/assets/img/fondoHundirflota.png");
+    min-height: 100vh;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 0.5s ease;
+}
 
 .online-games-grid {
     display: grid;
