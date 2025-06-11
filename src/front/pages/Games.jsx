@@ -379,7 +379,7 @@ const handleClick = () => {
                 {e.stripe_price_id ? (
                   <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: e })}>Buy</button>
                 ) : (
-                  <button className="game-button disabled">Proximamente</button>
+                  <button className="game-button disabled">BBS</button>
                 )}
                   
                 <button className="game-button">❤️</button>
