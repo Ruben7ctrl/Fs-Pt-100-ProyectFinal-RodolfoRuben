@@ -105,30 +105,30 @@ export const Signup = () => {
                         {/* <label htmlFor="inputUserName" className="form-label">UserName</label> */}
                         <input type="text" className="form-control" id="inputUserName" placeholder="UserName" name="username" value={formData.username} onChange={handleChange} required />
                     </div>
-                    <div className="row mt-3">
+                    {/* <div className="row mt-3">
                         <div className="col-sm-12 col-md-6">
-                            {/* <label htmlFor="inputName" className="form-label">First Name</label> */}
+                            <label htmlFor="inputName" className="form-label">First Name</label>
                             <input type="text" className="form-control" placeholder="First Name" id="inputName" name="firstname" value={formData.firstname} onChange={handleChange} required />
                         </div>
                         <div className="col-sm-12 col-md-6">
-                            {/* <label htmlFor="inputLastName" className="form-label">Last Name</label> */}
+                            <label htmlFor="inputLastName" className="form-label">Last Name</label>
                             <input type="text" className="form-control" placeholder="Last Name" id="inputLastName" name="lastname" value={formData.lastname} onChange={handleChange} required />
                         </div>
                         <div className="row mt-3">
                             <div className="col-sm-12 col-md-6">
-                                {/* <label className="form-label" htmlFor="date-of-birth">
+                                <label className="form-label" htmlFor="date-of-birth">
                                     Date of Birth
-                                </label> */}
+                                </label>
                                 <input className="form-control" type="text" inputMode="numeric" id="date-of-birth" name="dateofbirth" placeholder="dd/mm/yyyy" value={formData.dateofbirth} onChange={handleChange} required />
                             </div>
                             <div className="col-sm-12 col-md-6">
-                                {/* <label htmlFor="inputPhone" className="form-label">Phone</label> */}
+                                <label htmlFor="inputPhone" className="form-label">Phone</label>
                                 <input type="number" className="form-control" placeholder="Phone" id="inputPhone" name="phone" value={formData.phone} onChange={handleChange} required />
                             </div>
                         </div>
-                    </div>
-                    <div className=" mt-3 col-sm-12 col-md-12">
-                        {/* <label htmlFor="avatar" className="form-label">Avatar</label> */}
+                    </div> */}
+                    <div className="avatars mt-3 col-sm-12 col-md-12">
+                        <label htmlFor="avatar" className="form-label">Elige tu Avatar (flechas)</label>
                         <input type="text" className="form-control" placeholder="Avatar" name="avatar" value={formData.avatar_image} onChange={handleChange} required />
                     </div>
 

@@ -7,7 +7,7 @@ import "../styles/Games.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
-import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight, DeviceMobile, DesktopTower, Monitor, AppleLogo, AndroidLogo, SignOut } from "phosphor-react";
+import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight, DeviceMobile, DesktopTower, Monitor, AppleLogo, AndroidLogo, SignOut, Clock, Calendar } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
@@ -425,7 +425,7 @@ const handleClick = () => {
                 {e.stripe_price_id ? (
                   <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: e })}>Buy</button>
                 ) : (
-                  <button className="game-button disabled">BBS</button>
+                  <button className="game-buttons" disabled><Clock size={27} /></button>
                 )}
                 <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
