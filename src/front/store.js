@@ -69,7 +69,7 @@ export default function storeReducer(store, action = {}) {
     case "logout":
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // localStorage.removeItem('activeSessionID')
+      localStorage.removeItem('activeSessionID')
       return {
         ...store,
         user: null,

@@ -5,6 +5,7 @@ import "../styles/IAsession.css"
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
+import NodeMaterialObserver from "three/src/materials/nodes/manager/NodeMaterialObserver.js";
 
 
 export const ChatbotIA = () => {
@@ -13,7 +14,8 @@ export const ChatbotIA = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('')
     const [chapter, setChapter] = useState(1)
-     const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [placeholderActivo, setPlaceholderActivo] = useState(true)
 
     const [campaignConfig, setCampaignConfig] = useState({
         difficulty_level: null,
@@ -77,7 +79,7 @@ export const ChatbotIA = () => {
             if (savedSessionID) {
                 openAiServices.getIAsession(savedSessionID).then(sessionData => {
                     console.log('session existente cargada', sessionData)
-                    localStorage.setItem('activeSesionID', savedSessionID)
+                    localStorage.setItem('activeSessionID', savedSessionID)
                     dispatch({ type: 'set_sessionID', payload: savedSessionID})
 
                     openAiServices.getIAevents(savedSessionID).then(data => {
@@ -105,9 +107,10 @@ export const ChatbotIA = () => {
         const userMessage = { text: input, sender: 'user' }
         const updatedMessages = [...messages, userMessage]
 
-        setMessages([...messages, userMessage])
+        setMessages(updatedMessages)
         detectarDatosCampaign(input);
         setInput('')
+        setPlaceholderActivo(false)
 
 
         try {
@@ -159,6 +162,7 @@ export const ChatbotIA = () => {
         }
     }
 
+
     // console.log('Mensajes actuales:', messages.map((msg, i) => ({
     //     index: i,
     //     textLength: msg.text?.length || 0,
@@ -178,7 +182,8 @@ export const ChatbotIA = () => {
                     }
                 </div>
                 <div className="input-container">
-                    <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key == 'Enter' && handleSendMessage()} placeholder="Escribir Mensaje" />
+                    <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key == 'Enter' && handleSendMessage()} 
+                        placeholder={placeholderActivo ? `Me llamo '...', soy un/una '...' y la dificultad es '...'` : "Escribir Mensaje"} />
                 </div>
                 <button onClick={handleSendMessage}>
                     Enviar
