@@ -47,24 +47,27 @@ export const ResetPassword = () => {
 	}
 
 	return (
-		<div className="card w-75">
-			<h2>Cambio de contraseña</h2>
-			<p>Hola {user && user.email}, vamos a cambiar la contraseña</p>
-			<input
-				type="password"
-				onChange={e => setPassword(e.target.value)}
-				value={password}
-			/>
-			<button onClick={handleClick}>change password</button>
+		<div className="forgot-container">
+			<div className="forgot-box">
+					<h2>Cambio de contraseña</h2>
+					<p>Hola {user && user.username}, vamos a cambiar la contraseña</p>
+					<input
+						type="password"
+						onChange={e => setPassword(e.target.value)}
+						value={password}
+					/>
+					<button onClick={handleClick}>change password</button>
 
-			{
-				success !== null && (
-					success ? (
-						<div className="container bg-success"> se ha actualizado la contraseña exitosamente</div>
-				) : (
-						<div className="container bg-danger"> hubo un problema</div>
-				)
-			)}
+					{
+						success !== null && (
+							success ? (
+								<div className="container bg-success"> se ha actualizado la contraseña exitosamente</div>
+							) : (
+								<div className="container bg-danger"> hubo un problema</div>
+							)
+						)}
+			</div>
 		</div>
+
 	);
 };
