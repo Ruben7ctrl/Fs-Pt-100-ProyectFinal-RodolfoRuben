@@ -185,5 +185,15 @@ def seed_store_items():
         StoreItem(game_api_id= 58753, name="Forza Horizon 4", stripe_price_id= 'price_1RY5cWREEOIw4cHyUFmv2YZv', price= 35.95, currency= 'eur'),
         StoreItem(game_api_id= 364806, name="Need for Speed Heat", stripe_price_id= 'price_1RY5d8REEOIw4cHygzXNCulu', price= 29.95, currency= 'eur'),
         StoreItem(game_api_id= 4003, name="Grid 2", stripe_price_id= 'price_1RY5dgREEOIw4cHydWjiGzQO', price= 19.90, currency= 'eur'),
+        StoreItem(game_api_id= 12668, name="Get Smart", stripe_price_id= 'price_1RYmpyREEOIw4cHyF1UIkDpN', price= 15.95, currency= 'eur'),
+        StoreItem(game_api_id= 401011, name="I would f*ck Hitler", stripe_price_id= 'price_1RZFp1REEOIw4cHyReeNhmQG', price= 19.95, currency= 'eur'),
+        StoreItem(game_api_id= 34734, name="Grabsch", stripe_price_id= 'price_1RZFqcREEOIw4cHyzuE1EUJ2', price= 15.95, currency= 'eur'),
+        StoreItem(game_api_id= 2136, name="Parchisi", stripe_price_id= 'price_1RZFrGREEOIw4cHyqjiDNdaR', price= 22.95, currency= 'eur'),
+        StoreItem(game_api_id= 6956, name="Creeps' Castle", stripe_price_id= 'price_1RZFs7REEOIw4cHyBdESVyRm', price= 25.99, currency= 'eur'),
+        StoreItem(game_api_id= 295293, name="The Thing: The Boardgame", stripe_price_id= 'price_1RZFtKREEOIw4cHy6qA2c9HO', price= 17.95, currency= 'eur'),
+        StoreItem(game_api_id= 179601, name="A Game of Thrones: The Card Game (Second Edition) – Taking the Black", stripe_price_id= 'price_1RZFu8REEOIw4cHy87NbhQoo', price= 29.95, currency= 'eur'),
+        StoreItem(game_api_id= 13166, name="Let's Go Fishin'", stripe_price_id= 'price_1RZFv0REEOIw4cHyksLfbupN', price= 12.95, currency= 'eur'),
+        StoreItem(game_api_id= 259342, name="Luxantis", stripe_price_id= 'price_1RZFw0REEOIw4cHyHSukuWoJ', price= 18.95, currency= 'eur'),
+        StoreItem(game_api_id= 3717, name="Rasslefest", stripe_price_id= 'price_1RZFwwREEOIw4cHydM3MdZ5y', price= 15.95, currency= 'eur'),
     ]
     return store_items
