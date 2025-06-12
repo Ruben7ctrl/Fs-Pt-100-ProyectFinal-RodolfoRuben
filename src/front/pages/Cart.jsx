@@ -5,6 +5,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js"
 import { useEffect, useState } from "react"
 import "../styles/Cart.css"
+import { ArrowLeft } from "phosphor-react";
 
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC);
@@ -53,18 +54,28 @@ export const Cart = () => {
 
     if (checkoutActive && clientSecret) {
         return (
-            <EmbeddedCheckoutProvider
-                stripe={stripePromise}
-                options={{ clientSecret }} >
+            <div className="cart-container">
+                <div className="embedded-checkout-wrapper">
+                    <EmbeddedCheckoutProvider
+                        stripe={stripePromise}
+                        options={{ clientSecret }} >
 
-                <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
+                        <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                </div>
+            </div>
+
         )
     }
 
 
     return (
         <div className="cart-container">
+            <div className="boardgames-detail-back">
+                <button className="icon-button" onClick={() => navigate('/games')}>
+                    <ArrowLeft size={24} weight="bold" />
+                </button>
+            </div>
             <h1>Tu Cesta</h1>
             {cart.length === 0 ? (
                 <div className="cart-summary">
