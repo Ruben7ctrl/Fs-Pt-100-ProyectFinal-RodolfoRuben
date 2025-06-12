@@ -7,7 +7,8 @@ openAiServices.createCampaign = async () => {
 A partir de lo que el usuario te responda, iras guiando y respondiendo a todas las acciones que realice el jugador (usuario). 
 Lo primero que tendra que hacer el jugador, es seleccionar que heroe va a ser, despues el nombre que quiere poner a su heroe y la dificultad de la historia que generes.
 Una vez seleccionado el heroe con su nombre y la dificultad, vas a devolver una lista de acciones para el escenario que le generes y se enfrente el jugador 
-deveulvemelo como un md`;
+deveulvemelo como un md.
+La aventura debe durar al menos 15 acciones del jugador (usuario)`;
 
     const resp = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
