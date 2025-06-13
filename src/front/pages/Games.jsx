@@ -195,32 +195,21 @@ export const Games = () => {
   console.log(juegosParaMostrar)
 
 
-  const handleFavoriteClick = async (juegosParaMostrar, user2_id) => {
+ const handleFavoriteClick = async (game) => {
+  const user = JSON.parse(localStorage.getItem("user"));
 
+  if (!user) {
+    navigate("/signin");
+    return;
+  }
 
+  const result = await userServices.addFavorite(null, game);
 
-    if (!juegosParaMostrar || !juegosParaMostrar.id) {
-      console.error("Error: El objeto juegosParaMostrar no tiene datos válidos.");
-      return;
-    }
+  if (result) {
+    dispatch({ type: "add_favorite", payload: game }); // opcional, solo si quieres actualizar store.user.favorites
+  }
+};
 
-    // Construir el objeto con los datos correctos
-    const bodyData = {
-      user1_id: JSON.parse(localStorage.getItem("user")).id, // ID del usuario actual
-      user2_id: user2_id, // ID del segundo usuario (pásalo desde la UI)
-      onlinegame_id: juegosParaMostrar.id // ID del juego online
-    };
-
-    // Llamar a la API con el body correcto
-    const favoriteResponse = await userServices.addFavorite(bodyData);
-
-    // Actualizar el estado si la respuesta es válida
-    if (favoriteResponse && favoriteResponse.favorites) {
-      dispatch({ type: "set_favorites", payload: favoriteResponse.favorites });
-    } else {
-      console.error("Error al actualizar favoritos.");
-    }
-  };
 
 
   // -----------------------  array de géneros  ------------------------ //
@@ -379,7 +368,7 @@ export const Games = () => {
                 <h2 className="game-title neon-text">{e.name}</h2>
                 <p className="game-description">{e.rating}⭐</p>
                 <button className="game-button">Buy</button>
-                <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
+                <button className="game-button" onClick={() => handleFavoriteClick(e)}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
                 </Link>

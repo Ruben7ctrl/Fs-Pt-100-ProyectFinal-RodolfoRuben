@@ -108,70 +108,71 @@ userServices.checkAuth = async (token) => {
   }
 };
 
-userServices.addFavorite = async (user2_id, game) => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+userServices.addFavorite = async (_, game) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!token || !user) {
-        window.location.href = "/signin";
-        return;
-    }
+  if (!token || !user) {
+    window.location.href = "/signin";
+    return;
+  }
 
-    // Crear el body según lo que espera el backend
-    const body = {
-        user1_id: user.id, // El usuario logueado
-        user2_id: user2_id, // El ID del segundo usuario (puedes obtenerlo de la UI)
-        onlinegame_id: game.id // ID del juego online seleccionado
-    };
+  const body = {
+    user1_id: user.id,
+    onlinegame_id: game.id
+  };
 
-    try {
-        const resp = await fetch(`${backendUrl}/api/favorites`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        });
+  try {
+    const resp = await fetch(`${backendUrl}/api/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
 
-        if (!resp.ok) throw new Error(`Error al agregar favorito: ${await resp.text()}`);
+    if (!resp.ok) throw new Error(`Error al agregar favorito: ${await resp.text()}`);
 
-        const data = await resp.json();
-        console.log("Favorito agregado correctamente:", data);
-
-        return data; // Retorna el objeto serializado desde el backend
-    } catch (error) {
-        console.error("Error al agregar favorito:", error);
-        return null;
-    }
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    console.error("Error al agregar favorito:", error);
+    return null;
+  }
 };
 
 
-userServices.getFavorites = async () => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+userServices.getFavorites = async (dispatch) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!token || !user) {
-        return [];
+  if (!token || !user) return [];
+
+  try {
+    const resp = await fetch(`${backendUrl}/api/users/${user.id}/favorites`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!resp.ok) throw new Error("Error al obtener favoritos");
+
+    const data = await resp.json();
+    const favorites = data.favorites || [];
+
+    // Actualizar el estado global si se proporciona `dispatch`
+    if (dispatch) {
+      dispatch({ type: "set_favorites", payload: favorites });
     }
 
-    try {
-        const resp = await fetch(backendUrl + `/api/users/${user.id}/favorites`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!resp.ok) throw new Error("Error al obtener favoritos");
-
-        const data = await resp.json();
-        return data.favorites || [];
-    } catch (error) {
-        console.log("Error al obtener favoritos:", error);
-        return [];
-    }
+    return favorites;
+  } catch (error) {
+    console.error("Error al obtener favoritos:", error);
+    return [];
+  }
 };
 
 

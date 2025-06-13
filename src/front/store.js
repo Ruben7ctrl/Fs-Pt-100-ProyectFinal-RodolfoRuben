@@ -26,17 +26,15 @@ export default function storeReducer(store, action = {}) {
      user: { ...store.user, favorites: action.payload }
    };
     case "add_favorite":
-      if (!store.user) return store; // Asegurar que el usuario está logueado
+  if (!store.user) return store;
 
-      const updatedFavorites = [...store.user.favorites, action.payload];
-      const updatedUser = { ...store.user, favorites: updatedFavorites };
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      return {
-        ...store,
-        user: updatedUser,
-      };
+  return {
+    ...store,
+    user: {
+      ...store.user,
+      favorites: [...(store.user.favorites || []), action.payload] // opcional, si quieres reflejarlo de inmediato
+    }
+  };
 
     case "get_videos":
       return {
