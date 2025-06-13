@@ -97,7 +97,7 @@ export const Game = () => {
     return (
         <div className="game">
               <div className="boardgames-backB">
-                            <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                            <button className="icon-buttonB" onClick={() => navigate('/onlinegames')}>
                                 <ArrowLeft size={24} weight="bold" />
                             </button>
                         </div>

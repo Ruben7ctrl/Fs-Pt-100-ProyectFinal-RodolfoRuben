@@ -196,7 +196,7 @@ def create_checkout_session():
             return_url=FRONT + 'return?session_id={CHECKOUT_SESSION_ID}',
         )
     except Exception as e:
-        return str(e)
+        return jsonify({"error": str(e)})
 
     return jsonify({"clientSecret":session.client_secret})
 

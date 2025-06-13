@@ -54,7 +54,7 @@ export const Gameboarddetail = () => {
 
         {/* Botón Volver → en la esquina superior derecha */}
         <div className="boardgames-detail-back">
-            <button className="icon-button" onClick={() => navigate('/games')}>
+            <button className="icon-button" onClick={() => navigate('/boardgames')}>
                 <ArrowLeft size={24} weight="bold" />
             </button>
         </div>

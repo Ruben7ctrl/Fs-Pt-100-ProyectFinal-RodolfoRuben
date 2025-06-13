@@ -68,6 +68,10 @@
     color: #ffffffaa;
 }
 
+.signupmaga label {
+    color: #ffffff;
+}
+
 .signupmaga .btn-secondary {
     background-color: rgb(157, 60, 0);
     border: 0.15rem solid #ffffff;
@@ -119,6 +123,10 @@
     color: #DEA402;
 }
 
+.signupasesino label {
+    color: #DEA402;
+}
+
 .signupasesino .btn-secondary {
     background-color: rgb(1, 57, 47);
     border: 0.20rem solid #EB1AADff;
@@ -167,6 +175,10 @@
 }
 .signupsoldado input::placeholder {
     color: #ffffffaa;
+}
+
+.signupsoldado label {
+    color: #ffffff;
 }
 
 .signupsoldado .btn-secondary:hover {
@@ -310,3 +322,6 @@
     color: #000;
 }
 
+.avatars {
+    justify-items: center;
+}

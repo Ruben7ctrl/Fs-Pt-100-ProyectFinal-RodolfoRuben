@@ -2,6 +2,7 @@ import { useState } from "react"
 import axios from 'axios'
 import { useActionData } from "react-router-dom"
 import userServices from "../services/flux"
+import "../styles/ForgotPassword.css"
 
 
 export const ForgotPassword = () => {
@@ -10,7 +11,7 @@ export const ForgotPassword = () => {
     // const [msg, setMsg] = useState('')
     // const [error, setError] = useState('')
 
-    
+
 
     // const handleSubmit = async (e) => {
     //     e.preventDefault()
@@ -46,10 +47,12 @@ export const ForgotPassword = () => {
         //     <p>{msg}</p>
         // </div>
 
-        <div>
-            <h1>Recuperar Contraseña</h1>
-            <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
-            <button onClick={handleClick}>Reset</button>
-        </div>
+            <div className="forgot-container">
+                <div className="forgot-box">
+                    <h1>Recuperar Contraseña</h1>
+                    <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
+                    <button onClick={handleClick}>Reset</button>
+                </div>
+            </div>
     )
 }
