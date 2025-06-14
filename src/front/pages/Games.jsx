@@ -7,7 +7,7 @@ import "../styles/Games.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
 import { UserLogueado } from "../components/UserLogueado";
-import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight, DeviceMobile, DesktopTower, Monitor, AppleLogo, AndroidLogo, SignOut, Clock, Calendar } from "phosphor-react";
+import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight, DeviceMobile, DesktopTower, Monitor, AppleLogo, AndroidLogo, SignOut, Clock, Calendar, ShoppingCart } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
@@ -30,11 +30,11 @@ export const Games = () => {
 
   // Access the global state and dispatch function using the useGlobalReducer hook.
   const {
-    store: { videojuegos },
+    store,
     dispatch,
   } = useGlobalReducer();
 
-
+  const { videojuegos, cart } = store;
 
 
 
@@ -151,9 +151,13 @@ export const Games = () => {
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
-    { icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames" },
-    { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
+    ...(userIsLoggedIn
+      ? [{
+         icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
+      }] : []),
+    // { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
     { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
+    { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
     { icon: <User size={32} weight="fill" />, label: "Profile" },
     ...(userIsLoggedIn
       ? [{
@@ -313,11 +317,12 @@ export const Games = () => {
     fetchGames()
   }, [page, activeGenre, activePlatform, dispatch])
 
-const handleClick = () => {
-  navigate('/cart')
-}
+// const handleClick = () => {
+//   navigate('/cart')
+// }
 
 
+console.log("user", user);
 
 
   return (
@@ -356,11 +361,11 @@ const handleClick = () => {
 
         <div className="offcanvas-body">
           {/* Cesta */}
-          <div className="discover-sidebar__menu">
+          {/* <div className="discover-sidebar__menu">
             <button className="discover-sidebar__title btn-reset" onClick={handleClick}>
               Cesta
             </button>
-          </div>
+          </div> */}
           {/* ALL GAMES */}
           <div className="discover-sidebar__menu">
             <button className="discover-sidebar__title btn-reset" onClick={clearGenre}>
@@ -393,7 +398,7 @@ const handleClick = () => {
               {platforms.map(({ slug, label, icon, id }) => (
                 <li key={id} className="discover-sidebar__item">
                   <button
-                    className={`discover-sidebar__link btn-reset ${activePlatform === slug ? "active-genre" : ""}`}
+                    className={`discover-sidebar__link btn-reset ${activePlatform === id ? "active-genre" : ""}`}
                     onClick={() => handlePlatformClick(slug)}
                   >
                     <span className="icon">
@@ -413,7 +418,12 @@ const handleClick = () => {
         <div className="loading neon-text">Cargando…</div>
       ) : (
         <div className="game-list">
-          {juegosParaMostrar.map((e) => (
+          {juegosParaMostrar.map((e) => {
+            let alreadyInCart = false;
+            if (Array.isArray(store.cart)) {
+              alreadyInCart = store.cart.some(item => item.id === e.id)
+            }
+          return (
             <div
               key={e.id}
               className="game-card glitch-bg"
@@ -423,17 +433,24 @@ const handleClick = () => {
                 <h2 className="game-title neon-text">{e.name}</h2>
                 <p className="game-description">{e.rating}⭐</p>
                 {e.stripe_price_id ? (
-                  <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: e })}>Buy</button>
+                  <button className="game-button" onClick={() => {
+                    if (alreadyInCart) {
+                      alert("Este juego ya esta en el carrito")
+                        return;
+                    }
+                    dispatch({ type: 'add_to_cart', payload: e });
+                }}
+                >Buy</button>
                 ) : (
                   <button className="game-buttons" disabled><Clock size={27} /></button>
                 )}
-                <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
+                <button className="game-button" onClick={() => handleFavoriteClick(e, user?.id)}>❤️</button>
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
                 </Link>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       )}
 

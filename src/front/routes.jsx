@@ -23,6 +23,8 @@ import { Gameboarddetail } from "./pages/GamesBoardDetails";
 import { BattleShip } from "./pages/BattleShip";
 import { Cart } from "./pages/Cart";
 import PaymentReturn from "./components/PaymentReturn";
+import PrivateRoute from "./components/PrivateRoute"
+
 
 
 export const router = createBrowserRouter(
@@ -49,7 +51,7 @@ export const router = createBrowserRouter(
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/boardgames" element={<BoardGames />} />
         <Route path="/onlinegame/1" element={<Chess />} />
-        <Route path="/onlinegames" element={<OnlineGames />} />
+        <Route path="/onlinegames" element={<PrivateRoute><OnlineGames /></PrivateRoute> } />
         <Route path="/onlinegame/2" element={<TresEnRaya />} />
         <Route path="/onlinegame/3" element={<BattleShip />} />
         <Route path="/cart" element={<Cart />} />

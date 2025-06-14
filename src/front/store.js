@@ -107,6 +107,10 @@ export default function storeReducer(store, action = {}) {
         jdmdatos: action.payload
       }
     case 'add_to_cart': 
+      const exists = store.cart.some(item => item.id === action.payload.id)
+      if (exists) {
+        return store;
+      }
       return {
         ...store,
         cart: [...store.cart, action.payload]

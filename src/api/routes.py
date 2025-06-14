@@ -413,7 +413,10 @@ def delete_profile():
 
 
 @api.route('/onlinegames', methods=['GET'])
+@jwt_required()
 def get_online_games():
+
+    current_user = get_jwt_identity()
 
     stmt = select(OnlineGames)
     online = db.session.execute(stmt).scalars().all()
@@ -943,7 +946,12 @@ def create_purchases():
         db.session.add(new_purchases)
         db.session.commit()
 
-        return jsonify(new_purchases.serialize()), 201
+        new_own = OwnGames(
+            user_id=data["user_id"],
+            purchase_id=new_purchases.id
+        )
+
+        return jsonify({"purchase": new_purchases.serialize(), "own_game": new_own.serialize()}), 201
 
     except Exception as e:
         print(e)

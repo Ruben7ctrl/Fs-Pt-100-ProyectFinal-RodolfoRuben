@@ -43,6 +43,7 @@ export const Cart = () => {
                 price: item.stripe_price_id,
                 quantity: 1,
             }));
+            
             const secret = await stripeServices.fetchClientSecret(items);
             setClientSecret(secret)
             setCheckoutActive(true)
