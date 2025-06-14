@@ -44,6 +44,7 @@ class Users(db.Model):
             "phone": self.phone if self.phone else None,
             "favorite1": [fav.serialize() for fav in self.favorite1],
             # "favorite2": [fav.serialize() for fav in self.favorite2],
+            "avatar_image": self.avatar_image if self.avatar_image else None,
             "usercontact": [cont.serialize() for cont in self.usercontact],
             "online_stats": [stats.serialize() for stats in self.online_stats],
             "ia_sessions": [ia.serialize() for ia in self.ia_sessions],
