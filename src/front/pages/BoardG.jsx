@@ -223,7 +223,7 @@ export const BoardGames = () => {
                                         <p>🎯 {juego.minPlayers} - {juego.maxPlayers} jugadores</p>
                                         <p>⏱️ {juego.playTime} min</p>
                                         <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
-                                        <p className="categoriesB">{juego.categories?.join(", ")}</p>
+                                        {/* <p className="categoriesB">{juego.categories?.join(", ")}</p> */}
                                     </div>
 
                                 </Link>
