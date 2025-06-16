@@ -20,32 +20,54 @@ export const Signin = () => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const data = await userServices.signin(formData)
+  e.preventDefault();
+  try {
+    const data = await userServices.signin(formData);
 
-            if (data?.success) {
-                if (formData.identify?.includes("@admin")) {
-                    navigate('/admin')
-                    setFormData({
-                        identify: "",
-                        password: ""
-                    })
-                } else {
-                    navigate('/games')
-                    setFormData({
-                        identify: "",
-                        password: ""
-                    })
-                }
-            } else {
-                alert(data?.error || "Email, contraseña incorrectos")
-            }
-        } catch (error) {
-            console.log("Login error", error);
+    if (data?.success) {
+      // ⚠️ Paso 1: obtenemos relaciones favoritas
+      const favorite1 = data.user.favorite1 || [];
 
-        }
+      // ⚠️ Paso 2: enriquecemos llamando a las APIs externas
+      const favorites = await userServices.getFavoritesFromRelations(favorite1);
+
+      // ⚠️ Paso 3: actualizamos user en store y localStorage
+      const userActualizado = {
+        ...data.user,
+        favorites: favorites,
+      };
+
+      dispatch({
+        type: "signin/signup",
+        payload: {
+          user: userActualizado,
+          token: data.token,
+        },
+      });
+
+      localStorage.setItem("user", JSON.stringify(userActualizado));
+      localStorage.setItem("token", data.token);
+
+      // Redirección por rol
+      if (formData.identify?.includes("@admin")) {
+        navigate("/admin");
+      } else {
+        navigate("/games");
+      }
+
+      setFormData({ identify: "", password: "" });
+
+    } else {
+      alert(data?.error || "Email o contraseña incorrectos");
     }
+
+  } catch (error) {
+    console.log("Login error", error);
+  }
+};
+
+
+
 
     const handleClick = () => {
         navigate('/signup')

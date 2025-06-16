@@ -43,11 +43,12 @@ export default function storeReducer(store, action = {}) {
     ...store,
     user: {
       ...store.user,
-      favorites: store.user.favorites.filter(
-        (fav) => fav.id !== action.payload
-      )
+      favorite1: store.user.favorite1.filter(f => String(f.game_api_id) !== String(action.payload)),
+      favorites: store.user.favorites.filter(f => String(f.id) !== String(action.payload)),
     }
   };
+
+
     case "set_favorites":
    return {
      ...store,

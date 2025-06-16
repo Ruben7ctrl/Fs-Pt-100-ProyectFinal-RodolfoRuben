@@ -1,37 +1,63 @@
-
 import { ArrowLeft, User, CaretLeft, CaretRight } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import "../styles/UserProfile.css";
 import anime from "animejs";
 import React, { useRef, useState, useEffect } from "react";
-
+import userServices from "../services/flux";
 
 export const UserProfile = () => {
-  const { store } = useGlobalReducer();
+  const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
-
   const user = store.user;
-  const avatarName = user.avatar_image || "default";
-  const avatarUrl = `/src/front/assets/img/${avatarName}.jpg`;
+
   const [hoveredCard, setHoveredCard] = useState(null);
   const hoverRef = useRef(null);
-
-
   const videoCarouselRef = useRef(null);
   const boardCarouselRef = useRef(null);
+  const [userInfo, setUserInfo] = useState(null);
 
-  const scrollCarousel = (ref, direction) => {
-    const el = ref.current;
-    const scrollAmount = 300;
 
-    anime({
-      targets: el,
-      scrollLeft: direction === "left" ? el.scrollLeft - scrollAmount : el.scrollLeft + scrollAmount,
-      duration: 500,
-      easing: "easeInOutQuad"
-    });
-  };
+  const avatarName = user?.avatar_image || "default";
+  const avatarUrl = `/src/front/assets/img/${avatarName}.jpg`;
+
+  // Cargar favoritos enriquecidos si es necesario
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return navigate("/signin");
+
+      const userFromToken = await userServices.checkAuth(token);
+      if (!userFromToken) return navigate("/signin");
+
+      // Enriquecer favoritos (videojuegos y juegos de mesa)
+      const enrichedFavorites = await userServices.getFavoritesFromRelations(userFromToken.favorite1 || []);
+      const filteredFavorites = enrichedFavorites.filter((f) => f !== null);
+
+      // Actualiza store y estado local
+      setUserInfo({
+        ...userFromToken,
+        favorites: filteredFavorites,
+      });
+
+      dispatch({
+        type: "signin/signup",
+        payload: {
+          user: {
+            ...userFromToken,
+            favorites: filteredFavorites,
+            purchases: userFromToken.owned_games || [],
+          },
+          token,
+        },
+      });
+    };
+
+    fetchUserData();
+  }, []);
+
+
+
 
 
   useEffect(() => {
@@ -62,18 +88,46 @@ export const UserProfile = () => {
     }
   }, [hoveredCard]);
 
+  const scrollCarousel = (ref, direction) => {
+    const el = ref.current;
+    const scrollAmount = 300;
+
+    anime({
+      targets: el,
+      scrollLeft: direction === "left" ? el.scrollLeft - scrollAmount : el.scrollLeft + scrollAmount,
+      duration: 500,
+      easing: "easeInOutQuad",
+    });
+  };
+
+  if (!user || !user.favorite1 || !user.favorites) {
+    return <div className="loading-userProfile">Cargando perfil...</div>;
+  }
 
 
 
 
-console.log('ESTE ES EL NOMBRE DEL AVATAR',avatarName);
-console.log('ESTE ES URL',avatarUrl);
+const handleRemoveFavorite = async (gameId, gameType) => {
+  const token = localStorage.getItem("token");
+  if (!token) return alert("Debes iniciar sesión");
+
+  const favToRemove = user.favorite1.find(
+    (f) => String(f.game_api_id) === String(gameId) && f.game_type === gameType
+  );
+
+  if (!favToRemove) return console.warn("❗ Favorito no encontrado");
+
+  const success = await userServices.eliminarFavorito(favToRemove.id, token);
+  if (success) {
+    dispatch({ type: "remove_favorite", payload: gameId });
+  }
+};
 
 
 
   return (
     <div className="fondoGamesProfile">
-      {/* ────── BLOQUE SUPERIOR: encabezado + videojuegos ────── */}
+      {/* Bloque superior */}
       <div className="profile-top-section-userProfile">
         <div className="profile-top-userProfile">
           <button className="icon-button-userProfile" onClick={() => navigate(-1)}>
@@ -81,28 +135,19 @@ console.log('ESTE ES URL',avatarUrl);
           </button>
 
           <div className="avatar-info-userProfile">
-            <div
-              className="avatar-circle-userProfile"
-              style={{ backgroundImage : `url(${avatarUrl})` }}
-
-            />
+            <div className="avatar-circle-userProfile" style={{ backgroundImage: `url(${avatarUrl})` }} />
             <div className="profile-name-userProfile neon-text">
-              <User size={24} /> {user.username}
+              <User size={24} /> {user?.username}
             </div>
           </div>
         </div>
 
         <div className="favorites-section-userProfile">
           <h2 className="slider-title-userProfile neon-text">🎮 Tus videojuegos favoritos</h2>
-
           <div className="carousel-container-userProfile">
-            <button
-              className="carousel-btn-userProfile"
-              onClick={() => scrollCarousel(videoCarouselRef, "left")}
-            >
+            <button className="carousel-btn-userProfile" onClick={() => scrollCarousel(videoCarouselRef, "left")}>
               <CaretLeft size={32} />
             </button>
-
             <div className="carousel-track-userProfile" ref={videoCarouselRef}>
               {user.favorite1
                 .filter((f) => f.game_type === "videogame")
@@ -113,9 +158,7 @@ console.log('ESTE ES URL',avatarUrl);
                     <div
                       key={index}
                       className="favorite-card-small-userProfile"
-                      onMouseEnter={() => {
-                        if (hoveredCard?.id !== game.id) setHoveredCard(game);
-                      }}
+                      onMouseEnter={() => setHoveredCard(game)}
                       onMouseLeave={() => setHoveredCard(null)}
                     >
                       <img
@@ -124,22 +167,27 @@ console.log('ESTE ES URL',avatarUrl);
                         className="favorite-card-img-userProfile"
                       />
                       <p className="favorite-name-userProfile">{game.name}</p>
+                      <button
+                        className="remove-fav-btn-userProfile"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFavorite(fav.game_api_id, "videogame");
+                        }}
+                      >
+                        ×
+                      </button>
                     </div>
                   );
                 })}
             </div>
-
-            <button
-              className="carousel-btn-userProfile"
-              onClick={() => scrollCarousel(videoCarouselRef, "right")}
-            >
+            <button className="carousel-btn-userProfile" onClick={() => scrollCarousel(videoCarouselRef, "right")}>
               <CaretRight size={32} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* ────── BLOQUE CENTRAL: tarjeta flotante ────── */}
+      {/* Bloque flotante hover */}
       <div className="profile-hover-zone-userProfile">
         {hoveredCard && (
           <div className="hover-preview-card-userProfile" ref={hoverRef}>
@@ -153,19 +201,14 @@ console.log('ESTE ES URL',avatarUrl);
         )}
       </div>
 
-      {/* ────── BLOQUE INFERIOR: boardgames al fondo ────── */}
+      {/* Bloque inferior */}
       <div className="profile-bottom-section-userProfile">
         <div className="favorites-section-userProfile">
           <h2 className="slider-title-userProfile neon-text">🎲 Tus juegos de mesa favoritos</h2>
-
           <div className="carousel-container-userProfile">
-            <button
-              className="carousel-btn-userProfile"
-              onClick={() => scrollCarousel(boardCarouselRef, "left")}
-            >
+            <button className="carousel-btn-userProfile" onClick={() => scrollCarousel(boardCarouselRef, "left")}>
               <CaretLeft size={32} />
             </button>
-
             <div className="carousel-track-userProfile" ref={boardCarouselRef}>
               {user.favorite1
                 .filter((f) => f.game_type === "boardgame")
@@ -176,9 +219,7 @@ console.log('ESTE ES URL',avatarUrl);
                     <div
                       key={index}
                       className="favorite-card-small-userProfile"
-                      onMouseEnter={() => {
-                        if (hoveredCard?.id !== game.id) setHoveredCard(game);
-                      }}
+                      onMouseEnter={() => setHoveredCard(game)}
                       onMouseLeave={() => setHoveredCard(null)}
                     >
                       <img
@@ -187,15 +228,20 @@ console.log('ESTE ES URL',avatarUrl);
                         className="favorite-card-img-userProfile"
                       />
                       <p className="favorite-name-userProfile">{game.name}</p>
+                      <button
+                        className="remove-fav-btn-userProfile"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFavorite(fav.game_api_id, "boardgame");
+                        }}
+                      >
+                        ×
+                      </button>
                     </div>
                   );
                 })}
             </div>
-
-            <button
-              className="carousel-btn-userProfile"
-              onClick={() => scrollCarousel(boardCarouselRef, "right")}
-            >
+            <button className="carousel-btn-userProfile" onClick={() => scrollCarousel(boardCarouselRef, "right")}>
               <CaretRight size={32} />
             </button>
           </div>
@@ -204,7 +250,4 @@ console.log('ESTE ES URL',avatarUrl);
     </div>
   );
 
-
-
 };
-

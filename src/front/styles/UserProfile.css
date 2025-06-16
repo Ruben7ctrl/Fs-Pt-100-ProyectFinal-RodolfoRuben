@@ -160,7 +160,7 @@
 }
 .hover-preview-card-userProfile {
   width: 300px;
-  height: 180px;
+  height: 250px;
   border-radius: 16px;
   overflow: hidden;
   border: 2px solid cyan;
@@ -192,4 +192,26 @@
   color: white;
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
+}
+
+.remove-fav-btn-userProfile {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.favorite-card-small-userProfile:hover .remove-fav-btn-userProfile {
+  opacity: 1;
 }

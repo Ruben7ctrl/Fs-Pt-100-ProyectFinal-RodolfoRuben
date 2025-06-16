@@ -156,7 +156,7 @@ userServices.addFavorite = async (_, game) => {
 
 
 
-userServices.getFavorites = async (dispatch) => {
+userServices.getFavorites = async (dispatch = null) => {
   const token = localStorage.getItem("token");
   const user = getStoredUser();
 
@@ -176,7 +176,6 @@ userServices.getFavorites = async (dispatch) => {
     const data = await resp.json();
     const favorites = data.favorites || [];
 
-    // Actualizar el estado global si se proporciona `dispatch`
     if (dispatch) {
       dispatch({ type: "set_favorites", payload: favorites });
     }
@@ -187,6 +186,51 @@ userServices.getFavorites = async (dispatch) => {
     return [];
   }
 };
+
+
+userServices.getFavoritesFromRelations = async (favoriteRelations) => {
+  const videogames = [];
+  const boardgames = [];
+
+  for (const fav of favoriteRelations) {
+    try {
+      if (fav.game_type === "videogame") {
+        const resp = await fetch(`https://api.rawg.io/api/games/${fav.game_api_id}?key=c5df4513c2584cc68477a27dce6e0f27`);
+        const data = await resp.json();
+        videogames.push({
+          id: fav.game_api_id,
+          name: data.name,
+          background_image: data.background_image,
+          type: "videogame",
+        });
+      } else if (fav.game_type === "boardgame") {
+        const resp = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${fav.game_api_id}&stats=1`);
+        if (!resp.ok) throw new Error("Error al obtener datos BGG");
+
+        const xmlText = await resp.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+        const item = xmlDoc.querySelector("item");
+        const name = item.querySelector('name[type="primary"]')?.getAttribute("value");
+        const image = item.querySelector("image")?.textContent;
+
+        boardgames.push({
+          id: fav.game_api_id,
+          name: name || "Sin nombre",
+          image: image || "",
+          type: "boardgame",
+        });
+      }
+    } catch (err) {
+      console.warn("Error enriqueciendo favorito", fav, err);
+    }
+  }
+
+  return [...videogames, ...boardgames];
+};
+
+
 
 
 userServices.eliminarFavorito = async (favoriteId, token) => {

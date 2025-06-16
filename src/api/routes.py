@@ -12,7 +12,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from api.mail.mailer import send_mail
-from flask import current_app 
+from flask import current_app
 from datetime import datetime
 import os
 
@@ -27,6 +27,8 @@ CORS(api)
 
 
 FRONT = 'https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev/'
+
+
 @api.route('/users', methods=['GET'])
 def get_users():
 
@@ -112,10 +114,12 @@ def signin():
 
         db.session.rollback()
         return jsonify({"error": "somthing went wrong"}), 400
-    
+
+
 @api.route('/mailer/<address>', methods=['POST'])
 def handle_mail(address):
     return send_mail(address)
+
 
 @api.route('/token', methods=['GET'])
 @jwt_required()
@@ -126,7 +130,6 @@ def check_jwt():
     if users:
         return jsonify({"success": True, "user": users.serialize()}), 200
     return jsonify({"success": False, "msg": "Bad token"}), 401
-
 
 
 @api.route('/forgot-password', methods=['POST'])
@@ -143,14 +146,11 @@ def forgot_password():
         result = send_mail(data["email"], token)
         print(result)
 
-
-        return jsonify({"success": True, "token": token, "email":data["email"]}), 200
+        return jsonify({"success": True, "token": token, "email": data["email"]}), 200
 
     except Exception as e:
         print("Error enviando correo:", str(e))
         return jsonify({"success": False, 'msg': 'Error enviando email', 'error': str(e)}), 500
-
-    
 
 
 @api.route('/reset-password', methods=['PUT'])
@@ -181,16 +181,18 @@ def reset_password():
         print("Error al modificar password: {str(e)}")
         return jsonify({"success": False, "msg": f"Error al modificar password: {str(e)}"})
 
-#ruta para crear una session de pago con stripe
+# ruta para crear una session de pago con stripe
+
+
 @api.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
         body = request.get_json()
         if not body or 'items' not in body:
             return jsonify({"error": "Invalid request, 'items' is required"}), 400
-        
+
         session = stripe.checkout.Session.create(
-            ui_mode = 'embedded',
+            ui_mode='embedded',
             line_items=body['items'],
             mode='payment',
             return_url=FRONT + 'return?session_id={CHECKOUT_SESSION_ID}',
@@ -198,15 +200,15 @@ def create_checkout_session():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-    return jsonify({"clientSecret":session.client_secret})
+    return jsonify({"clientSecret": session.client_secret})
 
 
-#ruta que se encarga de recibir el id de la session y devolver el estado del pago
+# ruta que se encarga de recibir el id de la session y devolver el estado del pago
 @api.route('/session-status', methods=['GET'])
 def session_status():
-  session = stripe.checkout.Session.retrieve(request.args.get('session_id'))
+    session = stripe.checkout.Session.retrieve(request.args.get('session_id'))
 
-  return jsonify(status=session.status, customer_email=session.customer_details.email)
+    return jsonify(status=session.status, customer_email=session.customer_details.email)
 
 
 @api.route('/store-purchase', methods=['POST'])
@@ -221,14 +223,16 @@ def store_purchase():
 
         if not all([session_id, user_id, game_api_id, game_name]):
             return jsonify({"error": "Missing required fields"}), 400
-        
-        session = stripe.checkout.Session.retrieve(session_id, expand=['line_items'])
+
+        session = stripe.checkout.Session.retrieve(
+            session_id, expand=['line_items'])
         if session.payment_status != "paid":
             return jsonify({"error": "Payment not complete"}), 400
-        
+
         amount = session.amount_total
         currency = session.currency
-        stripe_price_id = session.line_items.data[0].price.id if session.line_items and session.line_items.data else "unknown" 
+        stripe_price_id = session.line_items.data[
+            0].price.id if session.line_items and session.line_items.data else "unknown"
 
         new_purchase = GamePurchase(
             game_api_id=game_api_id,
@@ -250,10 +254,11 @@ def store_purchase():
         db.session.commit()
 
         return jsonify({"message": "Purchase store successfully"}), 200
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
 
 @api.route('/items', methods=['GET'])
 def get_store_items():
@@ -276,13 +281,13 @@ def create_store_item():
 
     if not all([game_api_id, name, stripe_price_id, price, currency]):
         return jsonify({"error": "Missing required fields"}), 400
-    
+
     new_item = StoreItem(
-        game_api_id= game_api_id,
-        name= name,
-        stripe_price_id= stripe_price_id,
-        price= price,
-        currency= currency,
+        game_api_id=game_api_id,
+        name=name,
+        stripe_price_id=stripe_price_id,
+        price=price,
+        currency=currency,
     )
 
     db.session.add(new_item)
@@ -303,6 +308,7 @@ def delete_store_item(item_id):
     db.session.commit()
 
     return jsonify({"msg": "Store Game delete"}), 200
+
 
 @api.route('/profile', methods=['GET'])
 @jwt_required()
@@ -595,20 +601,21 @@ def update_result():
 
         if not user_id or not game_id or result not in ["win", "loss", "stalemate"] or move_count is None:
             return jsonify({"error": "Missing or invalid data"}), 400
-        
-        stmt = select(OnlineStats).where(OnlineStats.user_id == user_id, OnlineStats.online_game_id == game_id)
+
+        stmt = select(OnlineStats).where(OnlineStats.user_id ==
+                                         user_id, OnlineStats.online_game_id == game_id)
         stat = db.session.execute(stmt).scalar_one_or_none()
 
         if stat is None:
             stat = OnlineStats(
                 user_id=user_id,
                 online_game_id=game_id,
-                sessions_played= 1,
-                wins= 1 if result == "win" else 0,
-                losses= 1 if result == "loss" else 0,
-                stalemate= 1 if result == "stalemate" else 0,
-                move_count= move_count,
-                last_played= datetime.utcnow()
+                sessions_played=1,
+                wins=1 if result == "win" else 0,
+                losses=1 if result == "loss" else 0,
+                stalemate=1 if result == "stalemate" else 0,
+                move_count=move_count,
+                last_played=datetime.utcnow()
             )
             db.session.add(stat)
         else:
@@ -624,11 +631,11 @@ def update_result():
 
         db.session.commit()
         return jsonify(stat.serialize()), 200
-    
+
     except Exception as e:
         print("Error actualizado stats:", e)
         return jsonify({"error": "Something went wrong"}), 500
-    
+
 
 @api.route('/stats/<int:id>', methods=['PUT'])
 @jwt_required()
@@ -1016,16 +1023,25 @@ def create_favorites():
         # user2 = db.session.get(Users, user2_id)
         # if not user2:
         #     return jsonify({"error": "User2 not found"}), 404
-        
 
         # onlinegame = db.session.get(OnlineGames, onlinegame_id)
         # if not onlinegame:
         #     return jsonify({"error": "Online Game not found"}), 404
 
+    #  Verificar si ya existe un favorito idéntico
+        existing_fav = Favorites.query.filter_by(
+            user1_id=user1_id,
+            game_api_id=game_api_id,
+            game_type=game_type
+        ).first()
+
+        if existing_fav:
+            return jsonify({"message": "Este juego ya está en tus favoritos"}), 409
+
         new_favorite = Favorites(
             user1_id=user1_id,
             # user2_id=user2_id,
-            game_api_id= game_api_id,
+            game_api_id=game_api_id,
             onlinegame_id=onlinegame_id,
             game_type=game_type,
         )
