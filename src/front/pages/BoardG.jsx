@@ -14,6 +14,8 @@ import fallbackImage from './../assets/img/fallbackimage.jpg';
 import { Loading } from "../components/loading";
 import { Link } from "react-router-dom";
 import stripeServices from "../services/fluxStore";
+import { getStoredUser } from "../utils/storage";
+
 
 
 export const BoardGames = () => {
@@ -79,10 +81,10 @@ export const BoardGames = () => {
             ? [{
                 icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
             }] : []),
-        { icon: <GameController size={32} weight="fill" />, label: "Videogames", route: "/games"},
+        { icon: <GameController size={32} weight="fill" />, label: "Videogames", route: "/games" },
         { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
         // { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
-        { icon: <User size={32} weight="fill" />, label: "Profile" },
+        { icon: <User size={32} weight="fill" />, label: "Profile" , route : "/userprofile" },
         ...(userIsLoggedIn
             ? [{
                 icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
@@ -100,6 +102,42 @@ export const BoardGames = () => {
         // }
         if (label === "Profile" && !user) return navigate("/signin");
         route && navigate(route);
+    };
+
+
+    const handleFavoriteClick = async (game) => {
+        const user = getStoredUser();
+
+        if (!user) {
+            console.warn("🔴 No hay usuario en localStorage. Redirigiendo...");
+            navigate("/signin");
+            return;
+        }
+
+        // 🔥 Asegúrate de agregar el tipo correcto para juegos de mesa
+        const favoriteData = {
+            ...game,
+            game_type: "boardgame"
+        };
+
+        try {
+            const result = await userServices.addFavorite(null, favoriteData);
+
+            if (result) {
+                dispatch({ type: "add_favorite", payload: favoriteData });
+
+                const updatedUser = {
+                    ...user,
+                    favorites: [...(user.favorites || []), favoriteData]
+                };
+
+                localStorage.setItem("user", JSON.stringify(updatedUser));
+            } else {
+                console.warn("⚠️ No se recibió resultado válido de addFavorite");
+            }
+        } catch (err) {
+            console.error("❌ Error en handleFavoriteClick:", err);
+        }
     };
 
 
@@ -156,6 +194,10 @@ export const BoardGames = () => {
             console.log("Playback prevented:", e);
         });
     };
+
+    const isFavorite = (gameId) => {
+    return store.user?.favorites?.some(fav => fav.id === gameId);
+  };console.log("user", user);
 
     return (
         <div className="fondoGames">
@@ -233,7 +275,12 @@ export const BoardGames = () => {
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}
-                                    <button className="game-button" >❤️</button>
+                                    <button
+                                        className={`game-button ${isFavorite(juego.id) ? "favorited" : ""}`}
+                                        onClick={() => handleFavoriteClick(juego)}
+                                    >
+                                        {isFavorite(juego.id) ? "❤️" : "🤍"}
+                                    </button>
                                 </div>
                             </div>
 

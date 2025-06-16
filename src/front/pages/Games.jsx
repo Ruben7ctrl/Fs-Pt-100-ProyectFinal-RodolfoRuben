@@ -153,12 +153,12 @@ export const Games = () => {
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
     ...(userIsLoggedIn
       ? [{
-         icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
+        icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
       }] : []),
     // { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
     { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
     { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
-    { icon: <User size={32} weight="fill" />, label: "Profile" },
+    { icon: <User size={32} weight="fill" />, label: "Profile", route: "/userprofile" },
     ...(userIsLoggedIn
       ? [{
         icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
@@ -207,42 +207,45 @@ export const Games = () => {
 
 
   const handleFavoriteClick = async (game) => {
-  const user = getStoredUser();
+    const user = getStoredUser();
 
-  if (!user) {
-    console.warn("🔴 No hay usuario en localStorage. Redirigiendo...");
-    navigate("/signin");
-    return;
-  }
-
-  console.log("👤 Usuario encontrado:", user);
-  console.log("🎮 Juego que se intenta agregar a favoritos:", game);
-
-  try {
-    const result = await userServices.addFavorite(null, game);
-
-    console.log("📩 Respuesta de addFavorite:", result);
-
-    if (result) {
-      // Actualiza store
-      dispatch({ type: "add_favorite", payload: game });
-
-      // Actualiza localStorage
-      const updatedUser = {
-        ...user,
-        favorites: [...(user.favorites || []), game]
-      };
-
-      console.log("💾 Usuario actualizado con nuevo favorito:", updatedUser);
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-    } else {
-      console.warn("⚠️ No se recibió resultado válido de addFavorite");
+    if (!user) {
+      console.warn("🔴 No hay usuario en localStorage. Redirigiendo...");
+      navigate("/signin");
+      return;
     }
-  } catch (err) {
-    console.error("❌ Error en handleFavoriteClick:", err);
-  }
-};
+
+    const favoriteData = {
+      ...game, game_type: "videogame"
+    };
+
+
+
+    try {
+      const result = await userServices.addFavorite(null, favoriteData);
+
+      console.log("📩 Respuesta de addFavorite:", result);
+
+      if (result) {
+        // Actualiza store
+        dispatch({ type: "add_favorite", payload: favoriteData });
+
+        // Actualiza localStorage
+        const updatedUser = {
+          ...user,
+          favorites: [...(user.favorites || []), favoriteData]
+        };
+
+
+
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } else {
+        console.warn("⚠️ No se recibió resultado válido de addFavorite");
+      }
+    } catch (err) {
+      console.error("❌ Error en handleFavoriteClick:", err);
+    }
+  };
 
 
   // -----------------------  array de géneros  ------------------------ //
@@ -328,14 +331,14 @@ export const Games = () => {
     fetchGames()
   }, [page, activeGenre, activePlatform, dispatch])
 
-// const handleClick = () => {
-//   navigate('/cart')
-// }
+  // const handleClick = () => {
+  //   navigate('/cart')
+  // }
 
 
   const isFavorite = (gameId) => {
     return store.user?.favorites?.some(fav => fav.id === gameId);
-  };console.log("user", user);
+  }; console.log("user", user);
 
 
   return (
@@ -436,40 +439,41 @@ export const Games = () => {
             if (Array.isArray(store.cart)) {
               alreadyInCart = store.cart.some(item => item.id === e.id)
             }
-          return (
-            <div
-              key={e.id}
-              className="game-card glitch-bg"
-              style={{ "--background-url": `url(${e.background_image})` }}
-            >
-              <div className="game-info">
-                <h2 className="game-title neon-text">{e.name}</h2>
-                <p className="game-description">{e.rating}⭐</p>
-                {e.stripe_price_id ? (
-                  <button className="game-button" onClick={() => {
-                    if (alreadyInCart) {
-                      alert("Este juego ya esta en el carrito")
+            return (
+              <div
+                key={e.id}
+                className="game-card glitch-bg"
+                style={{ "--background-url": `url(${e.background_image})` }}
+              >
+                <div className="game-info">
+                  <h2 className="game-title neon-text">{e.name}</h2>
+                  <p className="game-description">{e.rating}⭐</p>
+                  {e.stripe_price_id ? (
+                    <button className="game-button" onClick={() => {
+                      if (alreadyInCart) {
+                        alert("Este juego ya esta en el carrito")
                         return;
-                    }
-                    dispatch({ type: 'add_to_cart', payload: e });
-                }}
-                >Buy</button>
-                ) : (
-                  <button className="game-buttons" disabled><Clock size={27} /></button>
-                )}
-                <button
-                  className={`game-button ${isFavorite(e.id) ? "favorited" : ""}`}
-                  onClick={() => handleFavoriteClick(e)}
-                >
-                  {isFavorite(e.id) ? "❤️" : "🤍"}
-                </button>
+                      }
+                      dispatch({ type: 'add_to_cart', payload: e });
+                    }}
+                    >Buy</button>
+                  ) : (
+                    <button className="game-buttons" disabled><Clock size={27} /></button>
+                  )}
+                  <button
+                    className={`game-button ${isFavorite(e.id) ? "favorited" : ""}`}
+                    onClick={() => handleFavoriteClick(e)}
+                  >
+                    {isFavorite(e.id) ? "❤️" : "🤍"}
+                  </button>
 
-                <Link to={`/games/${e.id}`} className="game-button">
-                  Info
-                </Link>
+                  <Link to={`/games/${e.id}`} className="game-button">
+                    Info
+                  </Link>
+                </div>
               </div>
-            </div>
-          )})}
+            )
+          })}
         </div>
       )}
 

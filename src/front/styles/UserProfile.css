@@ -1,0 +1,195 @@
+.fondoGamesProfile {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 1rem;
+  background-image: url("/src/front/assets/img/FondoPrincipal.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.profile-top-section-userProfile {
+  flex-shrink: 0;
+}
+
+.profile-hover-zone-userProfile {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.profile-bottom-section-userProfile {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+/* --- Encabezado --- */
+.profile-top-userProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+}
+
+.icon-button-userProfile {
+  background: transparent;
+  border: 2px solid cyan;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s ease;
+}
+.icon-button-userProfile:hover {
+  transform: scale(1.1);
+}
+
+.avatar-info-userProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-circle-userProfile {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid cyan;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  animation: avatarPulse-userProfile 2s infinite;
+}
+
+@keyframes avatarPulse-userProfile {
+  0%   { box-shadow: 0 0 10px cyan; }
+  50%  { box-shadow: 0 0 20px cyan; }
+  100% { box-shadow: 0 0 10px cyan; }
+}
+
+.profile-name-userProfile {
+  font-size: 1.3rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.favorites-section-userProfile {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.slider-title-userProfile {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.carousel-container-userProfile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.carousel-track-userProfile {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  max-width: 90vw;
+  scrollbar-width: none; /* Firefox */
+}
+.carousel-track-userProfile::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+.carousel-btn-userProfile {
+  background: transparent;
+  border: 2px solid cyan;
+  border-radius: 50%;
+  padding: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.carousel-btn-userProfile:hover {
+  transform: scale(1.1);
+}
+.favorite-card-small-userProfile {
+  width: 160px; /* 💡 Tamaño fijo para mantener consistencia */
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  padding: 0.5rem;
+  flex-shrink: 0; /* 🔒 evita que se estiren o contraigan */
+}
+
+
+.favorite-card-img-userProfile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ Asegura el recorte elegante */
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.favorite-name-userProfile {
+  z-index: 1;
+  font-size: 0.8rem;
+  text-align: center;
+  color: white;
+}
+.hover-preview-card-userProfile {
+  width: 300px;
+  height: 180px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid cyan;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  transition: box-shadow 0.3s ease;
+  will-change: transform, opacity;
+}
+
+
+.hover-card-img-userProfile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+}
+
+.hover-card-title-userProfile {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.1rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+}

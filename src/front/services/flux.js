@@ -115,7 +115,7 @@ userServices.checkAuth = async (token) => {
 
 userServices.addFavorite = async (_, game) => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getStoredUser();
 
   if (!token || !user) {
     window.location.href = "/signin";
@@ -124,7 +124,8 @@ userServices.addFavorite = async (_, game) => {
 
   const body = {
     user1_id: user.id,
-    game_api_id: game.id // ✅ esto es lo que tu backend necesita
+    game_api_id: game.id,
+    game_type : game.game_type // modificado en el back 
   };
 
   console.log("🧪 Enviando favorito al backend con:", body);
