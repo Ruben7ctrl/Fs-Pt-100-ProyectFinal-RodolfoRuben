@@ -8,6 +8,7 @@ import "../styles/ForgotPassword.css"
 export const ForgotPassword = () => {
 
     const [email, setEmail] = useState('')
+    const [success, setSuccess] = useState(null)
     // const [msg, setMsg] = useState('')
     // const [error, setError] = useState('')
 
@@ -34,8 +35,16 @@ export const ForgotPassword = () => {
     //     }
     // }
 
-    const handleClick = () => {
-        userServices.sendResetEmail(email)
+    const handleClick = async () => {
+        
+        const resp = await userServices.sendResetEmail(email)
+		if (resp && resp.success) {
+			setSuccess(true)
+
+		}
+		else {
+			setSuccess(false)
+		}
     }
 
     return (
@@ -52,6 +61,14 @@ export const ForgotPassword = () => {
                     <h1>Recuperar Contraseña</h1>
                     <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
                     <button onClick={handleClick}>Reset</button>
+                    {
+						success !== null && (
+							success ? (
+								<div className="container bg-success"> Se ha mandado el correo exitosamente</div>
+							) : (
+								<div className="container bg-danger"> hubo un problema</div>
+							)
+						)}
                 </div>
             </div>
     )

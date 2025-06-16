@@ -8,7 +8,9 @@ def send_mail(address, token):
     
     try:
         msg = Message("Reset your password",
-                      recipients=[address])
+                      recipients=[address],
+                      sender=('RaceGamer Support', os.getenv('MAIL_DEFAULT_SENDER')) )
+
         
         if os.getenv("FLASK_DEBUG") == "1":
             msg.html = f'''<a href= "https://zany-fortnight-4jv64j66gv992qg5r-3000.app.github.dev/reset-password?token={token}">Hola, sigue este vinculo para resetear tu contraseña</a>'''
