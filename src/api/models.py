@@ -208,6 +208,7 @@ class Favorites(db.Model):
     # user2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     onlinegame_id: Mapped[int] = mapped_column(ForeignKey("onlinegames.id"), nullable=True)
     game_api_id: Mapped[int] = mapped_column(nullable=True)
+    game_type: Mapped[str] = mapped_column(String(30), nullable=False)
 
 
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
@@ -231,7 +232,17 @@ class Favorites(db.Model):
             "onlinegamesFav": self.onlinegamesFav.name if self.onlinegamesFav else None,
             # "storegamesFav": self.storegamesFav.name if self.storegamesFav.name else None,
             "created_at": self.created_at.isoformat(),
+            "game_type": self.game_type,
+            # "type": self.get_type()
         }
+    # def get_type(self):
+    #     if self.onlinegame_id:
+    #         return "onlinegame"
+    #     if self.game_api_id and self.onlinegamesFav is None:
+    #         return "videogames"
+    #     if self.game_api_id and self.onlinegamesFav:
+    #         return "boardgame"
+    #     return "unknown"
     
 
 class UserContacts(db.Model):

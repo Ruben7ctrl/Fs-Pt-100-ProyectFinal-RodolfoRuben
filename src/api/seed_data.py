@@ -110,8 +110,9 @@ def seed_favorites(users, games):
         fav = Favorites(
             user1=user1,
             # user2=user2,
-            # game_api_id=game_api_id,
-            onlinegamesFav=random.choice(games)
+            game_api_id=faker.random_element(g.id for g in games),
+            onlinegamesFav=random.choice(games),
+            game_type=random.choice(["videogames", "boardgames"])
         )
         favorites.append(fav)
     return favorites
