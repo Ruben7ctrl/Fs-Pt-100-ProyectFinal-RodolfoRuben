@@ -12,8 +12,8 @@ export const UserProfile = () => {
   const navigate = useNavigate();
 
   const user = store.user;
-  const avatarName = user.Avatar_image || "default";
-  const avatarUrl = `.../assets/img/${avatarName}.jpg`;
+  const avatarName = user.avatar_image || "default";
+  const avatarUrl = `/src/front/assets/img/${avatarName}.jpg`;
   const [hoveredCard, setHoveredCard] = useState(null);
   const hoverRef = useRef(null);
 
@@ -34,39 +34,40 @@ export const UserProfile = () => {
   };
 
 
-useEffect(() => {
-  if (hoverRef.current && hoveredCard) {
-    hoverRef.current.style.opacity = 0;
-    hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(-45deg)";
-    hoverRef.current.style.left = "50%";
-    hoverRef.current.style.top = "50%";
+  useEffect(() => {
+    if (hoverRef.current && hoveredCard) {
+      hoverRef.current.style.opacity = 0;
+      hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(-45deg)";
+      hoverRef.current.style.left = "50%";
+      hoverRef.current.style.top = "50%";
 
-    anime({
-      targets: hoverRef.current,
-      opacity: 1,
-      scale: [0.8, 1],
-      rotateY: [-45, 0],
-      duration: 800,
-      easing: "easeOutExpo",
-      boxShadow: [
-        "0 0 0px rgba(0,255,255,0)",
-        "0 0 25px rgba(0,255,255,0.5)",
-        "0 0 15px rgba(0,255,255,0.3)",
-      ],
-      complete: () => {
-        if (hoverRef.current) {
-          hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(0deg)";
-        }
-      },
-    });
-  }
-}, [hoveredCard]);
-
-
+      anime({
+        targets: hoverRef.current,
+        opacity: 1,
+        scale: [0.8, 1],
+        rotateY: [-45, 0],
+        duration: 800,
+        easing: "easeOutExpo",
+        boxShadow: [
+          "0 0 0px rgba(0,255,255,0)",
+          "0 0 25px rgba(0,255,255,0.5)",
+          "0 0 15px rgba(0,255,255,0.3)",
+        ],
+        complete: () => {
+          if (hoverRef.current) {
+            hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(0deg)";
+          }
+        },
+      });
+    }
+  }, [hoveredCard]);
 
 
 
 
+
+console.log('ESTE ES EL NOMBRE DEL AVATAR',avatarName);
+console.log('ESTE ES URL',avatarUrl);
 
 
 
@@ -82,6 +83,7 @@ useEffect(() => {
           <div className="avatar-info-userProfile">
             <div
               className="avatar-circle-userProfile"
+              style={{ backgroundImage : `url(${avatarUrl})` }}
 
             />
             <div className="profile-name-userProfile neon-text">
