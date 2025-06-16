@@ -22,7 +22,7 @@ import sportImg from "../assets/img/Sport.png";
 import rpgImg from "../assets/img/RPG.png";
 import strategyImg from "../assets/img/Strategy.png";
 import stripeServices from "../services/fluxStore";
-
+import { getStoredUser } from "../utils/storage";
 
 export const Games = () => {
 
@@ -30,7 +30,7 @@ export const Games = () => {
 
   // Access the global state and dispatch function using the useGlobalReducer hook.
   const {
-    store: { videojuegos },
+    store: { videojuegos }, store,
     dispatch,
   } = useGlobalReducer();
 
@@ -56,26 +56,26 @@ export const Games = () => {
 
 
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = getStoredUser();
   const username = user?.username
 
-// useEffect(() => {
-//   if (!activeGenre && !activePlatform) {
-//     // Caso general
-//     storeServices.videojuegos(page).then((data) =>
-//       dispatch({ type: "load_videojuegos", payload: data })
-//     );
-//   } else {
-//     // Caso filtrado → llamar getRecomendados con page
-//     storeServices.getRecomendados({
-//       genre_slug: activeGenre,
-//       platform_id: activePlatform,
-//       page: page
-//     }).then((data) => {
-//       setGenreGames(data);
-//     });
-//   }
-// }, [page, activeGenre, activePlatform, dispatch]);
+  // useEffect(() => {
+  //   if (!activeGenre && !activePlatform) {
+  //     // Caso general
+  //     storeServices.videojuegos(page).then((data) =>
+  //       dispatch({ type: "load_videojuegos", payload: data })
+  //     );
+  //   } else {
+  //     // Caso filtrado → llamar getRecomendados con page
+  //     storeServices.getRecomendados({
+  //       genre_slug: activeGenre,
+  //       platform_id: activePlatform,
+  //       page: page
+  //     }).then((data) => {
+  //       setGenreGames(data);
+  //     });
+  //   }
+  // }, [page, activeGenre, activePlatform, dispatch]);
 
 
 
@@ -146,7 +146,7 @@ export const Games = () => {
 
   };
 
-  const userIsLoggedIn = !!localStorage.getItem('user')
+  const userIsLoggedIn = !!getStoredUser();
 
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
@@ -154,18 +154,18 @@ export const Games = () => {
     { icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames" },
     { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
     { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
-    { icon: <User size={32} weight="fill" />, label: "Profile" },
+    { icon: <User size={32} weight="fill" />, label: "Profile", route: "/profile" },
     ...(userIsLoggedIn
       ? [{
-        icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/')} 
+        icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
       }] : [])
-    
+
   ];
 
   const handleCardClick = (route, label, action) => {
     if (action) return action();
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = getStoredUser();
     if (label === "Search") {
       new window.bootstrap.Offcanvas("#staticBackdrop").show();
       return;
@@ -199,24 +199,46 @@ export const Games = () => {
   };
 
   const juegosParaMostrar = (activeGenre || activePlatform) ? genreGames : videojuegos;
-  console.log(juegosParaMostrar)
 
 
- const handleFavoriteClick = async (game) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleFavoriteClick = async (game) => {
+  const user = getStoredUser();
 
   if (!user) {
+    console.warn("🔴 No hay usuario en localStorage. Redirigiendo...");
     navigate("/signin");
     return;
   }
 
-  const result = await userServices.addFavorite(null, game);
+  console.log("👤 Usuario encontrado:", user);
+  console.log("🎮 Juego que se intenta agregar a favoritos:", game);
 
-  if (result) {
-    dispatch({ type: "add_favorite", payload: game }); // opcional, solo si quieres actualizar store.user.favorites
+  try {
+    const result = await userServices.addFavorite(null, game);
+
+    console.log("📩 Respuesta de addFavorite:", result);
+
+    if (result) {
+      // Actualiza store
+      dispatch({ type: "add_favorite", payload: game });
+
+      // Actualiza localStorage
+      const updatedUser = {
+        ...user,
+        favorites: [...(user.favorites || []), game]
+      };
+
+      console.log("💾 Usuario actualizado con nuevo favorito:", updatedUser);
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    } else {
+      console.warn("⚠️ No se recibió resultado válido de addFavorite");
+    }
+  } catch (err) {
+    console.error("❌ Error en handleFavoriteClick:", err);
   }
 };
-
 
 
   // -----------------------  array de géneros  ------------------------ //
@@ -295,19 +317,21 @@ export const Games = () => {
       if (activeGenre || activePlatform) {
         setGenreGames(juegosConPrecio)
       } else {
-        dispatch({ type: "load_videojuegos", payload: juegosConPrecio})
+        dispatch({ type: "load_videojuegos", payload: juegosConPrecio })
       }
-      
+
     }
     fetchGames()
   }, [page, activeGenre, activePlatform, dispatch])
 
-const handleClick = () => {
-  navigate('/cart')
-}
+  const handleClick = () => {
+    navigate('/cart')
+  }
 
 
-
+  const isFavorite = (gameId) => {
+    return store.user?.favorites?.some(fav => fav.id === gameId);
+  };
 
   return (
     <div className="fondoGames">
@@ -338,7 +362,7 @@ const handleClick = () => {
       >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title">
-            {JSON.parse(localStorage.getItem("user"))?.username || "Guest"}
+            {getStoredUser()?.username || "Guest"}
           </h5>
           <button className="btn-close bg-white" data-bs-dismiss="offcanvas" />
         </div>
@@ -416,7 +440,13 @@ const handleClick = () => {
                 ) : (
                   <button className="game-buttons" disabled><Clock size={27} /></button>
                 )}
-                <button className="game-button" onClick={handleFavoriteClick}>❤️</button>
+                <button
+                  className={`game-button ${isFavorite(e.id) ? "favorited" : ""}`}
+                  onClick={() => handleFavoriteClick(e)}
+                >
+                  {isFavorite(e.id) ? "❤️" : "🤍"}
+                </button>
+
                 <Link to={`/games/${e.id}`} className="game-button">
                   Info
                 </Link>

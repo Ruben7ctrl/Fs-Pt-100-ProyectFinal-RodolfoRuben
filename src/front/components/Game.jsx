@@ -18,6 +18,8 @@ export const Game = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [playerShipsPlaced, setPlayerShipsPlaced] = useState(false);
     const navigate = useNavigate();
+    
+
 
     useEffect(() => {
         const [newAIBoard, ships] = placeAllShipsRandomly(generateEmptyBoard());

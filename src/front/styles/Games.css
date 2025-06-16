@@ -405,3 +405,7 @@
     transition: background 0.3s, color 0.3s;
     margin: 0px 3px 3px 3px;
 }
+
+.favorited {
+  color: red;
+}

@@ -1,4 +1,5 @@
 import { Password } from "phosphor-react";
+import { getStoredUser } from "../utils/storage";
 
 const userServices = {};
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -97,16 +98,20 @@ userServices.checkAuth = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (resp.status != 200) return false;
 
-    const data = await resp.json();
-    console.log(data);
+    if (!resp.ok) return false;
 
-    return data;
+    const text = await resp.text();
+    console.log("🔧 Respuesta cruda del backend:", text);
+
+    const data = JSON.parse(text);
+    return data.user; // <-- Asegúrate de esto si el usuario viene como `user`
   } catch (error) {
     console.log("Error loading message from backend", error);
+    return null;
   }
 };
+
 
 userServices.addFavorite = async (_, game) => {
   const token = localStorage.getItem("token");
@@ -119,8 +124,10 @@ userServices.addFavorite = async (_, game) => {
 
   const body = {
     user1_id: user.id,
-    onlinegame_id: game.id
+    game_api_id: game.id // ✅ esto es lo que tu backend necesita
   };
+
+  console.log("🧪 Enviando favorito al backend con:", body);
 
   try {
     const resp = await fetch(`${backendUrl}/api/favorites`, {
@@ -132,7 +139,11 @@ userServices.addFavorite = async (_, game) => {
       body: JSON.stringify(body)
     });
 
-    if (!resp.ok) throw new Error(`Error al agregar favorito: ${await resp.text()}`);
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      console.error("❌ Error en el backend:", errorText);
+      throw new Error("Error al agregar favorito");
+    }
 
     const data = await resp.json();
     return data;
@@ -143,9 +154,10 @@ userServices.addFavorite = async (_, game) => {
 };
 
 
+
 userServices.getFavorites = async (dispatch) => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getStoredUser();
 
   if (!token || !user) return [];
 
@@ -174,6 +186,27 @@ userServices.getFavorites = async (dispatch) => {
     return [];
   }
 };
+
+
+userServices.eliminarFavorito = async (favoriteId, token) => {
+  try {
+    const res = await fetch(`${backendUrl}/api/favorites/${favoriteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("No se pudo eliminar el favorito");
+
+    return true;
+  } catch (error) {
+    console.error("❌ Error al eliminar favorito:", error);
+    return false;
+  }
+};
+
+
 
 
 export default userServices;
