@@ -1003,10 +1003,11 @@ def create_favorites():
         # user2_id = data.get('user2_id')
         game_api_id = data.get('game_api_id')
         onlinegame_id = data.get('onlinegame_id')
+        game_type = data.get('game_type')
         if not user1_id:
             return jsonify({"error": "User1 ID is required"}), 404
-        if not (onlinegame_id or game_api_id):
-            return jsonify({"error": "At least one of the onlinegame_id or game_api_id is required"})
+        if not (onlinegame_id or game_api_id) or not game_type:
+            return jsonify({"error": "At least one of the onlinegame_id or game_api_id or game_type is required"})
 
         user1 = db.session.get(Users, user1_id)
         if not user1:
@@ -1026,6 +1027,7 @@ def create_favorites():
             # user2_id=user2_id,
             game_api_id= game_api_id,
             onlinegame_id=onlinegame_id,
+            game_type=game_type,
         )
 
         db.session.add(new_favorite)
