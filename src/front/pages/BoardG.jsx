@@ -5,15 +5,14 @@ import userServices from "../services/flux";
 import "../styles/BoardGames.css";
 import { NavbarVisitor } from "../components/NavbarVisitor";
 import storeServices from "../services/fluxApis";
-import { House, MagnifyingGlass, ArrowLeft, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight } from "phosphor-react";
+import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User, CaretLeft, CaretRight, DeviceMobile, DesktopTower, Monitor, AppleLogo, AndroidLogo, SignOut, Clock, Calendar, ArrowLeft, ShoppingCart } from "phosphor-react";
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
+import Botonsiguiente from './../assets/Botonsiguiente.mp3'
 import { useNavigate } from "react-router-dom";
 import fallbackImage from './../assets/img/fallbackimage.jpg';
-import Botonsiguiente from './../assets/Botonsiguiente.mp3'
 import { Loading } from "../components/loading";
 import { Link } from "react-router-dom";
-import { Clock } from "phosphor-react";
 import stripeServices from "../services/fluxStore";
 
 
@@ -33,7 +32,75 @@ export const BoardGames = () => {
     const username = user?.username
 
 
+    const handleMouseEnter = (e) => {
 
+        anime.remove(e.currentTarget);
+        audioBotones.current.play();
+
+        anime({
+            targets: e.currentTarget,
+            translateY: [
+                { value: -44, easing: "easeOutExpo", duration: 600 },
+                { value: 0, easing: "easeOutBounce", duration: 800, delay: 100 }
+            ],
+
+            rotate: {
+                value: "-1turn", // ✅ Gira completamente
+                duration: 1000,
+                easing: "easeInOutSine"
+
+            },
+            delay: 0
+
+        });
+
+    };
+
+    const handleMouseLeave = (e) => {
+        anime.remove(e.currentTarget);
+
+        anime({
+            targets: e.currentTarget,
+            translateY: 0,
+            rotate: 0, // ✅ Asegura que vuelve al ángulo original
+            scale: 1,
+            duration: 400,
+            easing: "easeOutQuad"
+        });
+
+    };
+
+    const userIsLoggedIn = !!localStorage.getItem('user')
+
+    const items = [
+        { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
+        // { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
+        ...(userIsLoggedIn
+            ? [{
+                icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
+            }] : []),
+        { icon: <GameController size={32} weight="fill" />, label: "Videogames", route: "/games"},
+        { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
+        // { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
+        { icon: <User size={32} weight="fill" />, label: "Profile" },
+        ...(userIsLoggedIn
+            ? [{
+                icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
+            }] : [])
+
+    ];
+
+    const handleCardClick = (route, label, action) => {
+        if (action) return action();
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        // if (label === "Search") {
+        //     new window.bootstrap.Offcanvas("#staticBackdrop").show();
+        //     return;
+        // }
+        if (label === "Profile" && !user) return navigate("/signin");
+        route && navigate(route);
+    };
 
 
     const juegosPorPagina = 6
@@ -96,14 +163,29 @@ export const BoardGames = () => {
             <div className="boardgames-pageB">
 
                 {/* Botón Volver */}
-                <div className="boardgames-backB">
+                {/* <div className="boardgames-backB">
                     <button className="icon-buttonB" onClick={() => navigate('/games')}>
                         <ArrowLeft size={24} weight="bold" />
                     </button>
                 </div>
 
-                <h2 className="boardgames-titleB">🎲 Juegos de Mesa ({letra.toUpperCase()})</h2>
-
+                <h2 className="boardgames-titleB">🎲 Juegos de Mesa ({letra.toUpperCase()})</h2> */}
+                <div className="container mb-5">
+                    <div className="ps5-grid">
+                        {items.map(({ icon, label, route, action }, i) => (
+                            <div
+                                key={i}
+                                className="char ps5-card cyber-card"
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                onClick={() => handleCardClick(route, label, action)}
+                            >
+                                <div className="icon">{icon}</div>
+                                <span className="label">{label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
                 {/* Letras */}
                 <div className="boardgames-lettersB">
                     {letras.map(l => (
@@ -141,7 +223,7 @@ export const BoardGames = () => {
                                         <p>🎯 {juego.minPlayers} - {juego.maxPlayers} jugadores</p>
                                         <p>⏱️ {juego.playTime} min</p>
                                         <p>⭐ {parseFloat(juego.averageRating).toFixed(2)}</p>
-                                        <p className="categoriesB">{juego.categories?.join(", ")}</p>
+                                        {/* <p className="categoriesB">{juego.categories?.join(", ")}</p> */}
                                     </div>
 
                                 </Link>

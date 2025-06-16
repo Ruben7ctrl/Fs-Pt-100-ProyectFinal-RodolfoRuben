@@ -32,10 +32,10 @@ export const OnlineGames = () => {
     }, []);
 
 
-const handleClick = ()=>{
+    const handleClick = () => {
 
-    navigate('/ia_sessions')
-}
+        navigate('/ia_sessions')
+    }
 
     const handleJoinGame = (gameId) => {
         localStorage.setItem('gameId', gameId);
@@ -51,76 +51,76 @@ const handleClick = ()=>{
     };
 
     // 🚀 Elegimos la imagen de fondo según hoveredGame
- const getBackgroundClass = () => {
-    if (hoveredGame === 'ajedrez') return 'fondoAjedrez';
-    if (hoveredGame === 'tres en raya') return 'fondoTresEnRaya';
-    if (hoveredGame === 'campaña') return 'fondoCampaña';
-    if (hoveredGame === 'hundir la flota') return 'fondoHundirflota';
+    const getBackgroundClass = () => {
+        if (hoveredGame === 'ajedrez') return 'fondoAjedrez';
+        if (hoveredGame === 'tres en raya') return 'fondoTresEnRaya';
+        if (hoveredGame === 'campaña') return 'fondoCampaña';
+        if (hoveredGame === 'hundir la flota') return 'fondoHundirflota';
 
-    return 'fondoGames';
-};
+        return 'fondoGames';
+    };
 
-return (
-    <div className={getBackgroundClass()}>
-        <div className="boardgames-pageB">
+    return (
+        <div className={getBackgroundClass()}>
+            <div className="boardgames-pageB">
 
-            {/* Botón Volver */}
-            <div className="boardgames-backB">
-                <button className="icon-buttonB" onClick={() => navigate('/games')}>
-                    <ArrowLeft size={24} weight="bold" />
-                </button>
-            </div>
+                {/* Botón Volver */}
+                <div className="boardgames-backB">
+                    <button className="icon-buttonB" onClick={() => navigate('/games')}>
+                        <ArrowLeft size={24} weight="bold" />
+                    </button>
+                </div>
 
-            <h2 className="boardgames-titleB">🎲 Juegos Online</h2>
+                <h2 className="boardgames-titleB">🎲 Juegos Online</h2>
 
-            
 
-            <div className="online-games-grid">
-                {games.length === 0 ? (
-                    <p>No hay partidas disponibles</p>
-                ) : (
-                    games.map((game) => (
-                        <div
-                            key={game.id}
-                            className="online-game-card"
-                            onMouseEnter={() => {
-                                setHoveredGame(game.name.toLowerCase());
-                                playHoverSound();
-                            }}
-                            onMouseLeave={() => setHoveredGame(null)}
-                            onClick={() => handleJoinGame(game.id)}
-                        >
-                            <div className="online-game-card-content">
-                                <h3>{game.name}</h3>
-                                <p>{game.description}</p>
-                                <p>Dificultad: {game.difficulty_levels}</p>
+
+                <div className="online-games-grid">
+                    {games.length === 0 ? (
+                        <p>No hay partidas disponibles</p>
+                    ) : (
+                        games.map((game) => (
+                            <div
+                                key={game.id}
+                                className="online-game-card"
+                                onMouseEnter={() => {
+                                    setHoveredGame(game.name.toLowerCase());
+                                    playHoverSound();
+                                }}
+                                onMouseLeave={() => setHoveredGame(null)}
+                                onClick={() => handleJoinGame(game.id)}
+                            >
+                                <div className="online-game-card-content">
+                                    <h3>{game.name}</h3>
+                                    <p>{game.description}</p>
+                                    <p>Dificultad: {game.difficulty_levels}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))
-                )}
-<div
-                            
-                            className="online-game-card"
-                            onMouseEnter={() => {
-                                setHoveredGame('campaña');
-                                
-                                playHoverSound();
-                            }}
-                            onMouseLeave={() => setHoveredGame(null)}
-                           onClick={() => handleClick()}
-                        
-                        >
-                            <div className="online-game-card-content">
-                                <h3>Campaña</h3>
-                                <p>Este es el juego clasico de campaña, estaras en todo momento asistido por la IA</p>
-                                <p>Dificultad: Medium</p>
-                            </div>
-                        </div>
-                
-            </div>
+                        ))
+                    )}
+                    <div
 
+                        className="online-game-card"
+                        onMouseEnter={() => {
+                            setHoveredGame('campaña');
+
+                            playHoverSound();
+                        }}
+                        onMouseLeave={() => setHoveredGame(null)}
+                        onClick={() => handleClick()}
+
+                    >
+                        <div className="online-game-card-content">
+                            <h3>Campaña</h3>
+                            <p>Este es el juego clasico de campaña, estaras en todo momento asistido por la IA</p>
+                            <p>Dificultad: Medium</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
-    </div>
-);
+    );
 
 };
