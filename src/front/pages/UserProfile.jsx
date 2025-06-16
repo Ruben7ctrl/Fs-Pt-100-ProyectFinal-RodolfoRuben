@@ -62,31 +62,35 @@ export const UserProfile = () => {
 
   useEffect(() => {
     if (hoverRef.current && hoveredCard) {
-      hoverRef.current.style.opacity = 0;
-      hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(-45deg)";
-      hoverRef.current.style.left = "50%";
-      hoverRef.current.style.top = "50%";
+      const card = hoverRef.current;
+
+      // Estado inicial: forma distorsionada y oculta
+      card.style.opacity = 0;
+      card.style.transform = "translate(-50%, -50%) scale(0.2) rotate(-30deg) skew(20deg, 10deg)";
+      card.style.filter = "blur(10px)";
+      card.style.left = "50%";
+      card.style.top = "50%";
 
       anime({
-        targets: hoverRef.current,
-        opacity: 1,
-        scale: [0.8, 1],
-        rotateY: [-45, 0],
-        duration: 800,
-        easing: "easeOutExpo",
-        boxShadow: [
-          "0 0 0px rgba(0,255,255,0)",
-          "0 0 25px rgba(0,255,255,0.5)",
-          "0 0 15px rgba(0,255,255,0.3)",
+        targets: card,
+        opacity: [0, 1],
+        scale: [0.2, 1],
+        rotate: [-30, 0],
+        skew: [
+          { value: '20deg', duration: 0 },
+          { value: '0deg', duration: 700 }
         ],
+        filter: ['blur(10px)', 'blur(0px)'],
+        easing: "easeOutExpo",
+        duration: 1000,
         complete: () => {
-          if (hoverRef.current) {
-            hoverRef.current.style.transform = "translate(-50%, -50%) rotateY(0deg)";
-          }
-        },
+          card.style.transform = "translate(-50%, -50%)";
+          card.style.filter = "none";
+        }
       });
     }
   }, [hoveredCard]);
+
 
   const scrollCarousel = (ref, direction) => {
     const el = ref.current;
@@ -107,21 +111,21 @@ export const UserProfile = () => {
 
 
 
-const handleRemoveFavorite = async (gameId, gameType) => {
-  const token = localStorage.getItem("token");
-  if (!token) return alert("Debes iniciar sesión");
+  const handleRemoveFavorite = async (gameId, gameType) => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Debes iniciar sesión");
 
-  const favToRemove = user.favorite1.find(
-    (f) => String(f.game_api_id) === String(gameId) && f.game_type === gameType
-  );
+    const favToRemove = user.favorite1.find(
+      (f) => String(f.game_api_id) === String(gameId) && f.game_type === gameType
+    );
 
-  if (!favToRemove) return console.warn("❗ Favorito no encontrado");
+    if (!favToRemove) return console.warn("❗ Favorito no encontrado");
 
-  const success = await userServices.eliminarFavorito(favToRemove.id, token);
-  if (success) {
-    dispatch({ type: "remove_favorite", payload: gameId });
-  }
-};
+    const success = await userServices.eliminarFavorito(favToRemove.id, token);
+    if (success) {
+      dispatch({ type: "remove_favorite", payload: gameId });
+    }
+  };
 
 
 
@@ -160,6 +164,7 @@ const handleRemoveFavorite = async (gameId, gameType) => {
                       className="favorite-card-small-userProfile"
                       onMouseEnter={() => setHoveredCard(game)}
                       onMouseLeave={() => setHoveredCard(null)}
+                      onClick={() => navigate(`/games/${game.id}`)}
                     >
                       <img
                         src={game.background_image || game.image}
@@ -194,10 +199,11 @@ const handleRemoveFavorite = async (gameId, gameType) => {
             <img
               src={hoveredCard.background_image || hoveredCard.image}
               alt={hoveredCard.name}
-              className="hover-card-img-userProfile"
+              className="hover-preview-img"
             />
-            <h3 className="hover-card-title-userProfile">{hoveredCard.name}</h3>
+            <h3 className="hover-preview-title">{hoveredCard.name}</h3>
           </div>
+
         )}
       </div>
 
@@ -221,6 +227,9 @@ const handleRemoveFavorite = async (gameId, gameType) => {
                       className="favorite-card-small-userProfile"
                       onMouseEnter={() => setHoveredCard(game)}
                       onMouseLeave={() => setHoveredCard(null)}
+                      onClick={() => navigate(`/boardgame/${game.id}`)}
+                      
+                      
                     >
                       <img
                         src={game.background_image || game.image}
