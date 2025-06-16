@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, Users, OnlineGames, Favorites, OnlineStats, Purchases, UserContacts, IAsessions, IAevents, GamePurchase, OwnGames, StoreItem
+from api.models import db, Users, OnlineGames, Favorites, OnlineStats, UserContacts, IAsessions, IAevents, GamePurchase, StoreItem
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select, or_
@@ -896,83 +896,83 @@ def delete_events(id):
         return jsonify({"error": "something went wrong delete events"})
 
 
-@api.route('/purchases', methods=['GET'])
-@jwt_required()
-def get_purchases():
-    try:
+# @api.route('/purchases', methods=['GET'])
+# @jwt_required()
+# def get_purchases():
+#     try:
 
-        stmt = select(Purchases)
-        purchases = db.session.execute(stmt).scalars().all()
-        return jsonify([money.serialize() for money in purchases]), 200
+#         stmt = select(Purchases)
+#         purchases = db.session.execute(stmt).scalars().all()
+#         return jsonify([money.serialize() for money in purchases]), 200
 
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "something went wrong get purchases"})
-
-
-@api.route('/purchases/<int:id>', methods=['GET'])
-@jwt_required()
-def get_one_purchases(id):
-    try:
-
-        stmt = select(Purchases).where(Purchases.id == id)
-        purchases = db.session.execute(stmt).scalar_one_or_none()
-        if purchases is None:
-            return jsonify({"error": "Purchases not found"}),  400
-
-        return jsonify(purchases.serialize()), 200
-
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "something went wrong purchase"})
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "something went wrong get purchases"})
 
 
-@api.route('/purchases', methods=['POST'])
-@jwt_required()
-def create_purchases():
-    try:
+# @api.route('/purchases/<int:id>', methods=['GET'])
+# @jwt_required()
+# def get_one_purchases(id):
+#     try:
 
-        data = request.get_json()
-        if not data or "amount" not in data or "payment_method" not in data or "user_id" not in data:
-            return jsonify({"error": "Missing data"}), 400
+#         stmt = select(Purchases).where(Purchases.id == id)
+#         purchases = db.session.execute(stmt).scalar_one_or_none()
+#         if purchases is None:
+#             return jsonify({"error": "Purchases not found"}),  400
 
-        new_purchases = Purchases(
-            amount=data["amount"],
-            payment_method=data["payment_method"],
-            status=data.get("status", None),
-            user_id=data["user_id"]
-        )
+#         return jsonify(purchases.serialize()), 200
 
-        db.session.add(new_purchases)
-        db.session.commit()
-
-        new_own = OwnGames(
-            user_id=data["user_id"],
-            purchase_id=new_purchases.id
-        )
-
-        return jsonify({"purchase": new_purchases.serialize(), "own_game": new_own.serialize()}), 201
-
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "something went wrong create purchase"})
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "something went wrong purchase"})
 
 
-@api.route('/users/<int:id>/purchases', methods=['GET'])
-@jwt_required()
-def get_user_purchases(id):
-    try:
+# @api.route('/purchases', methods=['POST'])
+# @jwt_required()
+# def create_purchases():
+#     try:
 
-        stmt = select(Purchases).where(Purchases.user_id == id)
-        user_purchases = db.session.execute(stmt).scalars().all()
-        if user_purchases is None:
-            return jsonify({"error": "Purchases not found"}),  400
+#         data = request.get_json()
+#         if not data or "amount" not in data or "payment_method" not in data or "user_id" not in data:
+#             return jsonify({"error": "Missing data"}), 400
 
-        return jsonify([user.serialize() for user in user_purchases]), 200
+#         new_purchases = Purchases(
+#             amount=data["amount"],
+#             payment_method=data["payment_method"],
+#             status=data.get("status", None),
+#             user_id=data["user_id"]
+#         )
 
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "something went wrong user purchases"})
+#         db.session.add(new_purchases)
+#         db.session.commit()
+
+#         new_own = OwnGames(
+#             user_id=data["user_id"],
+#             purchase_id=new_purchases.id
+#         )
+
+#         return jsonify({"purchase": new_purchases.serialize(), "own_game": new_own.serialize()}), 201
+
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "something went wrong create purchase"})
+
+
+# @api.route('/users/<int:id>/purchases', methods=['GET'])
+# @jwt_required()
+# def get_user_purchases(id):
+#     try:
+
+#         stmt = select(Purchases).where(Purchases.user_id == id)
+#         user_purchases = db.session.execute(stmt).scalars().all()
+#         if user_purchases is None:
+#             return jsonify({"error": "Purchases not found"}),  400
+
+#         return jsonify([user.serialize() for user in user_purchases]), 200
+
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "something went wrong user purchases"})
 
 
 @api.route('/users/<int:id>/favorites', methods=['GET'])

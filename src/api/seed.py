@@ -26,9 +26,9 @@ with app.app_context():
     db.session.add_all(games)
     db.session.commit()
 
-    purchases = seed_purchases(users)
-    db.session.add_all(purchases)
-    db.session.commit()
+    # purchases = seed_purchases(users)
+    # db.session.add_all(purchases)
+    # db.session.commit()
 
     # stats = seed_online_stats(users, games)
     # db.session.add_all(stats)
@@ -54,9 +54,9 @@ with app.app_context():
     db.session.add_all(game_purchases)
     db.session.commit()
 
-    own_games = seed_own_games(users, game_purchases)
-    db.session.add_all(own_games)
-    db.session.commit()
+    # own_games = seed_own_games(users, game_purchases)
+    # db.session.add_all(own_games)
+    # db.session.commit()
 
     store_items = seed_store_items()
     db.session.add_all(store_items)

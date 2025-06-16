@@ -22,7 +22,7 @@ class Users(db.Model):
     favorite1: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user1", foreign_keys=lambda: [Favorites.user1_id])
     # favorite2: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user2", foreign_keys=lambda: [Favorites.user2_id])
 
-    purchases: Mapped[List["Purchases"]] = relationship(back_populates="user_purchase")
+    # purchases: Mapped[List["Purchases"]] = relationship(back_populates="user_purchase")
 
     usercontact: Mapped[List["UserContacts"]] = relationship("UserContacts", back_populates="user_cont", foreign_keys="UserContacts.user_id")
 
@@ -30,7 +30,7 @@ class Users(db.Model):
 
     ia_sessions: Mapped[List["IAsessions"]] = relationship(back_populates="user_iasessions")
 
-    owned_games: Mapped[list["OwnGames"]] = relationship(back_populates="user")
+    # owned_games: Mapped[list["OwnGames"]] = relationship(back_populates="user")
 
 
     def serialize(self):
@@ -48,7 +48,7 @@ class Users(db.Model):
             "usercontact": [cont.serialize() for cont in self.usercontact],
             "online_stats": [stats.serialize() for stats in self.online_stats],
             "ia_sessions": [ia.serialize() for ia in self.ia_sessions],
-            "owned_games": [own.serialize() for own in self.owned_games],
+            # "owned_games": [own.serialize() for own in self.owned_games],
         }
     
 
@@ -77,30 +77,30 @@ class OnlineGames(db.Model):
         }
     
 
-class Purchases(db.Model):
-    __tablename__ = "purchases"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    amount: Mapped[int] = mapped_column(nullable=False)
-    payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
-    status: Mapped[str] = mapped_column(String(50), nullable=True)
-    purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
+# class Purchases(db.Model):
+#     __tablename__ = "purchases"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     amount: Mapped[int] = mapped_column(nullable=False)
+#     payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
+#     status: Mapped[str] = mapped_column(String(50), nullable=True)
+#     purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user_purchase: Mapped["Users"] = relationship(back_populates="purchases")
+#     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+#     user_purchase: Mapped["Users"] = relationship(back_populates="purchases")
 
-    # storegame_id: Mapped[int] = mapped_column(ForeignKey(".id"), nullable=False)
-    # storegamepay: Mapped["Users"] = relationship(back_populates="purchases")    
+#     # storegame_id: Mapped[int] = mapped_column(ForeignKey(".id"), nullable=False)
+#     # storegamepay: Mapped["Users"] = relationship(back_populates="purchases")    
 
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "amount": self.amount,
-            "payment_method": self.payment_method,
-            "status": self.status if self.status else None,
-            "purchased_at": self.purchased_at.isoformat(),
-            "user_purchase": self.user_purchase.username,
-        }
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "amount": self.amount,
+#             "payment_method": self.payment_method,
+#             "status": self.status if self.status else None,
+#             "purchased_at": self.purchased_at.isoformat(),
+#             "user_purchase": self.user_purchase.username,
+#         }
     
 
 class OnlineStats(db.Model):
@@ -276,7 +276,7 @@ class GamePurchase(db.Model):
     purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
 
 
-    owners: Mapped[list["OwnGames"]] = relationship(back_populates="purchase")
+    # owners: Mapped[list["OwnGames"]] = relationship(back_populates="purchase")
 
 
     def serialize(self):
@@ -312,22 +312,22 @@ class StoreItem(db.Model):
         }
     
 
-class OwnGames(db.Model):
-    __tablename__ = "owngames"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    purchase_id: Mapped[int] = mapped_column(ForeignKey("game_purchase.id"), nullable=False)
-    acquired_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
+# class OwnGames(db.Model):
+#     __tablename__ = "owngames"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+#     purchase_id: Mapped[int] = mapped_column(ForeignKey("game_purchase.id"), nullable=False)
+#     acquired_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
 
     
-    user: Mapped["Users"] = relationship(back_populates="owned_games")
-    purchase: Mapped["GamePurchase"] = relationship(back_populates="owners")
+#     user: Mapped["Users"] = relationship(back_populates="owned_games")
+#     purchase: Mapped["GamePurchase"] = relationship(back_populates="owners")
 
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "purchase": self.purchase,
-            "acquired_at": self.acquired_at.isoformat()
-        }
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "user_id": self.user_id,
+#             "purchase": self.purchase,
+#             "acquired_at": self.acquired_at.isoformat()
+#         }
