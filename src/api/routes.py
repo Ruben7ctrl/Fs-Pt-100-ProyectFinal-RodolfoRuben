@@ -245,14 +245,6 @@ def store_purchase():
         db.session.add(new_purchase)
         db.session.commit()
 
-        own_game = OwnGames(
-            user_id=user_id,
-            purchase_id=new_purchase.id
-        )
-
-        db.session.add(own_game)
-        db.session.commit()
-
         return jsonify({"message": "Purchase store successfully"}), 200
 
     except Exception as e:
