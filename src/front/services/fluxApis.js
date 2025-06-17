@@ -1,10 +1,11 @@
 const storeServices = {}
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const apikeyRAWG = import.meta.env.VITE_RAWG_API_KEY;
 
 storeServices.videojuegos = async (page = 1) => {
 
     try {
-        const resp = await fetch(`https://api.rawg.io/api/games?key=c5df4513c2584cc68477a27dce6e0f27&page=${page}`)
+        const resp = await fetch(`https://api.rawg.io/api/games?key=${apikeyRAWG}&page=${page}`)
         if(!resp.ok) throw new Error("Error fetch data")
         const data = await resp.json()
         return data.results
@@ -20,7 +21,7 @@ storeServices.videojuegos = async (page = 1) => {
 storeServices.getRecomendados = async ({ genre_slug = null, platform_id = null, page = 1 }) => {
     try {
         const url = new URL("https://api.rawg.io/api/games");
-        url.searchParams.set("key", "c5df4513c2584cc68477a27dce6e0f27");
+        url.searchParams.set("key", apikeyRAWG);
         url.searchParams.set("page", page);
         url.searchParams.set("page_size", 10);
 
@@ -46,7 +47,7 @@ storeServices.getRecomendados = async ({ genre_slug = null, platform_id = null, 
 storeServices.getOneVideojuegos = async (id) => {
 
     try {
-        const resp = await fetch(`https://api.rawg.io/api/games/${id}?key=c5df4513c2584cc68477a27dce6e0f27`)
+        const resp = await fetch(`https://api.rawg.io/api/games/${id}?key=${apikeyRAWG}`)
         console.log(resp);
         
         if (!resp.ok) throw new Error('Error fetch data')
@@ -64,7 +65,7 @@ storeServices.getOneVideojuegos = async (id) => {
 storeServices.video = async (id) => {
 
     try {
-        const resp = await fetch(`https://api.rawg.io/api/games/${id}/movies?key=c5df4513c2584cc68477a27dce6e0f27`)
+        const resp = await fetch(`https://api.rawg.io/api/games/${id}/movies?key=${apikeyRAWG}`)
         console.log(resp);
         
         if (!resp.ok) throw new Error('Error fetch data')
