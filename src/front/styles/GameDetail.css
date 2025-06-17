@@ -256,24 +256,39 @@
 }
 
 
-@media (max-width: 768px) {
-  .game-video-box {
-    position: static;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    margin-bottom: 20px;
-    order: -1;
-  }
-
-  .game-video-box .videoinfo,
-  .game-video-box .imginfo {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    height: auto;
+@media (max-width: 1024px) {
+  .game-main-content {
+    flex-direction: column;
+    align-items: center;
   }
 
   .game-info-panel {
+    width: 90% !important;
     margin-top: 20px;
   }
+
+  .game-video-box {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+    margin: 40px 0;
+    z-index: auto;
+  }
+
+  .videoinfo,
+  .imginfo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
 }
+
+.game-main-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap; /* permite que se apilen en pantallas pequeñas */
+}
+
