@@ -3,6 +3,7 @@ import { getStoredUser } from "../utils/storage";
 
 const userServices = {};
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const apikeyRAWG = import.meta.env.VITE_RAWG_API_KEY;
 
 userServices.signup = async (formData) => {
   try {
@@ -195,7 +196,7 @@ userServices.getFavoritesFromRelations = async (favoriteRelations) => {
   for (const fav of favoriteRelations) {
     try {
       if (fav.game_type === "videogame") {
-        const resp = await fetch(`https://api.rawg.io/api/games/${fav.game_api_id}?key=c5df4513c2584cc68477a27dce6e0f27`);
+        const resp = await fetch(`https://api.rawg.io/api/games/${fav.game_api_id}?key=${apikeyRAWG}`);
         const data = await resp.json();
         videogames.push({
           id: fav.game_api_id,

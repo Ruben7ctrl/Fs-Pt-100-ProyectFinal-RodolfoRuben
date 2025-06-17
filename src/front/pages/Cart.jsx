@@ -77,7 +77,7 @@ export const Cart = () => {
                     <ArrowLeft size={24} weight="bold" />
                 </button>
             </div>
-            <h1>Tu Cesta</h1>
+            <h1 className="title">Tu Cesta</h1>
             {cart.length === 0 ? (
                 <div className="cart-summary">
                     <p><strong>No hay juegos en la cesta</strong></p>
@@ -91,7 +91,7 @@ export const Cart = () => {
                                 (i) => i.stripe_price_id === item.stripe_price_id
                             );
                             const price = storeItem?.price || "No disponible"
-                            const ratings = item.ratings?.map(r => r.title).join(", ") || "Sin Ratings"
+                            const ratings = item.ratings?.map(r => `"${r.title}"`).join(", ") || "Sin Ratings"
                             const platforms = item.platforms?.map(p => p.platform?.name || p.name).join(", ") || "Plataformas no disponibles"
                             const imageSrc = item.background_image || item.image || "fallback.jpg"
                             console.log("storeItem:", item);
@@ -108,15 +108,18 @@ export const Cart = () => {
                                     <div className="cart-item-details">
                                         <h3>{item.name}</h3>
                                         <p className="game-description">{item.rating}⭐</p>
-                                        <p><strong className="text-danger">Platforms: </strong>{platforms}</p>
-                                        <p><strong className="text-danger">Ratings: </strong>{ratings}</p>
-                                        <p>Precio: {price}€</p>
-                                        <button className="game-buttonss" onClick={() => dispatch({ type: 'remove_from_cart', payload: item.id })}>
-                                            Eliminar
-                                        </button>
-                                        <Link to={`/games/${item.id}`} className="game-buttonss">
-                                        Info
-                                        </Link>
+                                        <p><strong className="text">Platforms: </strong>{platforms}</p>
+                                        <p><strong className="text">Ratings: </strong>{ratings}</p>
+                                        <p><strong className="text">Precio:</strong> {price}€</p>
+                                        <div className="game-button-container">
+                                            <button className="game-buttonss" onClick={() => dispatch({ type: 'remove_from_cart', payload: item.id })}>
+                                                Eliminar
+                                            </button>
+                                            <Link to={`/games/${item.id}`} className="game-buttonss">
+                                                Info
+                                            </Link>
+                                        </div>
+
                                     </div>
                                 </li>
                             )
