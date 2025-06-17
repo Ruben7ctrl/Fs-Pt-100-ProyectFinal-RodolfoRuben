@@ -60,6 +60,13 @@ storeServices.getOneVideojuegos = async (id) => {
     }
 }
 
+storeServices.getGameScreenshots = async (id) => {
+  
+  const response = await fetch(`https://api.rawg.io/api/games/${id}/screenshots?key=${apikeyRAWG}`);
+  if (!response.ok) throw new Error("Error al obtener screenshots");
+  return await response.json();
+};
+
 
 
 storeServices.video = async (id) => {
