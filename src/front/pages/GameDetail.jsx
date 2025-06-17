@@ -35,6 +35,7 @@ export const GameDetail = () => {
                             }
                         })
                         .catch(error => console.error("Error cargando recomendados", error));
+                        
                 }
 
 
@@ -51,10 +52,13 @@ export const GameDetail = () => {
                         console.error("Error cargando video", error);
                         setVideo(null);
                     });
+                    
             });
         }
+        
     }, [id]);
 
+    
 
     if (!game) return <Loading />;
 
@@ -83,14 +87,30 @@ export const GameDetail = () => {
             </div>
 
             {/* Recuadro del video → arriba a la derecha */}
-            {video?.data?.max && (
+            {/* Recuadro del video o carrusel */}
+            {video?.data?.max ? (
                 <div className="game-video-box">
-                    <video
+                    <video className="videoinfo"
                         src={video.data.max}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
                         controls
                     />
                 </div>
+            ) : (
+                <div id="carouselFallback" className="carousel slide game-video-box" data-bs-ride="carousel">
+                    <div className="carousel-inner">
+                        {game.short_screenshots?.map((img, idx) => (
+                            <div className={`carousel-item ${idx === 0 ? 'active' : ''}`} key={img.id}>
+                                <img src={img.image} className="d-block w-100 imginfo" alt={`screenshot-${idx}`} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             )}
+
 
 
 
