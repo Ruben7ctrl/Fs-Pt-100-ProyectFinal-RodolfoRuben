@@ -456,7 +456,7 @@ export const Games = () => {
                       }
                       dispatch({ type: 'add_to_cart', payload: e });
                     }}
-                    >Buy</button>
+                    ><span class="fa-solid fa-cart-shopping"></span></button>
                   ) : (
                     <button className="game-buttons" disabled><Clock size={27} /></button>
                   )}

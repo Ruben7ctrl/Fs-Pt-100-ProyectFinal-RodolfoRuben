@@ -84,7 +84,7 @@ export const Signup = () => {
             <nav className="navbar">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
-                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44"/>
+                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
                     </a>
                 </div>
             </nav>
@@ -128,7 +128,7 @@ export const Signup = () => {
                         </div>
                     </div> */}
                     <div className="avatars mt-3 col-sm-12 col-md-12">
-                        <label htmlFor="avatar" className="form-label">Elige tu Avatar (flechas)</label>
+                        {/* <label htmlFor="avatar" className="form-label">Elige tu Avatar (flechas)</label> */}
                         <input type="text" className="form-control" placeholder="Avatar" name="avatar" value={formData.avatar_image} onChange={handleChange} required />
                     </div>
 
@@ -140,9 +140,13 @@ export const Signup = () => {
 
                 </form>
             </div>
-            <div className="botones_avatar ">
-                <button onClick={handleMas}><span className="fa-regular fa-square-caret-left"></span></button>
-                <button onClick={handleMenos}><span className="fa-regular fa-square-caret-right"></span></button>
+            <div className="botones_avatar">
+                    <h3 className="elige">Elige tu Avatar</h3>
+                <div className="botones">
+                    <button onClick={handleMas}><span className="fa-regular fa-square-caret-left"></span></button>
+                    <button onClick={handleMenos}><span className="fa-regular fa-square-caret-right"></span></button>
+                </div>
+
             </div>
         </div>
     )

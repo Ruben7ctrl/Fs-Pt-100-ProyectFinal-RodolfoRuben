@@ -271,7 +271,7 @@ export const BoardGames = () => {
                                 </Link>
                                 <div className="buttons-mesa">
                                     {juego?.stripe_price_id ? (
-                                        <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: juego })}>Buy</button>
+                                        <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: juego })}><span class="fa-solid fa-cart-shopping"></span></button>
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}

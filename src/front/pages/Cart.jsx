@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import useGlobalReducer from "../hooks/useGlobalReducer"
 import stripeServices from "../services/fluxStore"
 import { loadStripe } from "@stripe/stripe-js"
@@ -43,7 +43,7 @@ export const Cart = () => {
                 price: item.stripe_price_id,
                 quantity: 1,
             }));
-            
+
             const secret = await stripeServices.fetchClientSecret(items);
             setClientSecret(secret)
             setCheckoutActive(true)
@@ -91,6 +91,8 @@ export const Cart = () => {
                                 (i) => i.stripe_price_id === item.stripe_price_id
                             );
                             const price = storeItem?.price || "No disponible"
+                            const ratings = item.ratings?.map(r => r.title).join(", ") || "Sin Ratings"
+                            const platforms = item.platforms?.map(p => p.platform?.name || p.name).join(", ") || "Plataformas no disponibles"
                             const imageSrc = item.background_image || item.image || "fallback.jpg"
                             console.log("storeItem:", item);
 
@@ -105,10 +107,16 @@ export const Cart = () => {
                                         )}
                                     <div className="cart-item-details">
                                         <h3>{item.name}</h3>
+                                        <p className="game-description">{item.rating}⭐</p>
+                                        <p><strong className="text-danger">Platforms: </strong>{platforms}</p>
+                                        <p><strong className="text-danger">Ratings: </strong>{ratings}</p>
                                         <p>Precio: {price}€</p>
-                                        <button onClick={() => dispatch({ type: 'remove_from_cart', payload: item.id })}>
+                                        <button className="game-buttonss" onClick={() => dispatch({ type: 'remove_from_cart', payload: item.id })}>
                                             Eliminar
                                         </button>
+                                        <Link to={`/games/${item.id}`} className="game-buttonss">
+                                        Info
+                                        </Link>
                                     </div>
                                 </li>
                             )
@@ -116,7 +124,7 @@ export const Cart = () => {
                     </ul>
                     <div className="cart-summary">
                         <p><strong>Total:</strong> {calculateTotal()} €</p>
-                        <button onClick={handleCheckout} className="cyber-btn">Proceder al Pago</button>
+                        <button onClick={handleCheckout} className="cyber-btn1">Proceder al Pago</button>
                         <button onClick={() => navigate("/games")} className="cyber-btn">Seguir comprando</button>
                     </div>
 

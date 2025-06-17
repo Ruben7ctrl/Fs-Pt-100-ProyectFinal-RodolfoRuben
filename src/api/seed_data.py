@@ -1,5 +1,5 @@
 from faker import Faker
-from api.models import Users, OnlineGames, Purchases, OnlineStats, IAsessions, IAevents, Favorites, UserContacts, GamePurchase, OwnGames, StoreItem
+from api.models import Users, OnlineGames, OnlineStats, IAsessions, IAevents, Favorites, UserContacts, GamePurchase, StoreItem
 from werkzeug.security import generate_password_hash
 import random
 
@@ -41,17 +41,17 @@ def seed_online_games():
 
     return games
 
-def seed_purchases(users):
-    purchases = []
-    for _ in range(10):
-        purchase = Purchases(
-            amount=random.randint(5, 100),
-            payment_method=random.choice(["Credit Card", "PayPal", "Crypto"]),
-            status=random.choice(["Completed", "Pending", "Failed"]),
-            user_purchase=random.choice(users)
-        )
-        purchases.append(purchase)
-    return purchases
+# def seed_purchases(users):
+#     purchases = []
+#     for _ in range(10):
+#         purchase = Purchases(
+#             amount=random.randint(5, 100),
+#             payment_method=random.choice(["Credit Card", "PayPal", "Crypto"]),
+#             status=random.choice(["Completed", "Pending", "Failed"]),
+#             user_purchase=random.choice(users)
+#         )
+#         purchases.append(purchase)
+#     return purchases
 
 # def seed_online_stats(users, games):
 #     stats = []
@@ -145,18 +145,18 @@ def seed_game_purchases():
         game_purchases.append(purchase)
     return game_purchases
 
-def seed_own_games(users, game_purchases):
-    own_games = []
-    for _ in range(10):
-        user = random.choice(users)
-        purchase = random.choice(game_purchases)
-        own = OwnGames(
-            user_id=user.id,
-            purchase_id=purchase.id,
-            acquired_at=faker.date_time_between(start_date=purchase.purchased_at)
-        )
-        own_games.append(own)
-    return own_games
+# def seed_own_games(users, game_purchases):
+#     own_games = []
+#     for _ in range(10):
+#         user = random.choice(users)
+#         purchase = random.choice(game_purchases)
+#         own = OwnGames(
+#             user_id=user.id,
+#             purchase_id=purchase.id,
+#             acquired_at=faker.date_time_between(start_date=purchase.purchased_at)
+#         )
+#         own_games.append(own)
+#     return own_games
 
 def seed_store_items():
     store_items = [

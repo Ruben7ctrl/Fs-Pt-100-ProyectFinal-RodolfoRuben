@@ -199,6 +199,10 @@
     box-shadow: 0 0 #ffffff, 0 0 1rem #DA7A0Dff inset;
 }
 
+.botones {
+    display: flex;
+    gap: 1rem;
+}
 .botones_avatar {
     /* position: fixed;
     left: 50%;
@@ -208,10 +212,11 @@
     bottom: 2rem;
     display: flex;
     gap: 1.5rem;
-    justify-content: center;
+    align-items: center;
     /* margin-top: auto; */
     position: absolute;
-    left: 50%;
+    align-self: center;
+    flex-direction: column;
 }
 
 .botones_avatar button {
@@ -225,6 +230,27 @@
 
 .botones_avatar:hover {
     transform: scale(1.2);
+}
+.fondomaga .elige {
+    color: yellow;
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+.fondoasesino .elige {
+    color: green;
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+.fondosoldado .elige {
+    color: rgba(36,125,126,255);
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+@font-face {
+    font-family: 'SonicTurbo';
+    src: url('/src/front/assets/img/fonts/Sonic Turbo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .fondo {
