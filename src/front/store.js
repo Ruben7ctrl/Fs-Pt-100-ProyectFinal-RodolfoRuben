@@ -1,44 +1,69 @@
-import { act } from "react";
-
 export const initialStore = () => {
+  let user = {
+    id: null,
+    username: null,
+    email: null,
+    favorites: [],
+    purchases: []
+  };
+
+  try {
+    const rawUser = localStorage.getItem("user");
+
+    if (rawUser && rawUser !== "undefined") {
+      user = JSON.parse(rawUser);
+
+      if (!user.favorites) user.favorites = [];
+      if (!user.purchases) user.purchases = [];
+    }
+  } catch (e) {
+    console.warn("Error al cargar usuario desde localStorage:", e);
+    localStorage.removeItem("user");
+  }
+
   return {
-    user: JSON.parse(localStorage.getItem("user"))
-      ? {
-          ...JSON.parse(localStorage.getItem("user")),
-          favorites: JSON.parse(localStorage.getItem("user")).favorites || [],
-        }
-      : null,
+    user,
     sessionID: localStorage.getItem("activeSessionID") || null,
     videojuegos: [],
     unvideojuego: [],
     juegosdemesa: [],
     jdmdatos: [],
-    recomendados:[],
-    videos:[], 
+    recomendados: [],
+    videos: [],
     cart: []
-  
-  }
-}
+  };
+};
+
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
+    case "remove_favorite":
+  if (!store.user) return store;
+  return {
+    ...store,
+    user: {
+      ...store.user,
+      favorite1: store.user.favorite1.filter(f => String(f.game_api_id) !== String(action.payload)),
+      favorites: store.user.favorites.filter(f => String(f.id) !== String(action.payload)),
+    }
+  };
+
+
     case "set_favorites":
    return {
      ...store,
      user: { ...store.user, favorites: action.payload }
    };
     case "add_favorite":
-      if (!store.user) return store; // Asegurar que el usuario está logueado
+  if (!store.user) return store;
 
-      const updatedFavorites = [...store.user.favorites, action.payload];
-      const updatedUser = { ...store.user, favorites: updatedFavorites };
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      return {
-        ...store,
-        user: updatedUser,
-      };
+  return {
+    ...store,
+    user: {
+      ...store.user,
+      favorites: [...(store.user.favorites || []), action.payload] // opcional, si quieres reflejarlo de inmediato
+    }
+  };
 
     case "get_videos":
       return {

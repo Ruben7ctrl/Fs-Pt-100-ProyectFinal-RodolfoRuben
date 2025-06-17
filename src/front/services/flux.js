@@ -1,4 +1,5 @@
 import { Password } from "phosphor-react";
+import { getStoredUser } from "../utils/storage";
 
 const userServices = {};
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -97,82 +98,160 @@ userServices.checkAuth = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (resp.status != 200) return false;
 
-    const data = await resp.json();
-    console.log(data);
+    if (!resp.ok) return false;
 
-    return data;
+    const text = await resp.text();
+    console.log("🔧 Respuesta cruda del backend:", text);
+
+    const data = JSON.parse(text);
+    return data.user; // <-- Asegúrate de esto si el usuario viene como `user`
   } catch (error) {
     console.log("Error loading message from backend", error);
+    return null;
   }
 };
 
-userServices.addFavorite = async (user2_id, game) => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!token || !user) {
-        window.location.href = "/signin";
-        return;
+userServices.addFavorite = async (_, game) => {
+  const token = localStorage.getItem("token");
+  const user = getStoredUser();
+
+  if (!token || !user) {
+    window.location.href = "/signin";
+    return;
+  }
+
+  const body = {
+    user1_id: user.id,
+    game_api_id: game.id,
+    game_type : game.game_type // modificado en el back 
+  };
+
+  console.log("🧪 Enviando favorito al backend con:", body);
+
+  try {
+    const resp = await fetch(`${backendUrl}/api/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      console.error("❌ Error en el backend:", errorText);
+      throw new Error("Error al agregar favorito");
     }
 
-    // Crear el body según lo que espera el backend
-    const body = {
-        user1_id: user.id, // El usuario logueado
-        user2_id: user2_id, // El ID del segundo usuario (puedes obtenerlo de la UI)
-        onlinegame_id: game.id // ID del juego online seleccionado
-    };
-
-    try {
-        const resp = await fetch(`${backendUrl}/api/favorites`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!resp.ok) throw new Error(`Error al agregar favorito: ${await resp.text()}`);
-
-        const data = await resp.json();
-        console.log("Favorito agregado correctamente:", data);
-
-        return data; // Retorna el objeto serializado desde el backend
-    } catch (error) {
-        console.error("Error al agregar favorito:", error);
-        return null;
-    }
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    console.error("Error al agregar favorito:", error);
+    return null;
+  }
 };
 
 
-userServices.getFavorites = async () => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!token || !user) {
-        return [];
+userServices.getFavorites = async (dispatch = null) => {
+  const token = localStorage.getItem("token");
+  const user = getStoredUser();
+
+  if (!token || !user) return [];
+
+  try {
+    const resp = await fetch(`${backendUrl}/api/users/${user.id}/favorites`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!resp.ok) throw new Error("Error al obtener favoritos");
+
+    const data = await resp.json();
+    const favorites = data.favorites || [];
+
+    if (dispatch) {
+      dispatch({ type: "set_favorites", payload: favorites });
     }
 
-    try {
-        const resp = await fetch(backendUrl + `/api/users/${user.id}/favorites`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!resp.ok) throw new Error("Error al obtener favoritos");
-
-        const data = await resp.json();
-        return data.favorites || [];
-    } catch (error) {
-        console.log("Error al obtener favoritos:", error);
-        return [];
-    }
+    return favorites;
+  } catch (error) {
+    console.error("Error al obtener favoritos:", error);
+    return [];
+  }
 };
+
+
+userServices.getFavoritesFromRelations = async (favoriteRelations) => {
+  const videogames = [];
+  const boardgames = [];
+
+  for (const fav of favoriteRelations) {
+    try {
+      if (fav.game_type === "videogame") {
+        const resp = await fetch(`https://api.rawg.io/api/games/${fav.game_api_id}?key=c5df4513c2584cc68477a27dce6e0f27`);
+        const data = await resp.json();
+        videogames.push({
+          id: fav.game_api_id,
+          name: data.name,
+          background_image: data.background_image,
+          type: "videogame",
+        });
+      } else if (fav.game_type === "boardgame") {
+        const resp = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${fav.game_api_id}&stats=1`);
+        if (!resp.ok) throw new Error("Error al obtener datos BGG");
+
+        const xmlText = await resp.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+        const item = xmlDoc.querySelector("item");
+        const name = item.querySelector('name[type="primary"]')?.getAttribute("value");
+        const image = item.querySelector("image")?.textContent;
+
+        boardgames.push({
+          id: fav.game_api_id,
+          name: name || "Sin nombre",
+          image: image || "",
+          type: "boardgame",
+        });
+      }
+    } catch (err) {
+      console.warn("Error enriqueciendo favorito", fav, err);
+    }
+  }
+
+  return [...videogames, ...boardgames];
+};
+
+
+
+
+userServices.eliminarFavorito = async (favoriteId, token) => {
+  try {
+    const res = await fetch(`${backendUrl}/api/favorites/${favoriteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("No se pudo eliminar el favorito");
+
+    return true;
+  } catch (error) {
+    console.error("❌ Error al eliminar favorito:", error);
+    return false;
+  }
+};
+
+
 
 
 export default userServices;

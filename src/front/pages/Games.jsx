@@ -22,7 +22,7 @@ import sportImg from "../assets/img/Sport.png";
 import rpgImg from "../assets/img/RPG.png";
 import strategyImg from "../assets/img/Strategy.png";
 import stripeServices from "../services/fluxStore";
-
+import { getStoredUser } from "../utils/storage";
 
 export const Games = () => {
 
@@ -56,26 +56,26 @@ export const Games = () => {
 
 
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = getStoredUser();
   const username = user?.username
 
-// useEffect(() => {
-//   if (!activeGenre && !activePlatform) {
-//     // Caso general
-//     storeServices.videojuegos(page).then((data) =>
-//       dispatch({ type: "load_videojuegos", payload: data })
-//     );
-//   } else {
-//     // Caso filtrado → llamar getRecomendados con page
-//     storeServices.getRecomendados({
-//       genre_slug: activeGenre,
-//       platform_id: activePlatform,
-//       page: page
-//     }).then((data) => {
-//       setGenreGames(data);
-//     });
-//   }
-// }, [page, activeGenre, activePlatform, dispatch]);
+  // useEffect(() => {
+  //   if (!activeGenre && !activePlatform) {
+  //     // Caso general
+  //     storeServices.videojuegos(page).then((data) =>
+  //       dispatch({ type: "load_videojuegos", payload: data })
+  //     );
+  //   } else {
+  //     // Caso filtrado → llamar getRecomendados con page
+  //     storeServices.getRecomendados({
+  //       genre_slug: activeGenre,
+  //       platform_id: activePlatform,
+  //       page: page
+  //     }).then((data) => {
+  //       setGenreGames(data);
+  //     });
+  //   }
+  // }, [page, activeGenre, activePlatform, dispatch]);
 
 
 
@@ -146,30 +146,30 @@ export const Games = () => {
 
   };
 
-  const userIsLoggedIn = !!localStorage.getItem('user')
+  const userIsLoggedIn = !!getStoredUser();
 
   const items = [
     { icon: <House size={32} weight="fill" />, label: "Home", route: "/" },
     { icon: <MagnifyingGlass size={32} weight="fill" />, label: "Search" },
     ...(userIsLoggedIn
       ? [{
-         icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
+        icon: <Globe size={32} weight="fill" />, label: "OnlineGames", route: "/onlinegames"
       }] : []),
     // { icon: <GameController size={32} weight="fill" />, label: "Videogames" },
     { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
     { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
-    { icon: <User size={32} weight="fill" />, label: "Profile" },
+    { icon: <User size={32} weight="fill" />, label: "Profile", route: "/userprofile" },
     ...(userIsLoggedIn
       ? [{
-        icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/')} 
+        icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
       }] : [])
-    
+
   ];
 
   const handleCardClick = (route, label, action) => {
     if (action) return action();
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = getStoredUser();
     if (label === "Search") {
       new window.bootstrap.Offcanvas("#staticBackdrop").show();
       return;
@@ -203,33 +203,47 @@ export const Games = () => {
   };
 
   const juegosParaMostrar = (activeGenre || activePlatform) ? genreGames : videojuegos;
-  console.log(juegosParaMostrar)
-
-
-  const handleFavoriteClick = async (juegosParaMostrar, user2_id) => {
 
 
 
-    if (!juegosParaMostrar || !juegosParaMostrar.id) {
-      console.error("Error: El objeto juegosParaMostrar no tiene datos válidos.");
+  const handleFavoriteClick = async (game) => {
+    const user = getStoredUser();
+
+    if (!user) {
+      console.warn("🔴 No hay usuario en localStorage. Redirigiendo...");
+      navigate("/signin");
       return;
     }
 
-    // Construir el objeto con los datos correctos
-    const bodyData = {
-      user1_id: JSON.parse(localStorage.getItem("user")).id, // ID del usuario actual
-      user2_id: user2_id, // ID del segundo usuario (pásalo desde la UI)
-      onlinegame_id: juegosParaMostrar.id // ID del juego online
+    const favoriteData = {
+      ...game, game_type: "videogame"
     };
 
-    // Llamar a la API con el body correcto
-    const favoriteResponse = await userServices.addFavorite(bodyData);
 
-    // Actualizar el estado si la respuesta es válida
-    if (favoriteResponse && favoriteResponse.favorites) {
-      dispatch({ type: "set_favorites", payload: favoriteResponse.favorites });
-    } else {
-      console.error("Error al actualizar favoritos.");
+
+    try {
+      const result = await userServices.addFavorite(null, favoriteData);
+
+      console.log("📩 Respuesta de addFavorite:", result);
+
+      if (result) {
+        // Actualiza store
+        dispatch({ type: "add_favorite", payload: favoriteData });
+
+        // Actualiza localStorage
+        const updatedUser = {
+          ...user,
+          favorites: [...(user.favorites || []), favoriteData]
+        };
+
+
+
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } else {
+        console.warn("⚠️ No se recibió resultado válido de addFavorite");
+      }
+    } catch (err) {
+      console.error("❌ Error en handleFavoriteClick:", err);
     }
   };
 
@@ -310,19 +324,21 @@ export const Games = () => {
       if (activeGenre || activePlatform) {
         setGenreGames(juegosConPrecio)
       } else {
-        dispatch({ type: "load_videojuegos", payload: juegosConPrecio})
+        dispatch({ type: "load_videojuegos", payload: juegosConPrecio })
       }
-      
+
     }
     fetchGames()
   }, [page, activeGenre, activePlatform, dispatch])
 
-// const handleClick = () => {
-//   navigate('/cart')
-// }
+  // const handleClick = () => {
+  //   navigate('/cart')
+  // }
 
 
-console.log("user", user);
+  const isFavorite = (gameId) => {
+    return store.user?.favorites?.some(fav => fav.id === gameId);
+  }; console.log("user", user);
 
 
   return (
@@ -354,7 +370,7 @@ console.log("user", user);
       >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title">
-            {JSON.parse(localStorage.getItem("user"))?.username || "Guest"}
+            {getStoredUser()?.username || "Guest"}
           </h5>
           <button className="btn-close bg-white" data-bs-dismiss="offcanvas" />
         </div>
@@ -423,34 +439,41 @@ console.log("user", user);
             if (Array.isArray(store.cart)) {
               alreadyInCart = store.cart.some(item => item.id === e.id)
             }
-          return (
-            <div
-              key={e.id}
-              className="game-card glitch-bg"
-              style={{ "--background-url": `url(${e.background_image})` }}
-            >
-              <div className="game-info">
-                <h2 className="game-title neon-text">{e.name}</h2>
-                <p className="game-description">{e.rating}⭐</p>
-                {e.stripe_price_id ? (
-                  <button className="game-button" onClick={() => {
-                    if (alreadyInCart) {
-                      alert("Este juego ya esta en el carrito")
+            return (
+              <div
+                key={e.id}
+                className="game-card glitch-bg"
+                style={{ "--background-url": `url(${e.background_image})` }}
+              >
+                <div className="game-info">
+                  <h2 className="game-title neon-text">{e.name}</h2>
+                  <p className="game-description">{e.rating}⭐</p>
+                  {e.stripe_price_id ? (
+                    <button className="game-button" onClick={() => {
+                      if (alreadyInCart) {
+                        alert("Este juego ya esta en el carrito")
                         return;
-                    }
-                    dispatch({ type: 'add_to_cart', payload: e });
-                }}
-                ><span class="fa-solid fa-cart-shopping"></span></button>
-                ) : (
-                  <button className="game-buttons" disabled><Clock size={27} /></button>
-                )}
-                <button className="game-button" onClick={() => handleFavoriteClick(e, user?.id)}>❤️</button>
-                <Link to={`/games/${e.id}`} className="game-button">
-                  Info
-                </Link>
+                      }
+                      dispatch({ type: 'add_to_cart', payload: e });
+                    }}
+                    ><span class="fa-solid fa-cart-shopping"></span></button>
+                  ) : (
+                    <button className="game-buttons" disabled><Clock size={27} /></button>
+                  )}
+                  <button
+                    className={`game-button ${isFavorite(e.id) ? "favorited" : ""}`}
+                    onClick={() => handleFavoriteClick(e)}
+                  >
+                    {isFavorite(e.id) ? "❤️" : "🤍"}
+                  </button>
+
+                  <Link to={`/games/${e.id}`} className="game-button">
+                    Info
+                  </Link>
+                </div>
               </div>
-            </div>
-          )})}
+            )
+          })}
         </div>
       )}
 

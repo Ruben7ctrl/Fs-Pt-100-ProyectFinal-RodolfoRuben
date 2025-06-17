@@ -21,6 +21,7 @@ export const Home = () => {
 
 	audioHome.play();
 	
+	audioHome.volume = 0.1
 
 	},[])
 	
