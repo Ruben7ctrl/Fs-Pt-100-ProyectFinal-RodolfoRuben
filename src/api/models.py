@@ -32,6 +32,8 @@ class Users(db.Model):
 
     # owned_games: Mapped[list["OwnGames"]] = relationship(back_populates="user")
 
+    cart: Mapped[List["Cart"]] = relationship(back_populates="user")
+
 
     def serialize(self):
         return {
@@ -49,6 +51,7 @@ class Users(db.Model):
             "online_stats": [stats.serialize() for stats in self.online_stats],
             "ia_sessions": [ia.serialize() for ia in self.ia_sessions],
             # "owned_games": [own.serialize() for own in self.owned_games],
+            "cart": [item.serialize() for item in self.cart],
         }
     
 
@@ -331,3 +334,41 @@ class StoreItem(db.Model):
 #             "purchase": self.purchase,
 #             "acquired_at": self.acquired_at.isoformat()
 #         }
+
+class Cart(db.Model):
+    __tablename__ = "cart"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+
+    user: Mapped["Users"] = relationship(back_populates="cart")
+    items: Mapped[List["CartItem"]] = relationship(back_populates="cart")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "items": [item.serialize() for item in self.items],
+        }
+
+class CartItem(db.Model):
+    __tablename__ = "cartitem"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
+    storeItem_id: Mapped[int] = mapped_column(ForeignKey("store_item.id"), nullable=False)
+    quantity: Mapped[int] = mapped_column(nullable=False, default=1)
+
+    storeitem = db.relationship("StoreItem")
+    cart: Mapped["Cart"] = relationship(back_populates="items")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.storeitem.game_api_id,
+            "name": self.storeitem.name,
+            "stripe_price_id": self.storeitem.stripe_price_id,
+            "price": self.storeitem.price,
+            "currency": self.storeitem.currency,
+            "quantity": self.quantity,
+        }

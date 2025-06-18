@@ -7,9 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import app
 from api.models import db
 from seed_data import (
-    seed_users, seed_online_games, seed_purchases,
+    seed_users, seed_online_games,
     seed_ia_sessions, seed_ia_events, seed_favorites, seed_user_contacts,
-    seed_game_purchases, seed_own_games, seed_store_items
+    seed_game_purchases, seed_store_items
 )
 # from api import api
 

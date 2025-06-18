@@ -24,6 +24,7 @@ import strategyImg from "../assets/img/Strategy.png";
 import stripeServices from "../services/fluxStore";
 import { getStoredUser } from "../utils/storage";
 import { handleFavoriteClick } from "../utils/favoriteUtils.js";
+import { handleAddToCart } from "../utils/CartUtils.js"
 
 export const Games = () => {
 
@@ -413,11 +414,7 @@ console.log("Es favorito:", isFavorite());
                   <p className="game-description">{e.rating}⭐</p>
                   {e.stripe_price_id ? (
                     <button className="game-button" onClick={() => {
-                      if (alreadyInCart) {
-                        alert("Este juego ya esta en el carrito")
-                        return;
-                      }
-                      dispatch({ type: 'add_to_cart', payload: e });
+                     handleAddToCart(e, cart, dispatch, navigate)
                     }}
                     ><span className="fa-solid fa-cart-shopping"></span></button>
                   ) : (
