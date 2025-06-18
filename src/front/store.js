@@ -36,6 +36,7 @@ export const initialStore = () => {
 
 
 export default function storeReducer(store, action = {}) {
+  console.log("Dispatch action.type:", action.type);
   switch (action.type) {
     case "remove_favorite":
   if (!store.user) return store;
@@ -140,6 +141,11 @@ export default function storeReducer(store, action = {}) {
         ...store,
         cart: [...store.cart, action.payload]
       };
+    case 'set_cart':
+      return {
+        ...store,
+        cart: action.payload || [],
+      }
     case 'remove_from_cart':
       return {
         ...store,

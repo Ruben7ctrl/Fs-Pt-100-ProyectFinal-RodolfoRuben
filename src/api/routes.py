@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, Users, OnlineGames, Favorites, OnlineStats, UserContacts, IAsessions, IAevents, GamePurchase, StoreItem
+from api.models import db, Users, OnlineGames, Favorites, OnlineStats, UserContacts, IAsessions, IAevents, GamePurchase, StoreItem, Cart, CartItem
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select, or_
@@ -243,14 +243,6 @@ def store_purchase():
         )
 
         db.session.add(new_purchase)
-        db.session.commit()
-
-        own_game = OwnGames(
-            user_id=user_id,
-            purchase_id=new_purchase.id
-        )
-
-        db.session.add(own_game)
         db.session.commit()
 
         return jsonify({"message": "Purchase store successfully"}), 200
@@ -1146,3 +1138,117 @@ def delete_contacts(id):
     except Exception as e:
         print(e)
         return jsonify({"error": "something went wrong delete contact"})
+
+
+@api.route('/add-to-cart', methods=['POST'])
+def add_to_cart():
+    try:
+
+        data = request.get_json()
+        user_id = data.get('user_id')
+        game_api_id = data.get('game_api_id')
+        quantity = data.get('quantity', 1)
+        if not user_id or not game_api_id:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        cart = Cart.query.filter_by(user_id=user_id).first()
+        if not cart:
+            cart = Cart(user_id=user_id)
+            db.session.add(cart)
+            db.session.commit()
+
+        store_item = StoreItem.query.filter_by(game_api_id=game_api_id).first()
+        if not store_item:
+            return jsonify({"error": "StoreItem not found"}), 404
+            # store_item = StoreItem(
+            #     cart_id=cart.id,
+            #     game_api_id=game_api_id,
+            #     name=name,
+            #     stripe_price_id=stripe_price_id,
+            #     price=price,
+            #     currency=currency,
+            # )
+            # db.session.add(store_item)
+            # db.session.commit()
+
+        existing_cart_item = CartItem.query.filter_by(
+            cart_id=cart.id, storeItem_id=store_item.id).first()
+        if existing_cart_item:
+            existing_cart_item.quantity += quantity
+        else:
+            new_cart_item = CartItem(
+                cart_id=cart.id,
+                storeItem_id=store_item.id,
+                quantity=quantity
+            )
+            db.session.add(new_cart_item)
+
+        db.session.commit()
+
+        return jsonify({"msg": "Item agregado al carrito"}), 200
+
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@api.route('/cart/<int:user_id>', methods=['GET'])
+def get_cart(user_id):
+    try:
+
+        cart = Cart.query.filter_by(user_id=user_id).first()
+        print("Carrito:", cart)
+        if cart:
+            print("Items en carrito:", cart.items)
+            for i in cart.items:
+                print(i.serialize())
+        if not cart:
+            return jsonify({"items": []}), 200
+
+        print("Carrito encontrado:", cart.serialize())
+        return jsonify({"items": [item.serialize() for item in cart.items]}), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@api.route('/cart/item/<int:item_id>', methods=['DELETE'])
+def delete_cart_item(item_id):
+    try:
+
+        item = CartItem.query.get(item_id)
+        if not item:
+            return jsonify({"error": "Item not found"}), 404
+
+        db.session.delete(item)
+        db.session.commit()
+
+        return jsonify({"msg": "Item eliminado del carrito"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@api.route('/cart/clear/<int:user_id>', methods=['DELETE'])
+def delete_cart(user_id):
+    try:
+
+        cart_items = CartItem.query.filter_by(user_id=user_id).all()
+        if not cart_items:
+            return jsonify({"msg": "Cart ya vacio"}), 200
+
+        for item in cart_items:
+            db.session.delete(item)
+
+        db.session.commit()
+
+        return jsonify({"msg": "Cart vaciado"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Error en delete_cart:", e)
+        return jsonify({"error": str(e)}), 500
