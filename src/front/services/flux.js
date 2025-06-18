@@ -175,13 +175,13 @@ userServices.getFavorites = async (dispatch = null) => {
     if (!resp.ok) throw new Error("Error al obtener favoritos");
 
     const data = await resp.json();
-    const favorites = data.favorites || [];
+  
 
     if (dispatch) {
-      dispatch({ type: "set_favorites", payload: favorites });
-    }
+      dispatch({ type: "set_favorites", payload: data });
+    }console.log("set favorites", data);
 
-    return favorites;
+    return data;
   } catch (error) {
     console.error("Error al obtener favoritos:", error);
     return [];

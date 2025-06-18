@@ -8,8 +8,7 @@ def send_mail(address, token):
     
     try:
         msg = Message("Reset your password",
-                      recipients=[address],
-                      sender=('RaceGamer Support', os.getenv('MAIL_DEFAULT_SENDER')) )
+                      recipients=[address] )
 
         
         if os.getenv("FLASK_DEBUG") == "1":

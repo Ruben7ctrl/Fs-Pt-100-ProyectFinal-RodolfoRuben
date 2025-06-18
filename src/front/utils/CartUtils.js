@@ -33,7 +33,7 @@ export const handleAddToCart = async (game, cart, dispatch, navigate) => {
   }
 
   try {
-    dispatch({ type: "add_to_cart", payload: game });
+    dispatch({ type: "add_to_cart", payload: {...game, game_api_id: game.id} });
 
     console.log("Payload addToCart:", payload);
     const resp = await stripeServices.addToCart(payload);
