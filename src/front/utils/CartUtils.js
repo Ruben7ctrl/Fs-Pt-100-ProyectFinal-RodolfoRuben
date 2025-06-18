@@ -27,7 +27,7 @@ export const handleAddToCart = async (game, cart, dispatch, navigate) => {
     quantity: 1,
   };
 
-  if (cart.find((item) => item.id === game.id)) {
+  if (cart.find((item) => item.game_api_id === game.id || item.id === game.id)) {
     alert("Este juego ya esta en el carrito");
     return;
   }
@@ -36,7 +36,8 @@ export const handleAddToCart = async (game, cart, dispatch, navigate) => {
     dispatch({ type: "add_to_cart", payload: game });
 
     console.log("Payload addToCart:", payload);
-    await stripeServices.addToCart(payload);
+    const resp = await stripeServices.addToCart(payload);
+    console.log("📩 Respuesta de add_to_cart:", resp);
   } catch (error) {
     console.error("Error al añadir al carrito", error);
     alert("No se pudo guardar en el carrito");

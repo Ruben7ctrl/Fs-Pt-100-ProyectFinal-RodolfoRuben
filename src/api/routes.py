@@ -1185,7 +1185,7 @@ def add_to_cart():
 
         db.session.commit()
 
-        return jsonify({"msg": "Item agregado al carrito"}), 200
+        return jsonify(new_cart_item.serialize()), 200
 
     except Exception as e:
         print(e)
