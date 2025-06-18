@@ -2,7 +2,9 @@ import React, { useEffect ,useState} from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import "../styles/Home.css"
 import { useNavigate } from "react-router-dom";
-import ParaHome from './../assets/ParaHome.mp3'
+import ParaHome from './../assets/ParaHome.mp3';
+import { Loading } from '../components/loading';
+import GlitchGif from "../assets/img/GLITCH.gif";
 
 
 
@@ -13,18 +15,23 @@ export const Home = () => {
 	const [animarA, setAnimarA] = useState(false);
 	const [animarB, setAnimarB] = useState(false);
 	const navigate = useNavigate()
-
-	useEffect(()=>{
-
+	const [bgLoaded, setBgLoaded] = useState(false);
 
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = GlitchGif;
+    img.onload = () => setBgLoaded(true);
+  }, []);
 
-	audioHome.play();
+
+
+  useEffect(() => {
+    audioHome.play().catch(() => {});
+    audioHome.volume = 0.1;
+  }, []);
 	
-	audioHome.volume = 0.1
-
-	},[])
-	
+if (!bgLoaded) return <Loading />;
 
 	const handleSignup = () => {
 		setAnimar(true);
@@ -61,7 +68,10 @@ export const Home = () => {
 
 
 	return (
-		<div className="fondoPrincipal">
+		<div
+      className="fondoPrincipal"
+      style={{ backgroundImage: `url(${GlitchGif})` }}
+    >
 			<div className="structure">
 				<h1 className="text_logo">RACEGAME<span className="invertir">R</span></h1>
 				<div className="buttons">
