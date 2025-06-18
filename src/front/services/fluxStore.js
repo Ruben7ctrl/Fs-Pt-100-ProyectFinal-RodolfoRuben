@@ -63,6 +63,7 @@ stripeServices.fetchSessionStatus = async (sessionId) => {
 }
 
 stripeServices.addToCart = async ({user_id, game_api_id, quantity = 1}) => {
+    
 
     try {
         const resp = await fetch(backendUrl + "/api/add-to-cart", {

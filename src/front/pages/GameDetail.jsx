@@ -3,15 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useGlobalReducer from '../hooks/useGlobalReducer';
 import storeServices from '../services/fluxApis';
 import "../styles/GameDetail.css";
-import { MagnifyingGlass, User, ArrowLeft, ShoppingCart, Heart,HeartBreak } from 'phosphor-react';
+import { MagnifyingGlass, User, ArrowLeft, ShoppingCart, Heart,HeartBreak, ShoppingCartSimple } from 'phosphor-react';
 import { Loading } from '../components/loading';
 import { Link } from "react-router-dom";
 import { handleFavoriteClick } from "../utils/favoriteUtils.js";
 import { getStoredUser } from "../utils/storage";
+import { handleAddToCart } from "../utils/CartUtils.js"
 
 export const GameDetail = () => {
     const { id } = useParams(); // PARA CHECK
     const { store, dispatch } = useGlobalReducer()
+    const { cart, favorites } = store
     const navigate = useNavigate()
     const [game, setGame] = useState(null)
     const [video, setVideo] = useState(null);
@@ -82,6 +84,11 @@ const isFavorite = (id) =>
 
 console.log("Es favorito:", isFavorite(id));
 
+const isInCart = (id) =>
+  cart?.some(item => item.game_api_id === parseInt(id) || item.id === parseInt(id));
+
+console.log("Esta en cart:", isInCart(id));
+
     return (
         <div
             className="game-detail"
@@ -89,8 +96,10 @@ console.log("Es favorito:", isFavorite(id));
         >
             {/* Header superior izquierdo */}
             <div className="game-header">
-                <button className="icon-button">
-                    <ShoppingCart size={24} weight="bold" />
+                <button className="icon-button" onClick={() => {
+                     handleAddToCart(game, cart, dispatch, navigate)
+                    }}>
+                     {isInCart(id) ? <ShoppingCart size={24} weight="fill" /> : <ShoppingCartSimple size={24} weight="fill" />}
                 </button>
                 <button className="icon-button">
                     <Link to={'/userprofile'} >
