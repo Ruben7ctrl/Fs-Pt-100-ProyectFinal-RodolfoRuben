@@ -4,7 +4,7 @@ export const initialStore = () => {
     username: null,
     email: null,
     favorites: [],
-    purchases: []
+    purchases: [],
   };
 
   try {
@@ -30,41 +30,46 @@ export const initialStore = () => {
     jdmdatos: [],
     recomendados: [],
     videos: [],
-    cart: []
+    cart: [],
   };
 };
-
 
 export default function storeReducer(store, action = {}) {
   console.log("Dispatch action.type:", action.type);
   switch (action.type) {
     case "remove_favorite":
-  if (!store.user) return store;
-  return {
-    ...store,
-    user: {
-      ...store.user,
-      favorite1: store.user.favorite1.filter(f => String(f.game_api_id) !== String(action.payload)),
-      favorites: store.user.favorites.filter(f => String(f.id) !== String(action.payload)),
-    }
-  };
-
+      if (!store.user) return store;
+      return {
+        ...store,
+        user: {
+          ...store.user,
+          favorite1: store.user.favorite1.filter(
+            (f) => String(f.game_api_id) !== String(action.payload)
+          ),
+          favorites: store.user.favorites.filter(
+            (f) => String(f.id) !== String(action.payload)
+          ),
+        },
+      };
 
     case "set_favorites":
-   return {
-     ...store,
-     user: { ...store.user, favorites: action.payload }
-   };
+      return {
+        ...store,
+        user: {
+          ...store.user,
+          favorites: [...(store.user.favorites || []), action.payload],
+        },
+      };
     case "add_favorite":
-  if (!store.user) return store;
+      if (!store.user) return store;
 
-  return {
-    ...store,
-    user: {
-      ...store.user,
-      favorites: [...(store.user.favorites || []), action.payload] // opcional, si quieres reflejarlo de inmediato
-    }
-  };
+      return {
+        ...store,
+        user: {
+          ...store.user,
+          favorites: [...(store.user.favorites || []), action.payload], // opcional, si quieres reflejarlo de inmediato
+        },
+      };
 
     case "get_videos":
       return {
@@ -95,7 +100,7 @@ export default function storeReducer(store, action = {}) {
     case "logout":
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      localStorage.removeItem('activeSessionID')
+      localStorage.removeItem("activeSessionID");
       return {
         ...store,
         user: null,
@@ -130,32 +135,32 @@ export default function storeReducer(store, action = {}) {
     case "load_jdmdatos":
       return {
         ...store,
-        jdmdatos: action.payload
-      }
-    case 'add_to_cart': 
-      const exists = store.cart.some(item => item.id === action.payload.id)
+        jdmdatos: action.payload,
+      };
+    case "add_to_cart":
+      const exists = store.cart.some((item) => item.id === action.payload.id);
       if (exists) {
         return store;
       }
       return {
         ...store,
-        cart: [...store.cart, action.payload]
+        cart: [...store.cart, action.payload],
       };
-    case 'set_cart':
+    case "set_cart":
       return {
         ...store,
         cart: action.payload || [],
-      }
-    case 'remove_from_cart':
+      };
+    case "remove_from_cart":
       return {
         ...store,
-        cart: store.cart.filter((item) => item.id !== action.payload)
-      }
-    case 'clean_cart':
+        cart: store.cart.filter((item) => item.id !== action.payload),
+      };
+    case "clean_cart":
       return {
         ...store,
-        cart: []
-      }
+        cart: [],
+      };
     default:
       throw Error("Unknown action.");
   }

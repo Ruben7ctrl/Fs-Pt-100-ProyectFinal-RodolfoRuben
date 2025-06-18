@@ -9,7 +9,7 @@ import { House, MagnifyingGlass, Gear, Globe, GameController, PuzzlePiece, User,
 import anime from "animejs";
 import botones from './../assets/botones.mp3'
 import Botonsiguiente from './../assets/Botonsiguiente.mp3'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import fallbackImage from './../assets/img/fallbackimage.jpg';
 import { Loading } from "../components/loading";
 import { Link } from "react-router-dom";
@@ -21,7 +21,12 @@ import { getStoredUser } from "../utils/storage";
 export const BoardGames = () => {
 
     // Access the global state and dispatch function using the useGlobalReducer hook.
-    const { store, dispatch } = useGlobalReducer()
+    const {
+        store,
+        dispatch,
+    } = useGlobalReducer();
+
+    const { juegosdemesa, cart } = store;
     const [letra, setLetra] = useState("a")
     const [cargando, setCargando] = useState(false)
     const [pagina, setPagina] = useState(1)
@@ -84,7 +89,7 @@ export const BoardGames = () => {
         { icon: <GameController size={32} weight="fill" />, label: "Videogames", route: "/games" },
         { icon: <ShoppingCart size={32} weight="fill" />, label: "Cart", route: "/cart" },
         // { icon: <PuzzlePiece size={32} weight="fill" />, label: "Boardgames", route: "/boardgames" },
-        { icon: <User size={32} weight="fill" />, label: "Profile" , route : "/userprofile" },
+        { icon: <User size={32} weight="fill" />, label: "Profile", route: "/userprofile" },
         ...(userIsLoggedIn
             ? [{
                 icon: <SignOut size={32} weight="fill" />, label: "SignOut", action: () => { dispatch({ type: 'logout' }), navigate('/') }
@@ -117,11 +122,14 @@ export const BoardGames = () => {
         // 🔥 Asegúrate de agregar el tipo correcto para juegos de mesa
         const favoriteData = {
             ...game,
+            id: Number(game.id),
             game_type: "boardgame"
         };
 
         try {
             const result = await userServices.addFavorite(null, favoriteData);
+
+            console.log("📩 Respuesta de addFavorite:", result);
 
             if (result) {
                 dispatch({ type: "add_favorite", payload: favoriteData });
@@ -130,7 +138,8 @@ export const BoardGames = () => {
                     ...user,
                     favorites: [...(user.favorites || []), favoriteData]
                 };
-
+                console.log("updatedUser", user);
+                
                 localStorage.setItem("user", JSON.stringify(updatedUser));
             } else {
                 console.warn("⚠️ No se recibió resultado válido de addFavorite");
@@ -185,6 +194,7 @@ export const BoardGames = () => {
         cargar()
     }, [pagina, letra])
 
+
     const hoverSoundRef = useRef(new Audio(Botonsiguiente));
 
     const playHoverSound = () => {
@@ -195,9 +205,10 @@ export const BoardGames = () => {
         });
     };
 
+
     const isFavorite = (gameId) => {
-    return store.user?.favorites?.some(fav => fav.id === gameId);
-  };console.log("user", user);
+        return store.user?.favorites?.some(fav => Number(fav.id) === Number(gameId));
+    }; console.log("user", user);
 
     return (
         <div className="fondoGames">
@@ -279,7 +290,7 @@ export const BoardGames = () => {
                                         className={`game-button ${isFavorite(juego.id) ? "favorited" : ""}`}
                                         onClick={() => handleFavoriteClick(juego)}
                                     >
-                                        {isFavorite(juego.id) ? "❤️" : "🤍"}
+                                        {isFavorite(Number(juego.id)) ? "❤️" : "🤍"}
                                     </button>
                                 </div>
                             </div>
