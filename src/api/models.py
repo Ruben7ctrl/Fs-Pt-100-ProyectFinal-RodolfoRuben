@@ -357,6 +357,7 @@ class CartItem(db.Model):
     cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
     storeItem_id: Mapped[int] = mapped_column(ForeignKey("store_item.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(nullable=False, default=1)
+    game_type: Mapped[str] = mapped_column(String(30), nullable=False)
 
     storeitem = db.relationship("StoreItem")
     cart: Mapped["Cart"] = relationship(back_populates="items")
@@ -371,4 +372,5 @@ class CartItem(db.Model):
             "price": self.storeitem.price,
             "currency": self.storeitem.currency,
             "quantity": self.quantity,
+            "game_type": self.game_type,
         }

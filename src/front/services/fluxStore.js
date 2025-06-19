@@ -62,22 +62,24 @@ stripeServices.fetchSessionStatus = async (sessionId) => {
     }
 }
 
-stripeServices.addToCart = async ({user_id, game_api_id, quantity = 1}) => {
+stripeServices.addToCart = async ({user_id, game_api_id, stripe_price_id, quantity = 1, game_type}) => {
     
 
     try {
+        console.log("📦 Enviando a backend:", { user_id, game_api_id, stripe_price_id, quantity, game_type });
+        
         const resp = await fetch(backendUrl + "/api/add-to-cart", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({user_id, game_api_id, quantity })
+            body: JSON.stringify({user_id, game_api_id, stripe_price_id, quantity, game_type })
         })
         if (!resp.ok) {
                 const err = await resp.json()
                 throw new Error(err.error || "Error al agregar al carrito");
             }
-        const data = resp.json()
+        const data = await resp.json()
         return data
     } catch (error) {
         console.log("error", error);

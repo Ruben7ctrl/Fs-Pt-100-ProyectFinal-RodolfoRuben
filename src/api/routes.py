@@ -1147,8 +1147,10 @@ def add_to_cart():
         data = request.get_json()
         user_id = data.get('user_id')
         game_api_id = data.get('game_api_id')
+        stripe_price_id = data.get('stripe_price_id')
         quantity = data.get('quantity', 1)
-        if not user_id or not game_api_id:
+        game_type = data.get('game_type')
+        if not user_id or not game_api_id or not stripe_price_id or not game_type:
             return jsonify({"error": "Missing required fields"}), 400
 
         cart = Cart.query.filter_by(user_id=user_id).first()
@@ -1157,7 +1159,7 @@ def add_to_cart():
             db.session.add(cart)
             db.session.commit()
 
-        store_item = StoreItem.query.filter_by(game_api_id=game_api_id).first()
+        store_item = StoreItem.query.filter_by(game_api_id=game_api_id, stripe_price_id=stripe_price_id).first()
         if not store_item:
             return jsonify({"error": "StoreItem not found"}), 404
             # store_item = StoreItem(
@@ -1179,7 +1181,8 @@ def add_to_cart():
             new_cart_item = CartItem(
                 cart_id=cart.id,
                 storeItem_id=store_item.id,
-                quantity=quantity
+                quantity=quantity,
+                game_type=game_type
             )
             db.session.add(new_cart_item)
 

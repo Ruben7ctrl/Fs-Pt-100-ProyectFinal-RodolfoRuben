@@ -22,6 +22,11 @@ export const Cart = () => {
 
     const safeCart = cart || [];
 
+    const Game_Type = {
+        Videogames: "videogame",
+        Boardgames: "boardgame",
+    }
+
     console.log("contenido del carrito", cart);
 
     // useEffect(() => {
@@ -45,12 +50,34 @@ export const Cart = () => {
                 console.log("Respuesta del backend carrito:", cartData);
                 const enrichedItems = await Promise.all(
                     cartData.map(async (item) => {
-                        const details = await storeServices.getOneVideojuegos(item.game_api_id);
-                        return {
-                            ...item,
-                            background_image: details?.background_image,
-                            platforms: details?.platforms,
-                            ratings: details?.ratings,
+                        let details = null;
+
+                        const isBoardGame = item.game_api_id && item.game_api_id.length < 10;
+                        console.log("item.game_type:", item.game_type);
+                        console.log("espera:", Game_Type.Boardgames);
+
+                        if (item.game_type === Game_Type.Boardgames) {
+                            details = await storeServices.JuegosMesaDatos(item.game_api_id);
+                            return {
+                                ...item,
+                                image: details?.image,
+                                min_players: details?.minPlayers,
+                                max_players: details?.maxPlayers,
+                                play_time: details?.playTime,
+                                average_ratings: details?.averageRating,
+                                category: details?.categories?.join(", ") || "N/A",
+                                name: details?.name,
+                            }
+                        } else {
+                            details = await storeServices.getOneVideojuegos(item.game_api_id);
+                            return {
+                                ...item,
+                                background_image: details?.background_image,
+                                platforms: details?.platforms,
+                                ratings: details?.ratings,
+                                rating: details?.rating,
+                                name: details?.name,
+                            }
                         }
                     })
                 )
@@ -94,10 +121,10 @@ export const Cart = () => {
         try {
             await stripeServices.removeCartItem(itemId)
 
-            dispatch({ type: 'remove_from_cart', payload: itemId})
+            dispatch({ type: 'remove_from_cart', payload: itemId })
         } catch (error) {
             console.error("Error eliminando item", error.message);
-            
+
         }
     }
 
@@ -113,7 +140,7 @@ export const Cart = () => {
     //         dispatch({ type: 'clean_cart'})
     //     } catch (error) {
     //         console.error("Error vaciando carrito", error.message);
-            
+
     //     }
     // }
 
@@ -170,10 +197,24 @@ export const Cart = () => {
                                                 className="cart-item-image" />
                                         )}
                                     <div className="cart-item-details">
-                                        <h3>{item.name}</h3>
-                                        <p className="game-description">{item.rating}⭐</p>
-                                        <p><strong className="text">Platforms: </strong>{platforms}</p>
-                                        <p><strong className="text">Ratings: </strong>{ratings}</p>
+                                        <h3>{storeItem?.name}</h3>
+                                        {storeItem?.platforms ? (
+                                            <>
+                                                <p><strong className="text">Platforms: </strong>{platforms}</p>
+                                                <p><strong className="text">Ratings: </strong>{ratings}</p>
+                                                <p className="game-description">{storeItem.rating}⭐</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p><strong className="text">Jugadores: </strong>{item.min_players} - {item.max_players}</p>
+                                                <p><strong className="text">Duracion: </strong>{item.play_time} min</p>
+                                                <p><strong className="text">Categoria: </strong>{item.category}</p>
+                                                <p><strong className="text">Nota: </strong>{parseFloat(item.average_ratings).toFixed(1)} ⭐</p>
+                                            </>
+                                        )
+                                        }
+
+
                                         <p><strong className="text">Precio:</strong> {price}€</p>
                                         <div className="game-button-container">
                                             <button className="game-buttonss" onClick={() => handleRemoveCart(item.id)}>
