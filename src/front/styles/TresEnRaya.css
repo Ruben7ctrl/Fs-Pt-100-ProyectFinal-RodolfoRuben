@@ -6,6 +6,7 @@
   font-weight: 400;
   color: #fff;
   background-color: #0a0a0a;
+  border-radius: 15px;
 }
 
 .board-container {
@@ -182,5 +183,70 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@media (max-width: 425px) {
+  .board-container {
+    padding: 1rem;
+  }
+  .board {
+    padding: 1.5rem;
+  }
+  .board h1 {
+    font-size: 1.5rem;
+  }
+  .board .tresraya {
+    gap: 8px;
+  }
+  .square {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
+  }
+  .turns .square
+  .winners .square {
+    width: 50px;
+    height: 50px;
+  }
+  .board button {
+    width: 100px;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin: 15px;
+  }
+  .winner .texts {
+    width: 90%;
+    height: auto;
+    padding: 1.5rem;
+  }
+  .winner .texts h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .winner .win {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 375px) {
+  .square {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+  .board h1 {
+    font-size: 1.3rem;
+  }
+  .board button {
+    font-size: 0.85rem;
+    width: 90px;
+  }
+  .winner .win {
+    font-size: 30px;
+  }
+  .turns .square {
+    width: 45px;
+    height: 45px;
   }
 }
