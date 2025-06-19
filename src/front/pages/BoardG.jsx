@@ -15,6 +15,7 @@ import { Loading } from "../components/loading";
 import { Link } from "react-router-dom";
 import stripeServices from "../services/fluxStore";
 import { getStoredUser } from "../utils/storage";
+import { handleAddToCartBoard } from "../utils/CartUtils.js"
 
 
 
@@ -139,7 +140,7 @@ export const BoardGames = () => {
                     favorites: [...(user.favorites || []), favoriteData]
                 };
                 console.log("updatedUser", user);
-                
+
                 localStorage.setItem("user", JSON.stringify(updatedUser));
             } else {
                 console.warn("⚠️ No se recibió resultado válido de addFavorite");
@@ -282,7 +283,9 @@ export const BoardGames = () => {
                                 </Link>
                                 <div className="buttons-mesa">
                                     {juego?.stripe_price_id ? (
-                                        <button className="game-button" onClick={() => dispatch({ type: 'add_to_cart', payload: juego })}><span class="fa-solid fa-cart-shopping"></span></button>
+                                        <button className="game-button" onClick={() => {
+                                            handleAddToCartBoard(juego, cart, dispatch, navigate)
+                                        }}><span class="fa-solid fa-cart-shopping"></span></button>
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}

@@ -128,8 +128,8 @@ storeServices.JuegosMesaDatos = async (id) => {
         const year = item.querySelector('yearpublished')?.getAttribute("value")
         const description = item.querySelector('description')?.textContent
         const image = item.querySelector('image')?.textContent
-        const minPlayers = item.querySelector('minPlayers')?.getAttribute("value")
-        const maxPlayers = item.querySelector('maxPlayers')?.getAttribute("value")
+        const minPlayers = item.querySelector('minplayers')?.getAttribute("value")
+        const maxPlayers = item.querySelector('maxplayers')?.getAttribute("value")
         const playTime = item.querySelector('playingtime')?.getAttribute("value")
         const averageRating = item.querySelector('average')?.getAttribute("value")
         const categories = Array.from(item.getElementsByTagName("link")).filter(link => link.getAttribute("type") === "boardgamecategory").map(link => link.getAttribute("value"))
