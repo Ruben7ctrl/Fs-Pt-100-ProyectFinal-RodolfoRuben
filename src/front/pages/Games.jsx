@@ -448,9 +448,9 @@ console.log("Es favorito:", isFavorite());
           disabled={page === 1}
           className={`pagination-button cyber-btn ${page === 1 ? "disabled" : ""}`}
         >
-          <CaretLeft size={20} weight="bold" /> Página anterior
+          <CaretLeft size={20} weight="bold" /> Pagina anterior
         </button>
-        <span className="pagination-page">Página {page}</span>
+        <span className="pagination-page">Pagina {page}</span>
         <button
           onClick={() => {
             setPage((p) => p + 1);
@@ -458,7 +458,7 @@ console.log("Es favorito:", isFavorite());
           }}
           className="pagination-button cyber-btn"
         >
-          Página siguiente <CaretRight size={20} weight="bold" />
+          Pagina siguiente <CaretRight size={20} weight="bold" />
         </button>
       </div>
 
