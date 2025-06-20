@@ -212,7 +212,7 @@ export const BoardGames = () => {
     }; console.log("user", user);
 
     const isInCart = (gameId) =>
-        cart?.some(item => item.game_api_id === gameId || item.id === gameId);
+        cart?.some(item => Number(item.game_api_id) === Number(gameId) || Number(item.id) === Number(gameId));
 
     return (
         <div className="fondoGames">
