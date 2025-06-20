@@ -419,7 +419,7 @@ const isInCart = (gameId) =>
                     <button className="game-button" onClick={() => {
                      handleAddToCart(e, cart, dispatch, navigate)
                     }}
-                    >{isInCart(e.id) ? <span class="fa-solid fa-cart-shopping"></span> : <span class="fa-solid fa-cart-plus"></span>}</button>
+                    >{isInCart(e.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
                   ) : (
                     <button className="game-buttons" disabled><Clock size={27} /></button>
                   )}

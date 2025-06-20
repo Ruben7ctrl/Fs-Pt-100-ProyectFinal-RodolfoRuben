@@ -288,7 +288,7 @@ export const BoardGames = () => {
                                     {juego?.stripe_price_id ? (
                                         <button className="game-button" onClick={() => {
                                             handleAddToCartBoard(juego, cart, dispatch, navigate)
-                                        }}>{isInCart(juego.id) ? <span class="fa-solid fa-cart-shopping"></span> : <span class="fa-solid fa-cart-plus"></span>}</button>
+                                        }}>{isInCart(juego.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}
