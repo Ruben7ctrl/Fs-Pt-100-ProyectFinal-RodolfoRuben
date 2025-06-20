@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { handleFavoriteClick } from "../utils/favoriteUtils.js";
 import { getStoredUser } from "../utils/storage";
 import { handleAddToCart } from "../utils/CartUtils.js"
+import stripeServices from '../services/fluxStore.js';
 
 export const GameDetail = () => {
     const { id } = useParams(); // PARA CHECK
@@ -25,8 +26,15 @@ export const GameDetail = () => {
     useEffect(() => {
         if (id) {
             // Traemos el juego
-            storeServices.getOneVideojuegos(id).then(gameData => {
-                setGame(gameData);
+            Promise.all([
+                storeServices.getOneVideojuegos(id),
+                stripeServices.getItemsFromStore()
+            ]).then(([gameData, storeItems]) => {
+                const item = storeItems.find(si => si.game_api_id.toString() === gameData.id.toString())
+                setGame({
+                    ...gameData,
+                    stripe_price_id: item ? item.stripe_price_id : null
+                });
                 console.log('screenshots', gameData)
                 // 🚀 Traemos recomendados por un género aleatorio
                 if (gameData.genres && gameData.genres.length > 0) {
