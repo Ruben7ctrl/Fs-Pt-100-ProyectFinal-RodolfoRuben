@@ -211,6 +211,9 @@ export const BoardGames = () => {
         return store.user?.favorites?.some(fav => Number(fav.id) === Number(gameId));
     }; console.log("user", user);
 
+    const isInCart = (gameId) =>
+        cart?.some(item => item.game_api_id === gameId || item.id === gameId);
+
     return (
         <div className="fondoGames">
 
@@ -285,7 +288,7 @@ export const BoardGames = () => {
                                     {juego?.stripe_price_id ? (
                                         <button className="game-button" onClick={() => {
                                             handleAddToCartBoard(juego, cart, dispatch, navigate)
-                                        }}><span class="fa-solid fa-cart-shopping"></span></button>
+                                        }}>{isInCart(juego.id) ? <span class="fa-solid fa-cart-shopping"></span> : <span class="fa-solid fa-cart-plus"></span>}</button>
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}

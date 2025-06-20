@@ -305,6 +305,9 @@ export const Games = () => {
 
 console.log("Es favorito:", isFavorite());
 
+const isInCart = (gameId) =>
+  cart?.some(item => item.game_api_id === gameId || item.id === gameId);
+
   return (
     <div className="fondoGames">
       {/* ───────── GRID SUPERIOR ───────── */}
@@ -416,7 +419,7 @@ console.log("Es favorito:", isFavorite());
                     <button className="game-button" onClick={() => {
                      handleAddToCart(e, cart, dispatch, navigate)
                     }}
-                    ><span className="fa-solid fa-cart-shopping"></span></button>
+                    >{isInCart(e.id) ? <span class="fa-solid fa-cart-shopping"></span> : <span class="fa-solid fa-cart-plus"></span>}</button>
                   ) : (
                     <button className="game-buttons" disabled><Clock size={27} /></button>
                   )}
