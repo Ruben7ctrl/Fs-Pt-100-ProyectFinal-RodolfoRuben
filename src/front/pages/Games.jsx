@@ -24,6 +24,7 @@ import strategyImg from "../assets/img/Strategy.png";
 import stripeServices from "../services/fluxStore";
 import { getStoredUser } from "../utils/storage";
 import { handleFavoriteClick } from "../utils/favoriteUtils.js";
+import { handleAddToCart } from "../utils/CartUtils.js"
 
 export const Games = () => {
 
@@ -304,6 +305,9 @@ export const Games = () => {
 
 console.log("Es favorito:", isFavorite());
 
+const isInCart = (gameId) =>
+  cart?.some(item => item.game_api_id === gameId || item.id === gameId);
+
   return (
     <div className="fondoGames">
       {/* ───────── GRID SUPERIOR ───────── */}
@@ -413,13 +417,9 @@ console.log("Es favorito:", isFavorite());
                   <p className="game-description">{e.rating}⭐</p>
                   {e.stripe_price_id ? (
                     <button className="game-button" onClick={() => {
-                      if (alreadyInCart) {
-                        alert("Este juego ya esta en el carrito")
-                        return;
-                      }
-                      dispatch({ type: 'add_to_cart', payload: e });
+                     handleAddToCart(e, cart, dispatch, navigate)
                     }}
-                    ><span className="fa-solid fa-cart-shopping"></span></button>
+                    >{isInCart(e.id) ? <span class="fa-solid fa-cart-shopping"></span> : <span class="fa-solid fa-cart-plus"></span>}</button>
                   ) : (
                     <button className="game-buttons" disabled><Clock size={27} /></button>
                   )}
@@ -451,9 +451,9 @@ console.log("Es favorito:", isFavorite());
           disabled={page === 1}
           className={`pagination-button cyber-btn ${page === 1 ? "disabled" : ""}`}
         >
-          <CaretLeft size={20} weight="bold" /> Página anterior
+          <CaretLeft size={20} weight="bold" /> Pagina anterior
         </button>
-        <span className="pagination-page">Página {page}</span>
+        <span className="pagination-page">Pagina {page}</span>
         <button
           onClick={() => {
             setPage((p) => p + 1);
@@ -461,7 +461,7 @@ console.log("Es favorito:", isFavorite());
           }}
           className="pagination-button cyber-btn"
         >
-          Página siguiente <CaretRight size={20} weight="bold" />
+          Pagina siguiente <CaretRight size={20} weight="bold" />
         </button>
       </div>
 
