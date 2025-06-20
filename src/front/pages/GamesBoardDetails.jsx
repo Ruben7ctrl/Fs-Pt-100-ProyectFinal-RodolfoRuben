@@ -7,7 +7,8 @@ import userServices from "../services/flux";
 import { MagnifyingGlass, User, ArrowLeft, ShoppingCart, Heart,HeartBreak, ShoppingCartSimple } from 'phosphor-react';
 import { Loading } from '../components/loading';
 import { getStoredUser } from "../utils/storage";
-import { handleAddToCart } from "../utils/CartUtils.js"
+import { handleAddToCartBoard } from "../utils/CartUtils.js"
+import stripeServices from '../services/fluxStore.js';
 
 
 export const Gameboarddetail = () => {
@@ -25,7 +26,14 @@ export const Gameboarddetail = () => {
         const fetchJuego = async () => {
             try {
                 const data = await storeServices.JuegosMesaDatos(id);
-                setJuego(data);
+
+                const storeItems = await stripeServices.getItemsFromStore();
+                console.log("storeItems:", storeItems);
+                const item = storeItems.find(si => si.game_api_id.toString() === data.id.toString())
+                setJuego({
+                    ...data,
+                    stripe_price_id: item ? item.stripe_price_id : null
+            });
             } catch (error) {
                 console.error("Error fetching juego:", error);
             } finally {
@@ -93,7 +101,7 @@ export const Gameboarddetail = () => {
             {/* Header superior izquierdo */}
             <div className="game-header">
                 <button className="icon-button" onClick={() => {
-                    handleAddToCart(juego, cart, dispatch, navigate)
+                    handleAddToCartBoard(juego, cart, dispatch, navigate)
                 }}>
                     {isInCart(id) ? <ShoppingCart size={24} weight="fill" /> : <ShoppingCartSimple size={24} weight="fill" />}
                 </button>
