@@ -5,6 +5,7 @@ import "../styles/Autentication.css"
 import userServices from "../services/flux";
 
 
+
 export const Signin = () => {
 
 
@@ -79,9 +80,9 @@ export const Signin = () => {
         <div className="fondo">
             <nav className="navbar">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="/">
+                    <Link className="navbar-brand" to="/">
                         <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
-                    </a>
+                    </Link>
                 </div>
             </nav>
             <div className="center">

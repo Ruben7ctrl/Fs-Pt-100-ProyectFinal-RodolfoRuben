@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/Autentication.css"
 import userServices from "../services/flux";
 
@@ -83,9 +83,9 @@ export const Signup = () => {
         <div className={`fondo${avatar.nombre.toLowerCase()}`}>
             <nav className="navbar">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="/">
+                    <Link className="navbar-brand" to="/">
                         <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
-                    </a>
+                    </Link>
                 </div>
             </nav>
             <div className={`signup${avatar.nombre.toLowerCase()}`}>
