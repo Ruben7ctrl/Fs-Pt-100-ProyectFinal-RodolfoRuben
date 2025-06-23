@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, DateTime, ForeignKey
+from sqlalchemy import String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import List
@@ -20,15 +20,19 @@ class Users(db.Model):
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
     favorite1: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user1", foreign_keys=lambda: [Favorites.user1_id])
-    favorite2: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user2", foreign_keys=lambda: [Favorites.user2_id])
+    # favorite2: Mapped[List["Favorites"]] = relationship("Favorites", back_populates="user2", foreign_keys=lambda: [Favorites.user2_id])
 
-    purchases: Mapped[List["Purchases"]] = relationship(back_populates="user_purchase")
+    # purchases: Mapped[List["Purchases"]] = relationship(back_populates="user_purchase")
 
     usercontact: Mapped[List["UserContacts"]] = relationship("UserContacts", back_populates="user_cont", foreign_keys="UserContacts.user_id")
 
     online_stats: Mapped[List["OnlineStats"]] = relationship(back_populates="user_stats")
 
     ia_sessions: Mapped[List["IAsessions"]] = relationship(back_populates="user_iasessions")
+
+    # owned_games: Mapped[list["OwnGames"]] = relationship(back_populates="user")
+
+    cart: Mapped[List["Cart"]] = relationship(back_populates="user")
 
 
     def serialize(self):
@@ -41,10 +45,13 @@ class Users(db.Model):
             "dateofbirth": self.dateofbirth if self.dateofbirth else None,
             "phone": self.phone if self.phone else None,
             "favorite1": [fav.serialize() for fav in self.favorite1],
-            "favorite2": [fav.serialize() for fav in self.favorite2],
+            # "favorite2": [fav.serialize() for fav in self.favorite2],
+            "avatar_image": self.avatar_image if self.avatar_image else None,
             "usercontact": [cont.serialize() for cont in self.usercontact],
             "online_stats": [stats.serialize() for stats in self.online_stats],
             "ia_sessions": [ia.serialize() for ia in self.ia_sessions],
+            # "owned_games": [own.serialize() for own in self.owned_games],
+            "cart": [item.serialize() for item in self.cart],
         }
     
 
@@ -73,30 +80,30 @@ class OnlineGames(db.Model):
         }
     
 
-class Purchases(db.Model):
-    __tablename__ = "purchases"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    amount: Mapped[int] = mapped_column(nullable=False)
-    payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
-    status: Mapped[str] = mapped_column(String(50), nullable=True)
-    purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
+# class Purchases(db.Model):
+#     __tablename__ = "purchases"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     amount: Mapped[int] = mapped_column(nullable=False)
+#     payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
+#     status: Mapped[str] = mapped_column(String(50), nullable=True)
+#     purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user_purchase: Mapped["Users"] = relationship(back_populates="purchases")
+#     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+#     user_purchase: Mapped["Users"] = relationship(back_populates="purchases")
 
-    # storegame_id: Mapped[int] = mapped_column(ForeignKey(".id"), nullable=False)
-    # storegamepay: Mapped["Users"] = relationship(back_populates="purchases")    
+#     # storegame_id: Mapped[int] = mapped_column(ForeignKey(".id"), nullable=False)
+#     # storegamepay: Mapped["Users"] = relationship(back_populates="purchases")    
 
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "amount": self.amount,
-            "payment_method": self.payment_method,
-            "status": self.status if self.status else None,
-            "purchased_at": self.purchased_at.isoformat(),
-            "user_purchase": self.user_purchase.username,
-        }
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "amount": self.amount,
+#             "payment_method": self.payment_method,
+#             "status": self.status if self.status else None,
+#             "purchased_at": self.purchased_at.isoformat(),
+#             "user_purchase": self.user_purchase.username,
+#         }
     
 
 class OnlineStats(db.Model):
@@ -106,6 +113,7 @@ class OnlineStats(db.Model):
     wins: Mapped[int] = mapped_column(nullable=False)
     stalemate: Mapped[int] = mapped_column(nullable=False)
     losses: Mapped[int] = mapped_column(nullable=False)
+    move_count: Mapped[int] = mapped_column(nullable=False, default=0)
     last_played: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -122,6 +130,7 @@ class OnlineStats(db.Model):
             "wins": self.wins if self.wins else None,
             "stalemate": self.stalemate if self.stalemate else None,
             "losses": self.losses if self.losses else None,
+            "move_count": self.move_count,
             "last_played": self.last_played.isoformat(),
             "user_stats": self.user_stats.username,
             "online_game_stats": self.online_game_stats.name
@@ -176,7 +185,7 @@ class IAevents(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     chapter_number: Mapped[int] = mapped_column(nullable=True)
     decision: Mapped[str] = mapped_column(String(400), nullable=False)
-    description: Mapped[str] = mapped_column(String(400), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     outcome: Mapped[str] = mapped_column(String(400), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
@@ -199,15 +208,16 @@ class Favorites(db.Model):
     __tablename__ = "favorites"
     id: Mapped[int] = mapped_column(primary_key=True)
     user1_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    user2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    # user2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     onlinegame_id: Mapped[int] = mapped_column(ForeignKey("onlinegames.id"), nullable=True)
-    # storegames_id: Mapped[int] = mapped_column(ForeignKey(".id"), primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=True)
+    game_type: Mapped[str] = mapped_column(String(30), nullable=False)
 
 
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
     user1: Mapped["Users"] = relationship(back_populates="favorite1", foreign_keys=[user1_id])
-    user2: Mapped["Users"] = relationship(back_populates="favorite2", foreign_keys=[user2_id])
+    # user2: Mapped["Users"] = relationship(back_populates="favorite2", foreign_keys=[user2_id])
     onlinegamesFav: Mapped["OnlineGames"] = relationship(back_populates="favourite")
     # storegamesFAv: Mapped[""] = relationship(back_populates="favourite")
 
@@ -216,15 +226,26 @@ class Favorites(db.Model):
         return {
             "id": self.id,
             "user1_id": self.user1_id,
-            "user2_id": self.user2_id,
+            # "user2_id": self.user2_id,
+            "game_api_id": self.game_api_id,
             "onlinegame_id": self.onlinegame_id,
             # "storegames_id": self.storegames_id,
             "user1": self.user1.username if self.user1 else None,
-            "user2": self.user2.username if self.user2 else None,
-            "onlinegamesFav": self.onlinegamesFav.name if self.onlinegamesFav.name else None,
+            # "user2": self.user2.username if self.user2 else None,
+            "onlinegamesFav": self.onlinegamesFav.name if self.onlinegamesFav else None,
             # "storegamesFav": self.storegamesFav.name if self.storegamesFav.name else None,
             "created_at": self.created_at.isoformat(),
+            "game_type": self.game_type,
+            # "type": self.get_type()
         }
+    # def get_type(self):
+    #     if self.onlinegame_id:
+    #         return "onlinegame"
+    #     if self.game_api_id and self.onlinegamesFav is None:
+    #         return "videogames"
+    #     if self.game_api_id and self.onlinegamesFav:
+    #         return "boardgame"
+    #     return "unknown"
     
 
 class UserContacts(db.Model):
@@ -247,3 +268,109 @@ class UserContacts(db.Model):
         }
     
 
+class GamePurchase(db.Model):
+    __tablename__ = "game_purchase"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=True)
+    stripe_price_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    amount_paid: Mapped[int] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="eur")
+    purchased_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
+
+
+    # owners: Mapped[list["OwnGames"]] = relationship(back_populates="purchase")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.game_api_id,
+            "name": self.name,
+            "stripe_price_id": self.stripe_price_id,
+            "amount_price": self.amount_paid,
+            "currency": self.currency,
+            "purchased_at": self.purchased_at.isoformat()
+        }
+    
+    
+class StoreItem(db.Model):
+    __tablename__ = "store_item"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_api_id: Mapped[int] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=True)
+    stripe_price_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    price: Mapped[int] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="eur")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.game_api_id,
+            "name": self.name,
+            "stripe_price_id": self.stripe_price_id,
+            "price": self.price,
+            "currency": self.currency,
+        }
+    
+
+# class OwnGames(db.Model):
+#     __tablename__ = "owngames"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+#     purchase_id: Mapped[int] = mapped_column(ForeignKey("game_purchase.id"), nullable=False)
+#     acquired_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.utcnow)
+
+    
+#     user: Mapped["Users"] = relationship(back_populates="owned_games")
+#     purchase: Mapped["GamePurchase"] = relationship(back_populates="owners")
+
+
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "user_id": self.user_id,
+#             "purchase": self.purchase,
+#             "acquired_at": self.acquired_at.isoformat()
+#         }
+
+class Cart(db.Model):
+    __tablename__ = "cart"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+
+    user: Mapped["Users"] = relationship(back_populates="cart")
+    items: Mapped[List["CartItem"]] = relationship(back_populates="cart")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "items": [item.serialize() for item in self.items],
+        }
+
+class CartItem(db.Model):
+    __tablename__ = "cartitem"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
+    storeItem_id: Mapped[int] = mapped_column(ForeignKey("store_item.id"), nullable=False)
+    quantity: Mapped[int] = mapped_column(nullable=False, default=1)
+    game_type: Mapped[str] = mapped_column(String(30), nullable=False)
+
+    storeitem = db.relationship("StoreItem")
+    cart: Mapped["Cart"] = relationship(back_populates="items")
+
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "game_api_id": self.storeitem.game_api_id,
+            "name": self.storeitem.name,
+            "stripe_price_id": self.storeitem.stripe_price_id,
+            "price": self.storeitem.price,
+            "currency": self.storeitem.currency,
+            "quantity": self.quantity,
+            "game_type": self.game_type,
+        }

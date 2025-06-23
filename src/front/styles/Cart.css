@@ -1,0 +1,262 @@
+.cart-container {
+  background-image: url("/src/front/assets/img/FondoIA.jpg");
+
+  min-height: 100vh;
+  padding: 2rem;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 2rem;
+  min-height: 100vh;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  box-shadow: inset 0 0 25px #0ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #00ffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 30px #00ffff;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+  font-family: 'SpeedBeast', sans-serif;
+}
+
+@font-face {
+    font-family: 'SpeedBeast';
+    src: url('/src/front/assets/img/fonts/SpeedBeast FREE.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'VerminVibes';
+    src: url('/src/front/assets/img/fonts/Vermin Vibes.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.text {
+  color: #ff00ff;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-shadow: 
+    0 0 10px #ff00ff,
+    0 0 20px #ff00ff,
+    0 0 30px #ff00ff;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 1260px;
+}
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(15px);
+  border: 2px solid #00bfff;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 15px #00bfff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 280px;
+  cursor: pointer;
+
+}
+
+/* .cart-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 30px #00ffff, inset 0 0 12px #00bfff;
+} */
+.cart-item:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 30px #00bfff, 0 0 60px #00bfff inset;
+}
+
+.cart-item:hover::before {
+    filter: brightness(1.2) saturate(1.3) blur(1px);
+}
+
+.cart-item-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+  box-shadow: 0 0 12px #0ff;
+  transition: transform 0.3s ease;
+}
+
+/* .cart-item:hover .cart-item-image {
+  transform: scale(1.05);
+} */
+
+.cart-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  flex-grow: 1;
+}
+
+.cart-item-details h3 {
+  margin: 0;
+  color: #0ff;
+  font-size: 1.3rem;
+  text-shadow: 0 0 8px #00bfff;
+}
+
+.cart-item-details p {
+  margin: 0;
+  color: #ccc;
+  font-weight: 500;
+}
+
+
+/* .cart-item-details .game-button {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  background: #ff00ff;
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 12px #ff00ff;
+  transition: background 0.3s, box-shadow 0.3s;
+  text-align: center;
+  text-decoration: none;
+} */
+
+
+/* .cart-item-details .game-button:hover {
+  background: #d100d1;
+  box-shadow: 0 0 20px #ff00ff;
+} */
+
+.cart-summary {
+  margin-top: 3rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #0ff;
+  border-radius: 1rem;
+  padding: 1.5rem 3rem;
+  box-shadow: 0 0 20px #0ff;
+  max-width: 600px;
+  width: 90%;
+}
+
+.cart-summary p {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #0ff;
+}
+
+.cyber-btn {
+  background: linear-gradient(90deg, #0055ff, #33ccff);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  margin: 0.5rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  box-shadow: 0 0 12px #0ff, inset 0 0 6px rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'SonicTurbo', sans-serif;
+}
+
+.cyber-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #0ff, inset 0 0 10px #0ff;
+}
+
+.cyber-btn1 {
+  background: linear-gradient(90deg, #ff01b7, #ff7de5);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  margin: 0.5rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  box-shadow: 0 0 12px #ff00ff, inset 0 0 6px rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'SonicTurbo', sans-serif;
+}
+
+.cyber-btn1:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #0ff;
+}
+
+@font-face {
+    font-family: 'SonicTurbo';
+    src: url('/src/front/assets/img/fonts/Sonic Turbo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.embedded-checkout-wrapper {
+  max-width: 600px;
+  max-height: 90vh;
+  margin: 1rem auto;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 30px #00bfff, inset 0 0 15px #0ff;
+  backdrop-filter: blur(10px);
+  color: #0ff;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.embedded-checkout-wrapper h2 {
+  color: #0ff;
+  text-align: center;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px #0ff;
+}
+
+.game-buttonss {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #0055ff, #33ccff);
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 12px #ff00ff;
+  transition: background 0.3s, box-shadow 0.3s;
+  text-align: center;
+  text-decoration: none;
+}
+
+.game-buttonss:hover {
+  background: #d100d1;
+  box-shadow: 0 0 20px #ff00ff;
+}
+.game-button-container {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}

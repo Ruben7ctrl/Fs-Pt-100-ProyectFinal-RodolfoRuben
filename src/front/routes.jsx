@@ -12,6 +12,21 @@ import { Games } from "./pages/Games";
 import { Signup } from "./pages/SignUp";
 import { Signin } from "./pages/SignIn";
 import { IAsession } from "./pages/IAsession";
+import { GameDetail } from "./pages/GameDetail";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
+import { BoardGames } from "./pages/BoardG";
+import { Chess } from "./pages/ChessGame";
+import { OnlineGames } from "./pages/OnlineG";
+import { TresEnRaya } from "./pages/TresEnRaya";
+import { Gameboarddetail } from "./pages/GamesBoardDetails";
+import { BattleShip } from "./pages/BattleShip";
+import {UserProfile} from "./pages/UserProfile";
+import { Cart } from "./pages/Cart";
+import PaymentReturn from "./components/PaymentReturn";
+import PrivateRoute from "./components/PrivateRoute"
+
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -31,6 +46,19 @@ export const router = createBrowserRouter(
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/ia_sessions" element={<IAsession />} />
+        <Route path="/games/:id" element={<GameDetail />} />
+        <Route path="/boardgame/:id" element={<Gameboarddetail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/boardgames" element={<BoardGames />} />
+        <Route path="/onlinegame/1" element={<Chess />} />
+        <Route path="/onlinegames" element={<PrivateRoute><OnlineGames /></PrivateRoute> } />
+        <Route path="/onlinegame/2" element={<TresEnRaya />} />
+        <Route path="/onlinegame/3" element={<BattleShip />} />
+        <Route path="/userprofile" element={<UserProfile />} />
+        
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/return" element={<PaymentReturn />} />
       </Route>
     )
 );
