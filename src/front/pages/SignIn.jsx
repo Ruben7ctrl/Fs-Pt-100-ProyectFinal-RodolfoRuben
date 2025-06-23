@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Autentication.css"
 import userServices from "../services/flux";
+import logo from "../assets/img/Logo.png"
 
 
 
@@ -81,7 +82,7 @@ export const Signin = () => {
             <nav className="navbar">
                 <div className="container-fluid">
                     <Link className="navbar-brand" to="/">
-                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
+                        <img src={logo} alt="Logo" width="60" height="44" />
                     </Link>
                 </div>
             </nav>

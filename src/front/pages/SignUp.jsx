@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Autentication.css"
 import userServices from "../services/flux";
-
-
-
-
+import logo from "../assets/img/Logo.png"
 export const Signup = () => {
 
     const avatares = [
@@ -61,15 +58,6 @@ export const Signup = () => {
         })
     }, [avatar])
 
-    // useEffect(() => {
-    //     const className = `fondo${avatar.nombre.toLowerCase()}`
-    //     document.body.classList.add(className);
-
-    //     return () => {
-    //         document.body.classList(className);
-    //     }
-    // }, [avatar.nombre])
-
     const handleMas = () => {
         setAvatarIndex((avatarIndex - 1 + avatares.length) % avatares.length)
     }
@@ -84,7 +72,7 @@ export const Signup = () => {
             <nav className="navbar">
                 <div className="container-fluid">
                     <Link className="navbar-brand" to="/">
-                        <img src="src/front/assets/img/Logo.png" alt="Logo" width="60" height="44" />
+                        <img src={logo} alt="Logo" width="60" height="44" />
                     </Link>
                 </div>
             </nav>
@@ -94,41 +82,19 @@ export const Signup = () => {
                         <h2>SignUp</h2>
                     </div>
                     <div className=" mt-3 col-sm-12 col-md-12">
-                        {/* <label htmlFor="email" className="form-label">Email</label> */}
+                        <label htmlFor="email" className="form-label">Email</label>
                         <input type="email" className="form-control" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required />
                     </div>
                     <div className=" mt-3 col-sm-12 col-md-12">
-                        {/* <label htmlFor="password" className="form-label">Password</label> */}
+                        <label htmlFor="password" className="form-label">Password</label>
                         <input type="password" className="form-control" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required />
                     </div>
                     <div className=" mt-3 col-sm-12 col-md-12">
-                        {/* <label htmlFor="inputUserName" className="form-label">UserName</label> */}
+                        <label htmlFor="inputUserName" className="form-label">UserName</label>
                         <input type="text" className="form-control" id="inputUserName" placeholder="UserName" name="username" value={formData.username} onChange={handleChange} required />
                     </div>
-                    {/* <div className="row mt-3">
-                        <div className="col-sm-12 col-md-6">
-                            <label htmlFor="inputName" className="form-label">First Name</label>
-                            <input type="text" className="form-control" placeholder="First Name" id="inputName" name="firstname" value={formData.firstname} onChange={handleChange} required />
-                        </div>
-                        <div className="col-sm-12 col-md-6">
-                            <label htmlFor="inputLastName" className="form-label">Last Name</label>
-                            <input type="text" className="form-control" placeholder="Last Name" id="inputLastName" name="lastname" value={formData.lastname} onChange={handleChange} required />
-                        </div>
-                        <div className="row mt-3">
-                            <div className="col-sm-12 col-md-6">
-                                <label className="form-label" htmlFor="date-of-birth">
-                                    Date of Birth
-                                </label>
-                                <input className="form-control" type="text" inputMode="numeric" id="date-of-birth" name="dateofbirth" placeholder="dd/mm/yyyy" value={formData.dateofbirth} onChange={handleChange} required />
-                            </div>
-                            <div className="col-sm-12 col-md-6">
-                                <label htmlFor="inputPhone" className="form-label">Phone</label>
-                                <input type="number" className="form-control" placeholder="Phone" id="inputPhone" name="phone" value={formData.phone} onChange={handleChange} required />
-                            </div>
-                        </div>
-                    </div> */}
                     <div className="avatars mt-3 col-sm-12 col-md-12">
-                        {/* <label htmlFor="avatar" className="form-label">Elige tu Avatar (flechas)</label> */}
+                        <label htmlFor="avatar" className="form-label">Elige tu Avatar (flechas)</label>
                         <input type="text" className="form-control" placeholder="Avatar" name="avatar" value={formData.avatar_image} onChange={handleChange} required />
                     </div>
 
