@@ -1,7 +1,8 @@
 import { getStoredUser } from "../utils/storage";
 import stripeServices from "../services/fluxStore";
 
-export const handleAddToCart = async (game, cart, dispatch, navigate) => {
+
+export const handleAddToCart = async (game, cart, dispatch, navigate, showCartModal) => {
   const user = getStoredUser();
   console.log("🧩 game que recibo:", game);
 
@@ -29,7 +30,7 @@ export const handleAddToCart = async (game, cart, dispatch, navigate) => {
   };
 
   if (cart.find((item) => item.game_api_id === game.id || item.id === game.id)) {
-    alert("Este juego ya esta en el carrito");
+    showCartModal(game.name);
     return;
   }
 
@@ -45,7 +46,7 @@ export const handleAddToCart = async (game, cart, dispatch, navigate) => {
   }
 };
 
-export const handleAddToCartBoard = async (game, cart, dispatch, navigate) => {
+export const handleAddToCartBoard = async (game, cart, dispatch, navigate, showCartModal) => {
   const user = getStoredUser();
   console.log("🧩 game que recibo:", game);
 
@@ -73,7 +74,7 @@ export const handleAddToCartBoard = async (game, cart, dispatch, navigate) => {
   };
 
   if (cart.find((item) => item.game_api_id === game.id || item.id === game.id)) {
-    alert("Este juego ya esta en el carrito");
+    showCartModal(game.name);
     return;
   }
 
