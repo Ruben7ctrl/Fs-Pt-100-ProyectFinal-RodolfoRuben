@@ -5,6 +5,9 @@ import "../styles/UserProfile.css";
 import anime from "animejs";
 import React, { useRef, useState, useEffect } from "react";
 import userServices from "../services/flux";
+import Maga from "../assets/img/Maga.jpg";
+import Asesino from "../assets/img/Asesino.jpg";
+import Soldado from "../assets/img/Soldado.jpg";
 
 export const UserProfile = () => {
   const { store, dispatch } = useGlobalReducer();
@@ -17,9 +20,14 @@ export const UserProfile = () => {
   const boardCarouselRef = useRef(null);
   const [userInfo, setUserInfo] = useState(null);
 
+  const avatarMap = {
+    Maga,
+    Asesino,
+    Soldado,
+  }
 
   const avatarName = user?.avatar_image || "default";
-  const avatarUrl = `../assets/img/${avatarName}.jpg`;
+  const avatarUrl = avatarMap[avatarName];
 
   // Cargar favoritos enriquecidos si es necesario
   useEffect(() => {
