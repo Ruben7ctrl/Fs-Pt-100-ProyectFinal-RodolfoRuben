@@ -22,7 +22,6 @@ sqlalchemy = "*"
 faker = "*"
 flask-jwt-extended = "*"
 werkzeug = "*"
-flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.13"
