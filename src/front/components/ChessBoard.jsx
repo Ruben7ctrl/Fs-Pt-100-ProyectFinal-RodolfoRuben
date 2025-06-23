@@ -5,6 +5,7 @@ import { Chess } from "chess.js";
 import gamesServices from "../services/fluxGames";
 import { ArrowLeft, MagnifyingGlass, User } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
+import StockfishWorker from "../utils/stockfish.js?worker"
 
 
 export const ChessBoard = () => {
@@ -70,7 +71,7 @@ export const ChessBoard = () => {
     }
 
     useEffect(() => {
-        engine.current = new Worker("../utils/stockfish.js");
+        engine.current = new StockfishWorker();
 
         engine.current.onmessage = (event) => {
             const line = event.data;
