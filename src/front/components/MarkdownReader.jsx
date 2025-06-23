@@ -4,15 +4,13 @@ import he from "he";
 
 
 
-export const MarkdownReader = ({ text }) => {
+export const MarkdownReader = ({ text, sender }) => {
 
 
     return (
-        <section className="text-start">
+        <section className={`messages ${sender}`}>
             <article className="container-fluid">
-
-            <Markdown children={he.decode(String(text || ""))} remarkPlugins={[remarkGfm]} />
-
+                <Markdown children={he.decode(String(text || ""))} remarkPlugins={[remarkGfm]} />
             </article>
         </section>
     )

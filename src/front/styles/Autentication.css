@@ -1,7 +1,4 @@
-img {
-    margin-left: 3rem;
-    margin-top: 1rem;
-}
+
 .fondomaga {
     background-image: url('/src/front/assets/img/Maga.jpg');
     min-height: 100vh;
@@ -71,6 +68,10 @@ img {
     color: #ffffffaa;
 }
 
+.signupmaga label {
+    color: #ffffff;
+}
+
 .signupmaga .btn-secondary {
     background-color: rgb(157, 60, 0);
     border: 0.15rem solid #ffffff;
@@ -119,6 +120,10 @@ img {
     margin-bottom: 2rem;
 }
 .signupasesino input::placeholder {
+    color: #DEA402;
+}
+
+.signupasesino label {
     color: #DEA402;
 }
 
@@ -172,6 +177,10 @@ img {
     color: #ffffffaa;
 }
 
+.signupsoldado label {
+    color: #ffffff;
+}
+
 .signupsoldado .btn-secondary:hover {
     background-color: #00FFF7;
     color: #000;
@@ -190,6 +199,10 @@ img {
     box-shadow: 0 0 #ffffff, 0 0 1rem #DA7A0Dff inset;
 }
 
+.botones {
+    display: flex;
+    gap: 1rem;
+}
 .botones_avatar {
     /* position: fixed;
     left: 50%;
@@ -199,10 +212,11 @@ img {
     bottom: 2rem;
     display: flex;
     gap: 1.5rem;
-    justify-content: center;
+    align-items: center;
     /* margin-top: auto; */
     position: absolute;
-    left: 50%;
+    align-self: center;
+    flex-direction: column;
 }
 
 .botones_avatar button {
@@ -216,6 +230,27 @@ img {
 
 .botones_avatar:hover {
     transform: scale(1.2);
+}
+.fondomaga .elige {
+    color: yellow;
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+.fondoasesino .elige {
+    color: green;
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+.fondosoldado .elige {
+    color: rgba(36,125,126,255);
+    font-family: 'SonicTurbo', sans-serif;
+
+}
+@font-face {
+    font-family: 'SonicTurbo';
+    src: url('/src/front/assets/img/fonts/Sonic Turbo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .fondo {
@@ -311,4 +346,8 @@ img {
 .signin .btn-secondary:hover {
     background-color: #00FFF7;
     color: #000;
+}
+
+.avatars {
+    justify-items: center;
 }

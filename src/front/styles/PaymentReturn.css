@@ -1,0 +1,41 @@
+#success {
+    background: rgba(0, 0, 0, 0.6);
+    max-width: 600px;
+    margin: 8rem auto;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    color: #0ff;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 0 25px #00bfff;
+    backdrop-filter: blur(10px);
+}
+
+#success p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+#success a {
+    color: #f0f;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+#success a:hover {
+    color: #0ff;
+}
+
+.spinner-border {
+    width: 4rem;
+    height: 4rem;
+    border: 0.5rem solid rgba(0, 255, 255, 0.2);
+    border-top-color: #00ffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 10rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg);}
+}

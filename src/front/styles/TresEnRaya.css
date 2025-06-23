@@ -1,0 +1,252 @@
+/* General styles */
+.board-box {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #fff;
+  background-color: #0a0a0a;
+  border-radius: 15px;
+}
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-image: url("/src/front/assets/img/fondoTresEnRaya.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 2rem;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.board {
+  width: fit-content;
+  text-align: center;
+  border: 4px solid #00ffff;
+  border-radius: 16px;
+  box-shadow: 0 0 35px #00ffff, inset 0 0 12px #00ffff;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  animation: subtle-glow 4s infinite alternate ease-in-out;
+}
+
+@keyframes subtle-glow {
+  0% {
+    box-shadow: 0 0 25px #00ffff, inset 0 0 8px #00ffff;
+  }
+  100% {
+    box-shadow: 0 0 35px #00ffff, inset 0 0 14px #00ffff;
+  }
+}
+
+/* Title */
+.board h1 {
+  color: #00ffff;
+  margin-bottom: 16px;
+  font-size: 2rem;
+}
+
+/* Buttons */
+.board button {
+  padding: 10px 16px;
+  margin: 25px;
+  background-color: #0a0a0a;
+  border: 2px solid #00ffff;
+  color: #00ffff;
+  width: 120px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.board button:hover {
+  background-color: #00ffff;
+  color: #0a0a0a;
+  transform: scale(1.05);
+}
+
+/* Game board grid */
+.board .tresraya {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+
+/* Turns (if used) */
+.turns {
+  display: flex;
+  justify-content: center;
+  margin: 15px auto;
+  width: fit-content;
+  position: relative;
+  border-radius: 10px;
+}
+
+.turns .square,
+.winners .square {
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  border-color: transparent;
+  margin :3px;
+ 
+ 
+
+}
+
+/* Individual square */
+.square {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #222;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 48px;
+  background: linear-gradient(145deg, #00e0e0, #00c0c0);
+  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.square:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #00ffff, inset 0 0 10px #00ffff;
+}
+
+/* If selected (X or O played) */
+.square.is-selected {
+  color: #ff00ff;
+  background: linear-gradient(145deg, #e000e0, #c000c0);
+  box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.4);
+}
+
+/* Winner overlay */
+.winner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  animation: fadeIn 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+/* Winner box */
+.winner .texts {
+  background: #111;
+  height: 300px;
+  width: 320px;
+  border: 3px solid #ff00ff;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 0 25px #ff00ff;
+}
+
+.winner .texts h2 {
+  color: #ff00ff;
+  font-size: 2rem;
+}
+
+.winner .win {
+  display: flex;
+  gap: 15px;
+  font-size: 48px;
+  color: #00ffff;
+}
+
+/* Winner animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 425px) {
+  .board-container {
+    padding: 1rem;
+  }
+  .board {
+    padding: 1.5rem;
+  }
+  .board h1 {
+    font-size: 1.5rem;
+  }
+  .board .tresraya {
+    gap: 8px;
+  }
+  .square {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
+  }
+  .turns .square
+  .winners .square {
+    width: 50px;
+    height: 50px;
+  }
+  .board button {
+    width: 100px;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin: 15px;
+  }
+  .winner .texts {
+    width: 90%;
+    height: auto;
+    padding: 1.5rem;
+  }
+  .winner .texts h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .winner .win {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 375px) {
+  .square {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+  .board h1 {
+    font-size: 1.3rem;
+  }
+  .board button {
+    font-size: 0.85rem;
+    width: 90px;
+  }
+  .winner .win {
+    font-size: 30px;
+  }
+  .turns .square {
+    width: 45px;
+    height: 45px;
+  }
+}

@@ -1,0 +1,202 @@
+/* 🎮 Tablero principal */
+.fondoAjedrez1 {
+    background-image: url("/src/front/assets/img/fondoAjedrez.png");
+    min-height: 100vh;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 0.5s ease;
+}
+
+
+
+
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    aspect-ratio: 1 / 1; /* siempre cuadrado */
+    max-width: 80vmin; /* para que no se salga de pantalla */
+    max-height: 80vmin;
+    border: 4px solid #00ffff;
+    border-radius: 16px;
+    box-shadow: 0 0 35px #00ffff, inset 0 0 12px #00ffff;
+    background-color: #111;
+    padding: 8px;
+    animation: subtle-glow 4s infinite alternate ease-in-out;
+    margin: 0 auto; /* centrado */
+}
+
+@keyframes subtle-glow {
+    0% {
+        box-shadow: 0 0 25px #00ffff, inset 0 0 8px #00ffff;
+    }
+    100% {
+        box-shadow: 0 0 35px #00ffff, inset 0 0 14px #00ffff;
+    }
+}
+
+/* 🎨 Casillas con líneas y efecto 2D/3D */
+.squaresC.ligth {
+    background: linear-gradient(145deg, #00e0e0, #00c0c0);
+    border: 2px solid #222;
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.squaresC.dark {
+    background: linear-gradient(145deg, #e000e0, #c000c0);
+    border: 2px solid #222;
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Casilla seleccionada */
+.squaresC.selected {
+    outline: 3px solid white;
+    box-shadow: 0 0 15px white;
+    z-index: 2;
+}
+
+/* ♟️ Piezas */
+.piece {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+    transition: transform 0.2s ease;
+}
+
+.piece:active {
+    transform: scale(1.1);
+}
+
+/* 🎮 Piezas capturadas */
+.captured-pieces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid #00ffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ffff;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 80vmin; /* para que no se salga */
+    margin: 12px auto;
+    justify-content: center;
+}
+
+.captured-pieces p {
+    margin: 0 0 6px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #00ffff;
+    width: 100%;
+    text-align: center;
+}
+
+.captured-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+.captured-piece {
+    width: 24px;  /* tamaño pequeño */
+    height: 24px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+/* 🎮 Promotion popup */
+.promotion-popup {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    background-color: #111;
+    padding: 1rem;
+    border: 2px solid #00ffff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #00ffff;
+    color: #fff;
+    z-index: 1000;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.promotion-popup p {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #00ffff;
+}
+
+.promotion-popup button {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #0a0a0a;
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.promotion-popup button:hover {
+    background-color: #00ffff;
+    color: #0a0a0a;
+    transform: scale(1.05);
+}
+
+/* 🎮 Game Over popup */
+.game-over-popup {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    background-color: #111;
+    padding: 1.5rem;
+    border: 2px solid #ff00ff;
+    border-radius: 14px;
+    box-shadow: 0 0 25px #ff00ff;
+    color: #fff;
+    z-index: 1000;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.game-over-popup h2 {
+    margin-bottom: 1rem;
+    color: #ff00ff;
+}
+
+.game-over-popup p {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.game-over-popup button {
+    padding: 0.5rem 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #0a0a0a;
+    color: #ff00ff;
+    border: 1px solid #ff00ff;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.game-over-popup button:hover {
+    background-color: #ff00ff;
+    color: #0a0a0a;
+    transform: scale(1.05);
+}

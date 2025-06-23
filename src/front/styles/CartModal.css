@@ -1,0 +1,70 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-container {
+    background: #121224;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 20px #d207e4cc;
+    animation: modalFadeIn 0.3s ease-out;
+    color: #eee;
+    font-family: 'Inter', sans-serif;
+    border: 2px solid #d207e4;
+}
+
+.modal-title {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    color: #d207e4;
+    font-weight: 700;
+    text-shadow: 0 0 10px #d207e4aa;
+}
+
+.modal-message {
+    font-size: 1.1rem;
+    color: #bbb;
+    margin-bottom: 1.5rem;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #d207e4;
+    transition: color 0.2s ease;
+    font-weight: bold;
+}
+
+.modal-close:hover {
+    color: #f0f;
+    text-shadow: 0 0 8px #f0f;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

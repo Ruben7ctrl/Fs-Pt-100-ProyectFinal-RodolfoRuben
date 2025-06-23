@@ -1,56 +1,50 @@
 .fondoPrincipal {
-    background-image: url('/src/front/assets/img/GLITCH.gif');
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 1rem;
+  /* background-image: url('/src/front/assets/img/GLITCH.gif'); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
 
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 
-    position: relative;
-    z-index: 1;
-
+  position: relative;
+  z-index: 1;
 }
 
-.demo path{
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 0;
-    fill-rule: evenodd;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
-    fill: none;
-    stroke: currentColor;
-
+.demo path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  fill-rule: evenodd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  fill: none;
+  stroke: currentColor;
 }
 
-svg path{
+svg path {
+  fill: transparent;
+  stroke: rgb(255, 255, 255);
+  stroke-width: 2;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: textAnimation 2s ease-in-out 1 forwards;
+}
 
-    fill: transparent;
-    stroke: rgb(255, 255, 255);
-    stroke-width: 2;
-    stroke-dasharray:50;
+@keyframes textAnimation {
+  0% {
     stroke-dashoffset: 50;
-    animation : textAnimation 2s ease-in-out 1 forwards;
-
-}
-
-@keyframes textAnimation{
-    0%{
-        
-        stroke-dashoffset: 50;
-    }
-    80%{
-        fill : transparent;
-         }
-    100%{
-       
-        fill : #fff;
-        stroke-dashoffset: 0;
-    }
+  }
+  80% {
+    fill: transparent;
+  }
+  100% {
+    fill: #fff;
+    stroke-dashoffset: 0;
+  }
 }
 
 /* .fondoPrincipal::before {
@@ -61,196 +55,290 @@ svg path{
     z-index: -1;
 } */
 .structure {
-    text-align: center;
-    color: white;
-    margin-top: 35rem;
-    
+  text-align: center;
+  color: white;
+  margin-top: 35rem;
 }
 
 .text_logo {
-    font-size: 5.5vw;
-    /* color: #00ffff;
+  font-size: 5.5vw;
+  /* color: #00ffff;
     text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
     letter-spacing: 0.2rem; */
-    background: url('/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.12.14.png');
-    background-size: cover;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-family: 'SpeedBeast', sans-serif;
+  background: url("/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.12.14.png");
+  background-size: cover;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "SpeedBeast", sans-serif;
 }
 .invertir {
-    display: inline-block;
-    transform: scaleX(-1);
-    margin-left: 2px;
-    background: url('/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.13.39.png');
-    background-size: cover;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  display: inline-block;
+  transform: scaleX(-1);
+  margin-left: 2px;
+  background: url("/src/front/assets/img/Captura de pantalla 2025-05-25 a las 19.13.39.png");
+  background-size: cover;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .buttons {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
 
 .buttons button {
-    padding: 0.75rem 2rem;
-    font-size: 2rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    background: none;
-    width: 50%;
-    color: white;
-    font-family: 'SonicTurbo', sans-serif;
+  padding: 0.75rem 2rem;
+  font-size: 2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: none;
+  width: 50%;
+  color: white;
+  font-family: "SonicTurbo", sans-serif;
 }
 @font-face {
-    font-family: 'SonicTurbo';
-    src: url('/src/front/assets/img/fonts/Sonic Turbo.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "SonicTurbo";
+  src: url("/src/front/assets/img/fonts/Sonic Turbo.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'VideoGames';
-    src: url('/src/front/assets/img/fonts/video games.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "VideoGames";
+  src: url("/src/front/assets/img/fonts/video games.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'SpeedBeast';
-    src: url('/src/front/assets/img/fonts/SpeedBeast FREE.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "SpeedBeast";
+  src: url("/src/front/assets/img/fonts/SpeedBeast FREE.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'VerminVibes';
-    src: url('/src/front/assets/img/fonts/Vermin Vibes.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "VerminVibes";
+  src: url("/src/front/assets/img/fonts/Vermin Vibes.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 .box {
-      position: relative;
-      width: 100vw;
-      max-width: 1000px;
-      height: 300px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0, 255, 225, 0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-.boxes:hover{
-
-    background-color:rgba(255, 255, 0, 0.411)
+  position: relative;
+  width: 100vw;
+  max-width: 1000px;
+  height: 150px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 225, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-    .line {
-      position: absolute;
-      background-color: #00ffe1;
-      border-radius: 8px;
-    }
 
-   .main-line-left, .main-line-right {
-      height: 4px;
-      width: 0;
-      bottom: 0;
-      animation: drawMainLine 1s forwards;
-    }
+.boxes:hover {
+  background-color: rgba(255, 255, 0, 0.411);
+}
+.line {
+  position: absolute;
+  background-color: #00ffe1;
+  border-radius: 8px;
+}
 
-    .main-line-left {
-      left: 50%;
-      transform-origin: right;
-      animation-delay: 0s;
-    }
+.main-line-left,
+.main-line-right {
+  height: 4px;
+  width: 0;
+  bottom: 0;
+  animation: drawMainLine 1s forwards;
+}
 
-    .main-line-right {
-      right: 50%;
-      transform-origin: left;
-      animation-delay: 0s;
-    }
+.main-line-left {
+  left: 50%;
+  transform-origin: right;
+  animation-delay: 0s;
+}
 
-    .vertical-left, .vertical-right {
-      width: 4px;
-      height: 0;
-      animation: drawVertical 1s forwards;
-      animation-delay: 1s;
-    }
+.main-line-right {
+  right: 50%;
+  transform-origin: left;
+  animation-delay: 0s;
+}
 
-    .vertical-left {
-      left: 0;
-      bottom: 0;
-    }
+.vertical-left,
+.vertical-right {
+  width: 4px;
+  height: 0;
+  animation: drawVertical 1s forwards;
+  animation-delay: 1s;
+}
 
-    .vertical-right {
-      right: 0;
-      bottom: 0;
-    }
+.vertical-left {
+  left: 0;
+  bottom: 0;
+}
 
-    .top-line-left, .top-line-right {
-      height: 4px;
-      width: 0;
-      top: 0;
-      animation: drawTopHalf 1s forwards;
-      animation-delay: 2s;
-    }
+.vertical-right {
+  right: 0;
+  bottom: 0;
+}
 
-    .top-line-left {
-      left: 0;
-    }
+.top-line-left,
+.top-line-right {
+  height: 4px;
+  width: 0;
+  top: 0;
+  animation: drawTopHalf 1s forwards;
+  animation-delay: 2s;
+}
 
-    .top-line-right {
-      right: 0;
-    }
+.top-line-left {
+  left: 0;
+}
 
-    .background-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: lab(82.11% -50.97 -0.74 / 0.568);
-      opacity: 0;
-      animation: showBackground 0.5s forwards;
-      animation-delay: 3s;
-      z-index: -1;
-      border-radius: 16px;
-    }
+.top-line-right {
+  right: 0;
+}
 
-    @keyframes drawMainLine {
-      from { width: 0; }
-      to { width: 50%; }
-    }
+.background-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: lab(82.11% -50.97 -0.74 / 0.568);
+  opacity: 0;
+  animation: showBackground 0.5s forwards;
+  animation-delay: 3s;
+  z-index: -1;
+  border-radius: 16px;
+}
 
-    @keyframes drawVertical {
-      from { height: 0; }
-      to { height: 100%; }
-    }
+@keyframes drawMainLine {
+  from {
+    width: 0;
+  }
+  to {
+    width: 50%;
+  }
+}
 
-    @keyframes drawTopHalf {
-      from { width: 0; }
-      to { width: 50%; }
-    }
+@keyframes drawVertical {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
+}
 
-    @keyframes showBackground {
-      to { opacity: 1; }
-    }
+@keyframes drawTopHalf {
+  from {
+    width: 0;
+  }
+  to {
+    width: 10%;
+  }
+}
 
-    .blur-out-expand{
-      animation:blur-out-expand 0.4s linear both
-    }
-    
-    @keyframes blur-out-expand{
-      0%
-      {
-        transform:scale(1);filter:blur(.01px);
-      } 
-      100%
-      {
-        transform:scale(2);filter:blur(12px);opacity:0}
-    }
+@keyframes showBackground {
+  to {
+    opacity: 1;
+  }
+}
+
+.blur-out-expand {
+  animation: blur-out-expand 0.4s linear both;
+}
+
+@keyframes blur-out-expand {
+  0% {
+    transform: scale(1);
+    filter: blur(0.01px);
+  }
+  100% {
+    transform: scale(2);
+    filter: blur(12px);
+    opacity: 0;
+  }
+}
+
+/* —————————————————————————— */
+/*  Efecto grieta diagonal  */
+/* —————————————————————————— */
+.crack-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.crack-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: clip-path 10s ease;
+  /* aseguramos que el fondo original quede siempre por debajo */
+}
+
+.crack-layer.bottom {
+  z-index: 1;
+  background-position: left top;
+}
+
+.crack-layer.top {
+  z-index: 2;
+  /* al principio, capa superior cubre toda la pantalla */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  overflow: visible;
+  transition: clip-path 10s ease;
+ 
+}
+.crack-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  
+}
+.crack-layer.top.open .crack-svg {
+  opacity: 1;
+}
+
+.crack-path {
+  fill: none;
+  stroke: cyan;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+
+.crack-layer.top.open {
+  /* visible: zona inferior-derecha; fuera de esto, se ve AlternativoFondo2 */
+  clip-path: polygon(
+    100% 0,    /* esquina sup. der. */
+    100% 100%, /* esquina inf. der. */
+    0%   100%, /* esquina inf. izq. */
+    /* zig-zags muy cortos subiendo hacia sup. izq. */
+    20% 90%,
+    20% 80%,
+    30% 60%,
+    40% 60%,
+    40% 60%,
+    70% 50%,
+    80% 30%,
+    80% 20%,
+    90% 20%
+  );
+}
