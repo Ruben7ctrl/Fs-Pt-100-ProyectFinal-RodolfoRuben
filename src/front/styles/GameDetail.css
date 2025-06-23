@@ -8,7 +8,8 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding: 140px;
+    /* padding: 140px; */
+    padding: 120px;
     position: relative;
     overflow: hidden;
 }
@@ -218,6 +219,8 @@
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 10;
+  margin-top: 2.5rem;
+  margin-right: 5rem;
 }
 
 .game-video-box .videoinfo,
@@ -292,3 +295,9 @@
   flex-wrap: wrap; /* permite que se apilen en pantallas pequeñas */
 }
 
+
+@media (max-width: 768px) {
+    .game-video-box {
+        margin-top: 6rem;
+    }
+}

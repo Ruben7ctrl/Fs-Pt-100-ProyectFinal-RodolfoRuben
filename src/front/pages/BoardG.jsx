@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import stripeServices from "../services/fluxStore";
 import { getStoredUser } from "../utils/storage";
 import { handleAddToCartBoard } from "../utils/CartUtils.js"
-
+import { CartModal } from "../components/CartModal.jsx";
 
 
 export const BoardGames = () => {
@@ -36,8 +36,16 @@ export const BoardGames = () => {
     const navigate = useNavigate();
     const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
 
+    const [showModal, setShowModal] = useState(false);
+    const [gameName, setGameName] = useState("")
+
     const user = JSON.parse(localStorage.getItem('user'));
     const username = user?.username
+
+    const showCartModal = (name) => {
+        setGameName(name);
+        setShowModal(true);
+    }
 
 
     const handleMouseEnter = (e) => {
@@ -286,9 +294,12 @@ export const BoardGames = () => {
                                 </Link>
                                 <div className="buttons-mesa">
                                     {juego?.stripe_price_id ? (
-                                        <button className="game-button" onClick={() => {
-                                            handleAddToCartBoard(juego, cart, dispatch, navigate)
-                                        }}>{isInCart(juego.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
+                                        <>
+                                            <button className="game-button" onClick={() => {
+                                                handleAddToCartBoard(juego, cart, dispatch, navigate, showCartModal)
+                                            }}>{isInCart(juego.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
+                                            {/* <CartModal isOpen={showModal} onClose={() => setShowModal(false)} gameName={gameName} /> */}
+                                        </>
                                     ) : (
                                         <button className="game-bottons" disabled><Clock size={27} /></button>
                                     )}
@@ -302,6 +313,7 @@ export const BoardGames = () => {
                             </div>
 
                         ))}
+                        <CartModal isOpen={showModal} onClose={() => setShowModal(false)} gameName={gameName} />
                     </div>
                 )}
 

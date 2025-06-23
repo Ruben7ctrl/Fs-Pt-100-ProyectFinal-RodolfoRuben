@@ -25,6 +25,7 @@ import stripeServices from "../services/fluxStore";
 import { getStoredUser } from "../utils/storage";
 import { handleFavoriteClick } from "../utils/favoriteUtils.js";
 import { handleAddToCart } from "../utils/CartUtils.js"
+import { CartModal } from "../components/CartModal.jsx";
 
 export const Games = () => {
 
@@ -55,6 +56,8 @@ export const Games = () => {
 
   const navigate = useNavigate();
 
+  const [showModal, setShowModal] = useState(false);
+  const [gameName, setGameName] = useState("")
 
 
 
@@ -80,8 +83,10 @@ export const Games = () => {
   // }, [page, activeGenre, activePlatform, dispatch]);
 
 
-
-
+  const showCartModal = (name) => {
+    setGameName(name);
+    setShowModal(true);
+  }
 
 
 
@@ -208,7 +213,7 @@ export const Games = () => {
 
 
 
- 
+
 
 
   // -----------------------  array de géneros  ------------------------ //
@@ -303,10 +308,10 @@ export const Games = () => {
     return store.user?.favorites?.some(fav => fav.id === gameId);
   }; console.log("user", user);
 
-console.log("Es favorito:", isFavorite());
+  console.log("Es favorito:", isFavorite());
 
-const isInCart = (gameId) =>
-  cart?.some(item => item.game_api_id === gameId || item.id === gameId);
+  const isInCart = (gameId) =>
+    cart?.some(item => item.game_api_id === gameId || item.id === gameId);
 
   return (
     <div className="fondoGames">
@@ -416,16 +421,19 @@ const isInCart = (gameId) =>
                   <h2 className="game-title neon-text">{e.name}</h2>
                   <p className="game-description">{e.rating}⭐</p>
                   {e.stripe_price_id ? (
-                    <button className="game-button" onClick={() => {
-                     handleAddToCart(e, cart, dispatch, navigate)
-                    }}
-                    >{isInCart(e.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
+                    <>
+                      <button className="game-button" onClick={async () => {
+                        await handleAddToCart(e, cart, dispatch, navigate, showCartModal)
+                      }}
+                      >{isInCart(e.id) ? <span className="fa-solid fa-cart-shopping"></span> : <span className="fa-solid fa-cart-plus"></span>}</button>
+                      <CartModal isOpen={showModal} onClose={() => setShowModal(false)} gameName={gameName} />
+                    </>
                   ) : (
                     <button className="game-buttons" disabled><Clock size={27} /></button>
                   )}
                   <button
                     className={`game-button ${isFavorite(e.id) ? "favorited" : ""}`}
-                    onClick={() => handleFavoriteClick(e,dispatch,navigate)}
+                    onClick={() => handleFavoriteClick(e, dispatch, navigate)}
                   >
                     {isFavorite(e.id) ? "❤️" : "🤍"}
                   </button>
@@ -437,6 +445,7 @@ const isInCart = (gameId) =>
               </div>
             )
           })}
+          {/* <CartModal open={showModal} onOpenChange={setShowModal} gameName={gameName} /> */}
         </div>
       )}
 
