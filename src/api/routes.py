@@ -1259,7 +1259,7 @@ def delete_cart(user_id):
 
 
 
-@api.route('/seed', methods=['POST'])
+@api.route('/seed', methods=['GET'])
 def seed_info():
     games = [
         OnlineGames(name='Ajedrez', description='Sumérgete en el clásico juego de estrategia con Ajedrez Online, una experiencia multijugador diseñada para jugadores de todos los niveles. Enfréntate a la inteligencia artificial avanzada, perfecciona tus habilidades, y sigue tu progreso en estadísticas detalladas.', difficulty_levels='Hard'),

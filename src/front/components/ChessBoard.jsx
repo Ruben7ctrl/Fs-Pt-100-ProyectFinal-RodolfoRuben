@@ -70,7 +70,7 @@ export const ChessBoard = () => {
     }
 
     useEffect(() => {
-        engine.current = new Worker("/stockfish.js");
+        engine.current = new Worker("../utils/stockfish.js");
 
         engine.current.onmessage = (event) => {
             const line = event.data;

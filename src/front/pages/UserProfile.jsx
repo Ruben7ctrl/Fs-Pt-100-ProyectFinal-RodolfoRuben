@@ -19,7 +19,7 @@ export const UserProfile = () => {
 
 
   const avatarName = user?.avatar_image || "default";
-  const avatarUrl = `/src/front/assets/img/${avatarName}.jpg`;
+  const avatarUrl = `../assets/img/${avatarName}.jpg`;
 
   // Cargar favoritos enriquecidos si es necesario
   useEffect(() => {

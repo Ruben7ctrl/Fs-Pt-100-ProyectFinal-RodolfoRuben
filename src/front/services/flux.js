@@ -17,7 +17,7 @@ userServices.signup = async (formData) => {
     if (!resp.ok) throw new Error("something went wrong with signup");
     const data = await resp.json();
 
-    return data;
+    return {success: true, data};
   } catch (error) {
     console.log(error);
   }
